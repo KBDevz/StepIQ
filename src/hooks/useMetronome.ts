@@ -7,7 +7,7 @@ export function useMetronome() {
   const onBeatRef = useRef<((beat: number) => void) | null>(null);
 
   const getCtx = useCallback(() => {
-    if (!ctxRef.current) {
+    if (!ctxRef.current || ctxRef.current.state === 'closed') {
       ctxRef.current = new AudioContext();
     }
     if (ctxRef.current.state === 'suspended') {

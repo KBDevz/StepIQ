@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
 import { useMetronome } from '../../hooks/useMetronome';
@@ -61,13 +61,14 @@ export default function ActiveLevelScreen({
     [metronome, timer, state.devMode],
   );
 
-  // First mount: start level 1
-  const hasStarted = useRef(false);
+  // Start level 1 on mount
   useEffect(() => {
-    if (!hasStarted.current) {
-      hasStarted.current = true;
-      startLevel(state.currentLevel);
-    }
+    startLevel(state.currentLevel);
+    return () => {
+      metronome.stop();
+      timer.stop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleEntryConfirm = useCallback(
