@@ -37,11 +37,10 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
 
         // Try models in order of preference
         const models = [
+          'claude-sonnet-4-6',
           'claude-sonnet-4-5-20250514',
           'claude-3-5-sonnet-20241022',
           'claude-3-5-sonnet-latest',
-          'claude-3-5-haiku-20241022',
-          'claude-3-haiku-20240307',
         ];
 
         let res: Response | null = null;
