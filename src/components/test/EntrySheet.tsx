@@ -54,6 +54,7 @@ export default function EntrySheet({ level, onConfirm }: EntrySheetProps) {
             <HRKeypad
               value={hrValue}
               onChange={setHrValue}
+              showConfirm={false}
             />
 
             {hrValue && !hrValid && (
