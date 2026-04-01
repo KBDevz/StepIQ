@@ -299,8 +299,8 @@ export default function LandingPage({ onStart, onHowItWorks }: LandingPageProps)
               >
                 The Chester Step Test is the gold standard submaximal VO₂ max
                 assessment used in cardiac rehabilitation and occupational
-                health. Now available at home — no lab, no equipment beyond a
-                step.
+                health. Now available at home — no lab, just a step and a heart
+                rate monitor.
               </p>
 
               {/* Feature pills */}
