@@ -3,6 +3,7 @@ import { useTestState } from './hooks/useTestState';
 import { useMetronome } from './hooks/useMetronome';
 import { PRE_COUNTDOWN, DEV_PRE_COUNTDOWN } from './utils/protocol';
 import LandingPage from './components/screens/LandingPage';
+import HowItWorksPage from './components/screens/HowItWorksPage';
 import SetupScreen from './components/screens/SetupScreen';
 import InstructionsScreen from './components/screens/InstructionsScreen';
 import RestingHRScreen from './components/screens/RestingHRScreen';
@@ -45,12 +46,13 @@ export default function App() {
     );
   }
 
-  // How It Works page — full-width marketing page (placeholder for now)
+  // How It Works page — full-width marketing page
   if (screen === 'howItWorks') {
     return (
-      <LandingPage
+      <HowItWorksPage
         onStart={() => setScreen('setup')}
         onHowItWorks={() => setScreen('howItWorks')}
+        onLogoClick={() => setScreen('landing')}
       />
     );
   }
