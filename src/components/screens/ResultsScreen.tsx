@@ -11,6 +11,7 @@ interface ResultsScreenProps {
   state: TestState;
   stopReason: string;
   onNewTest: () => void;
+  onHowItWorks: () => void;
 }
 
 /* ── Lead Capture Card ── */
@@ -395,7 +396,7 @@ function LeadSuccessState({
 }
 
 /* ── Main Results Screen ── */
-export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsScreenProps) {
+export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks }: ResultsScreenProps) {
   const [firstName, setFirstName] = useState(state.name?.split(' ')[0] || '');
   const [lastName, setLastName] = useState(state.name?.split(' ').slice(1).join(' ') || '');
   const [email, setEmail] = useState('');
@@ -517,7 +518,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
 
       <NavBar
         onStart={onNewTest}
-        onHowItWorks={() => {}}
+        onHowItWorks={onHowItWorks}
         onLogoClick={onNewTest}
       />
 

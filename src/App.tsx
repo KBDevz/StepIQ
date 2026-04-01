@@ -84,6 +84,7 @@ export default function App() {
         state={state}
         stopReason={stopReason}
         onNewTest={resetTest}
+        onHowItWorks={() => setScreen('howItWorks')}
       />
     );
   }
