@@ -94,7 +94,7 @@ const steps = [
   },
   {
     title: 'Find a Step',
-    desc: 'Any 30cm (12 inches) step works — a standard stair step is perfect. You\'ll also need a heart rate monitor (smartwatch, chest strap, or manual pulse).',
+    desc: 'Any 30cm (12 inches) step works — a standard stair step is perfect. You\'ll also need a heart rate monitoring device (smartwatch, fitness band, or pulse oximeter).',
     icon: (
       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
@@ -489,7 +489,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick }: H
               Ready to Find Out Where You Stand?
             </h2>
             <p className="font-mono" style={{ fontSize: '0.85rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
-              Takes 10 to 12 minutes. No account required. Just a step and a heart rate monitor.
+              Takes 10 to 12 minutes. No account required. Just a step and a heart rate monitoring device.
             </p>
 
             <button
