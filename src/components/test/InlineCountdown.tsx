@@ -9,6 +9,7 @@ interface InlineCountdownProps {
 
 export default function InlineCountdown({ level, onComplete, playCountBeep }: InlineCountdownProps) {
   const [count, setCount] = useState(3);
+  const [showGo, setShowGo] = useState(false);
   const proto = getLevelProtocol(level);
 
   const onCompleteRef = useRef(onComplete);
@@ -18,6 +19,7 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
 
   useEffect(() => {
     setCount(3);
+    setShowGo(false);
     let done = false;
     playCountBeepRef.current(false);
 
@@ -26,10 +28,15 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
         const next = c - 1;
         if (next <= 0) {
           clearInterval(interval);
-          if (!done) {
-            done = true;
-            setTimeout(() => onCompleteRef.current(), 0);
-          }
+          setShowGo(true);
+          playCountBeepRef.current(true);
+          // Brief "GO" flash then complete
+          setTimeout(() => {
+            if (!done) {
+              done = true;
+              onCompleteRef.current();
+            }
+          }, 400);
           return 0;
         }
         playCountBeepRef.current(next <= 1);
@@ -45,13 +52,40 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
 
   return (
     <div className="inline-countdown-overlay">
-      <p className="font-mono text-sm text-[#5A7090] uppercase tracking-wider mb-2">
-        Level {level} — {proto.spm} steps/min · {proto.bpm} BPM
+      <p
+        className="font-mono"
+        style={{
+          fontSize: '0.6rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.14em',
+          color: '#5A7090',
+          marginBottom: '8px',
+        }}
+      >
+        Level {level} Starting
+      </p>
+      <p
+        className="font-mono"
+        style={{
+          fontSize: '0.75rem',
+          color: '#5A7090',
+          marginBottom: '24px',
+        }}
+      >
+        {proto.spm} steps/min · {proto.bpm} BPM
       </p>
       <span
-        className="font-serif text-[100px] leading-none text-[#EEF2FF] tabular-nums animate-pulse"
+        className="font-serif"
+        style={{
+          fontSize: '8rem',
+          lineHeight: 1,
+          fontWeight: 700,
+          color: showGo ? '#FFFFFF' : '#00E5A0',
+          fontVariantNumeric: 'tabular-nums',
+          transition: 'color 0.15s',
+        }}
       >
-        {count || 'GO'}
+        {showGo ? 'GO' : count}
       </span>
     </div>
   );

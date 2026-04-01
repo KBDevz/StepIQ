@@ -4,15 +4,19 @@ interface BeatDotsProps {
 
 export default function BeatDots({ activeBeat }: BeatDotsProps) {
   return (
-    <div className="flex items-center justify-center gap-4 my-4">
+    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', padding: '12px 0' }}>
       {[0, 1, 2, 3].map((i) => (
         <div
           key={i}
-          className={`w-4 h-4 rounded-full transition-all duration-100 ${
-            activeBeat === i
-              ? 'bg-[#00E5A0] shadow-[0_0_12px_rgba(0,229,160,0.6)] scale-125'
-              : 'bg-[#1C2F4A]'
-          }`}
+          style={{
+            width: '12px',
+            height: '12px',
+            borderRadius: '50%',
+            background: activeBeat === i ? '#00E5A0' : '#1C2F4A',
+            transform: activeBeat === i ? 'scale(1.3)' : 'scale(1)',
+            boxShadow: activeBeat === i ? '0 0 12px rgba(0,229,160,0.6)' : 'none',
+            transition: 'all 0.1s ease-out',
+          }}
         />
       ))}
     </div>

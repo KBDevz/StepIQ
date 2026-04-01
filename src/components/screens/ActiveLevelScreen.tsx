@@ -2,9 +2,6 @@ import { useState, useEffect, useRef } from 'react';
 import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
 import { onBeat, speakHRAlert, cancelSpeech } from '../../utils/voiceCoach';
-import Badge from '../ui/Badge';
-import Button from '../ui/Button';
-import FormCard from '../ui/FormCard';
 import BeatDots from '../test/BeatDots';
 import StepCues from '../test/StepCues';
 import LevelTimer from '../test/LevelTimer';
@@ -78,7 +75,6 @@ export default function ActiveLevelScreen({
   const [hrAlert, setHrAlert] = useState(false);
   const hrAlertFired = useRef(false);
 
-  // Refs for intervals — never go stale
   const metronomeId = useRef<number>(0);
   const timerId = useRef<number>(0);
   const endTime = useRef(0);
@@ -87,7 +83,6 @@ export default function ActiveLevelScreen({
   const currentLevelRef = useRef(state.currentLevel);
   const audioRef = useRef<ReturnType<typeof createAudioEngine> | null>(null);
 
-  // Get or create audio engine
   function audio() {
     if (!audioRef.current) audioRef.current = createAudioEngine();
     return audioRef.current;
@@ -113,10 +108,8 @@ export default function ActiveLevelScreen({
     const p = getLevelProtocol(level);
     const dur = state.devMode ? DEV_LEVEL_DURATION : LEVEL_DURATION;
 
-    // Stop any running intervals
     stopAll();
 
-    // Reset UI state
     currentLevelRef.current = level;
     setLevelActive(true);
     setShowSheet(false);
@@ -126,7 +119,6 @@ export default function ActiveLevelScreen({
     setTotalTime(dur);
     setRemaining(dur);
 
-    // -- Metronome --
     levelStartBeat.current = beatCount.current;
     const msPerBeat = 60000 / p.bpm;
 
@@ -136,23 +128,20 @@ export default function ActiveLevelScreen({
       audio().beep(isAccent ? 880 : 660, isAccent ? 0.5 : 0.3);
       setActiveBeat(beat);
 
-      // Voice coaching for first 4 cycles
       const beatsSinceStart = beatCount.current - levelStartBeat.current;
       onBeat(beatsSinceStart, currentLevelRef.current);
 
       beatCount.current++;
     };
 
-    tick(); // first beat immediate
+    tick();
     metronomeId.current = window.setInterval(tick, msPerBeat);
 
-    // -- Timer --
     endTime.current = Date.now() + dur * 1000;
     timerId.current = window.setInterval(() => {
       const left = Math.max(0, Math.ceil((endTime.current - Date.now()) / 1000));
       setRemaining(left);
 
-      // HR alert at 10 seconds remaining
       if (left <= 10 && left > 0 && !hrAlertFired.current) {
         hrAlertFired.current = true;
         setHrAlert(true);
@@ -160,21 +149,17 @@ export default function ActiveLevelScreen({
       }
 
       if (left <= 0) {
-        // Level complete — stop timer but keep metronome running
         stopTimer();
         setLevelActive(false);
         setHrAlert(false);
         setShowSheet(true);
-        // Metronome keeps running! Do NOT stop it here.
       }
     }, 100);
   }
 
-  // Expose startLevel via ref so InlineCountdown callback can access latest
   const startLevelRef = useRef(startLevel);
   startLevelRef.current = startLevel;
 
-  // Start level 1 on mount
   useEffect(() => {
     startLevel(state.currentLevel);
     return () => {
@@ -189,7 +174,6 @@ export default function ActiveLevelScreen({
   const progress = totalTime > 0 ? remaining / totalTime : 1;
 
   function handleEntryConfirm(hr: number, rpe: number) {
-    // NOW stop the metronome (after HR/RPE entry)
     stopMetronome();
     cancelSpeech();
     setActiveBeat(-1);
@@ -197,7 +181,6 @@ export default function ActiveLevelScreen({
     logLevel(hr, rpe);
     setShowSheet(false);
 
-    // Check stop conditions
     if (rpe >= 7) {
       onTestEnd(`RPE ${rpe} reached stop zone`);
       return;
@@ -211,7 +194,6 @@ export default function ActiveLevelScreen({
       return;
     }
 
-    // Continue to next level
     const next = state.currentLevel + 1;
     advanceLevel();
     setNextLevel(next);
@@ -231,72 +213,110 @@ export default function ActiveLevelScreen({
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
   return (
-    <div className="flex flex-col items-center px-6 relative" style={{ flex: 1 }}>
-      {/* Top spacer */}
-      <div style={{ flex: 1 }} />
+    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
 
-      {/* Centered content */}
-      <Badge>Level {state.currentLevel} of 5</Badge>
+      {/* ZONE 1 — Top bar */}
+      <div style={{
+        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+        padding: '14px 24px', height: '52px', flexShrink: 0,
+      }}>
+        <span
+          className="font-mono"
+          style={{
+            fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.12em',
+            color: '#00E5A0', background: 'rgba(0,229,160,0.1)',
+            border: '1px solid rgba(0,229,160,0.3)', borderRadius: '20px',
+            padding: '4px 12px', fontWeight: 600,
+          }}
+        >
+          Level {state.currentLevel} of 5
+        </span>
+        <span className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090' }}>
+          {proto.spm} spm · {proto.bpm} BPM
+        </span>
+      </div>
 
-      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-6">Level</p>
-      <p className="font-serif text-[100px] leading-none text-[#EEF2FF] my-2">{state.currentLevel}</p>
-      <p className="font-mono text-sm text-[#5A7090] mb-4">
-        {proto.spm} steps/min · {proto.bpm} BPM
-      </p>
+      {/* ZONE 2 — Level number (flex-grow centers it) */}
+      <div style={{
+        flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
+        flexShrink: 1, minHeight: 0,
+      }}>
+        <span className="font-serif" style={{
+          fontSize: '9rem', lineHeight: 1, color: '#EEF2FF', fontWeight: 700,
+        }}>
+          {state.currentLevel}
+        </span>
+      </div>
 
-      <BeatDots activeBeat={activeBeat} />
-
-      {/* Step direction cues — synced to metronome */}
-      <div className="w-full mt-4 mb-4">
+      {/* ZONE 3 — Step cue indicator */}
+      <div style={{ padding: '0 24px', flexShrink: 0 }}>
         <StepCues activeBeat={activeBeat} />
       </div>
 
-      <div className="w-full mb-6">
+      {/* ZONE 4 — Beat dots */}
+      <div style={{ flexShrink: 0 }}>
+        <BeatDots activeBeat={activeBeat} />
+      </div>
+
+      {/* ZONE 5 — Timer + progress */}
+      <div style={{ padding: '0 24px', flexShrink: 0 }}>
         <LevelTimer remaining={remaining} progress={progress} alert={hrAlert} />
       </div>
 
-      {/* HR alert message — only while level timer is running */}
-      {hrAlert && levelActive && (
-        <p
-          className="font-mono uppercase"
-          style={{
-            fontSize: '0.75rem',
-            letterSpacing: '0.08em',
-            color: '#FF8C42',
-            textAlign: 'center',
-            marginBottom: '12px',
-            animation: 'hrAlertPulse 0.8s ease-in-out infinite',
-          }}
-        >
-          Check your heart rate now
-        </p>
-      )}
-
-      {/* Bottom spacer */}
-      <div style={{ flex: 0.2 }} />
-
-      {/* Bottom section */}
-      <div className="w-full" style={{ paddingBottom: '24px' }}>
-        <FormCard className="w-full mb-4">
-          <div className="grid grid-cols-2 gap-6">
-            <div className="text-center">
-              <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Stop HR</p>
-              <p className="font-mono text-2xl text-[#FF8C42]">{state.stopHR} <span className="text-xs">bpm</span></p>
+      {/* ZONE 6/7 — HR alert OR info card */}
+      <div style={{ padding: '12px 24px', flexShrink: 0, minHeight: '60px' }}>
+        {hrAlert && levelActive ? (
+          <p
+            className="font-mono"
+            style={{
+              fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.14em',
+              color: '#FF8C42', textAlign: 'center',
+              animation: 'hrAlertPulse 0.8s ease-in-out infinite',
+            }}
+          >
+            Check your heart rate
+          </p>
+        ) : (
+          <div style={{
+            background: '#0D1829', border: '1px solid #1C2F4A', borderRadius: '10px',
+            padding: '12px 16px', display: 'flex',
+          }}>
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '4px' }}>Stop HR</p>
+              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#FF8C42' }}>
+                {state.stopHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090' }}>bpm</span>
+              </p>
             </div>
-            <div className="text-center">
-              <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Last HR</p>
-              <p className="font-mono text-2xl text-[#EEF2FF]">
-                {lastHR ? <>{lastHR} <span className="text-xs text-[#5A7090]">bpm</span></> : '—'}
+            <div style={{ width: '1px', background: '#1C2F4A', margin: '0 12px' }} />
+            <div style={{ flex: 1, textAlign: 'center' }}>
+              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '4px' }}>Last HR</p>
+              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#EEF2FF' }}>
+                {lastHR ? <>{lastHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090' }}>bpm</span></> : '—'}
               </p>
             </div>
           </div>
-        </FormCard>
-
-        <Button variant="ghost" onClick={handleEndEarly}>
-          End Test Early
-        </Button>
+        )}
       </div>
 
+      {/* ZONE 8 — End test early */}
+      <div style={{ textAlign: 'center', padding: '4px 0 16px', flexShrink: 0 }}>
+        <button
+          onClick={handleEndEarly}
+          className="font-mono"
+          style={{
+            display: 'inline-block', background: 'transparent', border: 'none',
+            color: '#5A7090', fontSize: '0.65rem', textTransform: 'uppercase',
+            letterSpacing: '0.1em', padding: '8px 16px', borderRadius: '6px',
+            cursor: 'pointer', transition: 'color 0.2s',
+          }}
+          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#C4D4E8'; }}
+          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; }}
+        >
+          End Test Early
+        </button>
+      </div>
+
+      {/* Overlays */}
       {showSheet && (
         <EntrySheet level={state.currentLevel} onConfirm={handleEntryConfirm} />
       )}

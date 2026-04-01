@@ -12,26 +12,32 @@ function formatTime(seconds: number): string {
 
 export default function LevelTimer({ remaining, progress, alert = false }: LevelTimerProps) {
   return (
-    <div className="w-full">
-      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider text-center mb-2">
-        Time Remaining
-      </p>
+    <div style={{ width: '100%' }}>
       <p
-        className="font-mono text-5xl text-center tabular-nums mb-4"
+        className="font-mono"
         style={{
+          fontSize: '5rem',
+          fontWeight: 600,
+          letterSpacing: '-0.03em',
+          textAlign: 'center',
+          fontVariantNumeric: 'tabular-nums',
           color: alert ? '#FF8C42' : '#EEF2FF',
           animation: alert ? 'timerPulse 0.8s ease-in-out infinite' : 'none',
           transition: 'color 0.3s',
+          lineHeight: 1,
+          marginBottom: '8px',
         }}
       >
         {formatTime(remaining)}
       </p>
-      <div className="w-full h-1.5 bg-[#152238] rounded-full overflow-hidden">
+      <div style={{ width: '100%', height: '3px', background: '#1C2F4A', borderRadius: '2px', overflow: 'hidden' }}>
         <div
-          className="h-full rounded-full transition-all duration-500 ease-linear"
           style={{
+            height: '100%',
+            borderRadius: '2px',
             width: `${progress * 100}%`,
             background: alert ? '#FF8C42' : '#00E5A0',
+            transition: 'width 0.5s linear, background 0.3s',
           }}
         />
       </div>
