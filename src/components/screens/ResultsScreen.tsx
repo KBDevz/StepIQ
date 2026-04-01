@@ -408,6 +408,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
   const [report, setReport] = useState<AIReport | null>(null);
   const [loading, setLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
+  const [showReport, setShowReport] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const vo2Max = calcVO2Max(state.data, state.maxHR);
@@ -415,12 +416,12 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
   const vo2Display = Math.round(vo2Max * 10) / 10;
   const hrFormula = state.betaBlocker ? 'Adjusted (Londeree)' : 'Standard (220-age)';
 
-  // Scroll to report when it generates
+  // Scroll to report when user clicks "View My Report"
   useEffect(() => {
-    if (report && reportRef.current) {
+    if (showReport && reportRef.current) {
       reportRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [report]);
+  }, [showReport]);
 
   const generateReport = useCallback(
     async (key: string) => {
@@ -616,7 +617,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
                   loading={loading}
                 />
               ) : (
-                <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
+                <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
               )}
             </div>
 
@@ -681,15 +682,15 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
               ))}
             </div>
 
-            {/* AI Report (full width below both columns) */}
+            {/* AI Report (only shown after user clicks "View My Report") */}
             <div ref={reportRef}>
-              {reportError && (
+              {showReport && reportError && (
                 <div style={{ marginBottom: '20px', padding: '14px 16px', borderRadius: '12px', background: 'rgba(255,68,68,0.08)', border: '1px solid rgba(255,68,68,0.25)' }}>
                   <p className="font-mono" style={{ fontSize: '0.72rem', color: '#FF4444' }}>{reportError}</p>
                 </div>
               )}
 
-              {report && (
+              {showReport && report && (
                 <AIReportPanel report={report} vo2Max={vo2Max} classification={classification} />
               )}
             </div>
@@ -727,7 +728,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
                 loading={loading}
               />
             ) : (
-              <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
+              <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
             )}
           </div>
         </div>
