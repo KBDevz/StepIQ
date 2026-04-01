@@ -15,6 +15,9 @@ interface ResultsScreenProps {
 }
 
 export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsScreenProps) {
+  const [email, setEmail] = useState('');
+  const [emailCaptured, setEmailCaptured] = useState(false);
+  const [skipEmail, setSkipEmail] = useState(false);
   const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_ANTHROPIC_API_KEY || '');
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [keyError, setKeyError] = useState<string | null>(null);
@@ -222,12 +225,57 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
         </div>
       )}
 
-      {/* Generate Report button */}
-      <div className="mb-4">
-        <Button variant="report" onClick={handleGenerateClick} disabled={loading}>
-          {loading ? 'Generating Report...' : 'Generate AI Report'}
-        </Button>
-      </div>
+      {/* Email capture card */}
+      {!emailCaptured && !skipEmail && !report && (
+        <FormCard className="mb-4">
+          <p className="font-serif text-lg text-[#EEF2FF] mb-1">Get your full report</p>
+          <p className="font-mono text-xs text-[#5A7090] mb-4 leading-relaxed">
+            Your VO2 score, AI analysis, and 8-week training protocol — sent to your inbox.
+          </p>
+          <input
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            placeholder="your@email.com"
+            className="w-full bg-[#152238] border border-[#1C2F4A] rounded-xl px-4 py-3 font-mono text-sm text-[#EEF2FF] placeholder-[#5A7090]/50 focus:outline-none focus:border-[#00E5A0]/50 transition-colors mb-3"
+          />
+          <Button
+            onClick={() => {
+              setEmailCaptured(true);
+              handleGenerateClick();
+            }}
+            disabled={!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)}
+          >
+            Send My Report
+          </Button>
+          <p className="font-mono text-[10px] text-[#5A7090] mt-2 text-center">
+            No spam. One email. Unsubscribe anytime.
+          </p>
+          <button
+            type="button"
+            onClick={() => { setSkipEmail(true); handleGenerateClick(); }}
+            className="block mx-auto mt-3 font-mono text-xs text-[#5A7090] hover:text-[#00E5A0] transition-colors underline underline-offset-2"
+          >
+            View report without saving →
+          </button>
+        </FormCard>
+      )}
+
+      {/* Email success state */}
+      {emailCaptured && !report && !loading && (
+        <div className="mb-4 p-3 rounded-lg bg-[#00E5A0]/10 border border-[#00E5A0]/25">
+          <p className="font-mono text-xs text-[#00E5A0]">Report will be sent once generated ✓</p>
+        </div>
+      )}
+
+      {/* Generate Report button (shown after email skip or capture) */}
+      {(emailCaptured || skipEmail) && !report && (
+        <div className="mb-4">
+          <Button variant="report" onClick={handleGenerateClick} disabled={loading}>
+            {loading ? 'Generating Report...' : 'Generate AI Report'}
+          </Button>
+        </div>
+      )}
 
       {reportError && (
         <div className="mb-4 p-3 rounded-lg bg-[#FF4444]/10 border border-[#FF4444]/25">

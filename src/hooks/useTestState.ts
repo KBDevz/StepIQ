@@ -18,7 +18,7 @@ const initialState: TestState = {
 
 export function useTestState() {
   const [state, setState] = useState<TestState>(initialState);
-  const [screen, setScreen] = useState<Screen>('setup');
+  const [screen, setScreen] = useState<Screen>('landing');
 
   const updateSetup = useCallback(
     (fields: Partial<Pick<TestState, 'name' | 'age' | 'sex' | 'betaBlocker'>>) => {
@@ -85,7 +85,7 @@ export function useTestState() {
 
   const resetTest = useCallback(() => {
     setState(initialState);
-    setScreen('setup');
+    setScreen('landing');
   }, []);
 
   const lastHR = useMemo(() => {
