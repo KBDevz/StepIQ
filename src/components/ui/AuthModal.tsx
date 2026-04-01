@@ -34,6 +34,7 @@ export default function AuthModal({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState('');
+  const [welcomeBack, setWelcomeBack] = useState(false);
 
   const inputStyle = (field?: string): React.CSSProperties => ({
     width: '100%',
@@ -89,7 +90,16 @@ export default function AuthModal({
     });
     setLoading(false);
     if (result.error) {
-      setErrors({ form: result.error });
+      const msg = result.error.toLowerCase();
+      if (msg.includes('already registered') || msg.includes('already been registered') || msg.includes('already exists')) {
+        // Switch to sign-in with the email pre-filled
+        setErrors({ emailHint: 'An account with this email already exists.' });
+        setWelcomeBack(true);
+        setMode('signin');
+        setPassword('');
+      } else {
+        setErrors({ form: result.error });
+      }
     } else {
       onClose();
     }
@@ -117,7 +127,7 @@ export default function AuthModal({
     if (result.error) {
       setErrors({ form: result.error });
     } else {
-      setSuccess('Password reset link sent. Check your email.');
+      setSuccess('Check your email for a password reset link');
     }
   };
 
@@ -161,11 +171,11 @@ export default function AuthModal({
         <h2 className="font-serif" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
           {mode === 'signup' ? 'Create Account' : mode === 'signin' ? 'Welcome Back' : 'Reset Password'}
         </h2>
-        <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7, marginBottom: '24px' }}>
+        <p className="font-mono" style={{ fontSize: '0.72rem', color: mode === 'signin' && welcomeBack ? '#00E5A0' : '#5A7090', lineHeight: 1.7, marginBottom: '24px' }}>
           {mode === 'signup'
             ? 'Sign up to save your results and track progress over time.'
             : mode === 'signin'
-              ? 'Sign in to access your saved results.'
+              ? (welcomeBack ? 'Welcome back — sign in to access your results' : 'Sign in to access your saved results.')
               : 'Enter your email to receive a password reset link.'}
         </p>
 
@@ -247,6 +257,16 @@ export default function AuthModal({
                 Sign in
               </span>
             </p>
+            <p className="font-mono" style={{ fontSize: '0.65rem', textAlign: 'center', marginTop: '8px' }}>
+              <span
+                onClick={() => { setMode('forgot'); setErrors({}); setSuccess(''); }}
+                style={{ color: '#5A7090', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#00E5A0'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#5A7090'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
+              >
+                Forgot your password?
+              </span>
+            </p>
           </>
         )}
 
@@ -254,8 +274,9 @@ export default function AuthModal({
         {mode === 'signin' && (
           <>
             <div style={{ marginBottom: '12px' }}>
-              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }} placeholder="Email address" style={inputStyle('email')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'email')} />
+              <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '', emailHint: '' })); setWelcomeBack(false); }} placeholder="Email address" style={inputStyle('email')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'email')} />
               {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.email}</p>}
+              {errors.emailHint && <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42', marginTop: '4px' }}>{errors.emailHint}</p>}
             </div>
 
             <div style={{ marginBottom: '8px' }}>
@@ -265,11 +286,11 @@ export default function AuthModal({
 
             <div style={{ textAlign: 'right', marginBottom: '20px' }}>
               <span
-                onClick={() => { setMode('forgot'); setErrors({}); setSuccess(''); }}
+                onClick={() => { setMode('forgot'); setErrors({}); setSuccess(''); setWelcomeBack(false); }}
                 className="font-mono"
-                style={{ fontSize: '0.65rem', color: '#5A7090', cursor: 'pointer', transition: 'color 0.2s' }}
-                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#00E5A0'; }}
-                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#5A7090'; }}
+                style={{ fontSize: '0.65rem', color: '#5A7090', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#00E5A0'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#5A7090'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
               >
                 Forgot password?
               </span>
