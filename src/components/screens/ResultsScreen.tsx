@@ -44,7 +44,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
             'anthropic-dangerous-direct-browser-access': 'true',
           },
           body: JSON.stringify({
-            model: 'claude-3-5-sonnet-20241022',
+            model: 'claude-3-5-sonnet-latest',
             max_tokens: 1800,
             messages: [{ role: 'user', content: prompt }],
           }),
