@@ -31,7 +31,7 @@ export default function RestingHRScreen({ onConfirm, onSkip }: RestingHRScreenPr
 
       {/* HR display */}
       <div style={{ marginBottom: '20px', textAlign: 'center' }}>
-        <span className="font-mono" style={{ fontSize: '3rem', fontWeight: 700, color: '#EEF2FF', fontVariantNumeric: 'tabular-nums' }}>
+        <span className="font-mono" style={{ fontSize: '3.5rem', fontWeight: 700, color: '#EEF2FF', fontVariantNumeric: 'tabular-nums' }}>
           {value || '—'}
         </span>
         <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', marginTop: '2px' }}>bpm</p>
@@ -40,15 +40,17 @@ export default function RestingHRScreen({ onConfirm, onSkip }: RestingHRScreenPr
       <HRKeypad
         value={value}
         onChange={setValue}
-        onConfirm={() => valid && onConfirm(num)}
-        confirmDisabled={!valid}
+        showConfirm={false}
       />
 
       {value && !valid && (
         <p className="font-mono" style={{ fontSize: '0.65rem', color: '#FF4444', marginTop: '10px' }}>Valid range: 30–120 bpm</p>
       )}
 
-      <div style={{ width: '100%', marginTop: '20px' }}>
+      <div style={{ width: '100%', marginTop: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+        <Button onClick={() => valid && onConfirm(num)} disabled={!valid}>
+          Confirm
+        </Button>
         <Button variant="ghost" onClick={onSkip}>Skip</Button>
       </div>
     </div>

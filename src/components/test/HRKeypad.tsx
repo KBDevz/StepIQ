@@ -6,6 +6,7 @@ interface HRKeypadProps {
   onConfirm?: () => void;
   confirmLabel?: string;
   confirmDisabled?: boolean;
+  showConfirm?: boolean;
 }
 
 export default function HRKeypad({
@@ -14,6 +15,7 @@ export default function HRKeypad({
   onConfirm,
   confirmLabel = 'Confirm',
   confirmDisabled = false,
+  showConfirm = true,
 }: HRKeypadProps) {
   const handleKey = useCallback(
     (key: string) => {
@@ -28,21 +30,41 @@ export default function HRKeypad({
     [value, onChange, onConfirm],
   );
 
-  const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'confirm'];
+  const keys = showConfirm
+    ? ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'confirm']
+    : ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'empty'];
+
+  const btnBase: React.CSSProperties = {
+    height: '56px',
+    borderRadius: '12px',
+    fontFamily: "'IBM Plex Mono', monospace",
+    fontSize: '1.25rem',
+    fontWeight: 500,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    cursor: 'pointer',
+    border: 'none',
+    transition: 'background 0.15s, transform 0.1s',
+  };
 
   return (
-    <div className="grid grid-cols-3 gap-2.5 max-w-[280px] mx-auto">
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
       {keys.map((key) => {
+        if (key === 'empty') {
+          return <div key={key} />;
+        }
         if (key === 'back') {
           return (
             <button
               key={key}
               type="button"
               onClick={() => handleKey('back')}
-              className="h-14 rounded-xl bg-[#152238] text-[#5A7090] font-mono text-lg
-                hover:bg-[#1C2F4A] active:scale-95 transition-all flex items-center justify-center"
+              style={{ ...btnBase, background: '#152238', color: '#5A7090' }}
+              onMouseDown={(e) => { (e.target as HTMLElement).style.transform = 'scale(0.95)'; }}
+              onMouseUp={(e) => { (e.target as HTMLElement).style.transform = ''; }}
             >
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z" />
                 <line x1="18" y1="9" x2="12" y2="15" />
                 <line x1="12" y1="9" x2="18" y2="15" />
@@ -57,8 +79,17 @@ export default function HRKeypad({
               type="button"
               disabled={confirmDisabled}
               onClick={() => handleKey('confirm')}
-              className="h-14 rounded-xl bg-[#00E5A0]/15 text-[#00E5A0] font-mono text-sm font-semibold
-                hover:bg-[#00E5A0]/25 active:scale-95 transition-all disabled:opacity-30 disabled:cursor-not-allowed"
+              style={{
+                ...btnBase,
+                background: 'rgba(0,229,160,0.15)',
+                color: '#00E5A0',
+                fontSize: '0.85rem',
+                fontWeight: 600,
+                opacity: confirmDisabled ? 0.3 : 1,
+                cursor: confirmDisabled ? 'not-allowed' : 'pointer',
+              }}
+              onMouseDown={(e) => { if (!confirmDisabled) (e.target as HTMLElement).style.transform = 'scale(0.95)'; }}
+              onMouseUp={(e) => { (e.target as HTMLElement).style.transform = ''; }}
             >
               {confirmLabel === 'Confirm' ? '✓' : confirmLabel}
             </button>
@@ -69,8 +100,11 @@ export default function HRKeypad({
             key={key}
             type="button"
             onClick={() => handleKey(key)}
-            className="h-14 rounded-xl bg-[#152238] text-[#EEF2FF] font-mono text-xl
-              hover:bg-[#1C2F4A] active:scale-95 transition-all"
+            style={{ ...btnBase, background: '#152238', color: '#EEF2FF' }}
+            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#1C2F4A'; }}
+            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = '#152238'; }}
+            onMouseDown={(e) => { (e.target as HTMLElement).style.transform = 'scale(0.95)'; }}
+            onMouseUp={(e) => { (e.target as HTMLElement).style.transform = ''; }}
           >
             {key}
           </button>
