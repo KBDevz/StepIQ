@@ -110,6 +110,7 @@ export function useAuth() {
             first_name: params.firstName,
             last_name: params.lastName,
           },
+          emailRedirectTo: `${window.location.origin}/set-password`,
         },
       });
 
@@ -134,12 +135,6 @@ export function useAuth() {
         });
 
         await fetchProfile(data.user.id);
-
-        // Send password setup email
-        const appUrl = window.location.origin;
-        await supabase.auth.resetPasswordForEmail(params.email, {
-          redirectTo: `${appUrl}/set-password`,
-        });
       }
 
       return { error: null, user: data.user, isDuplicate: false };
@@ -160,7 +155,9 @@ export function useAuth() {
   }, []);
 
   const resetPassword = useCallback(async (email: string) => {
-    const { error } = await supabase.auth.resetPasswordForEmail(email);
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/set-password`,
+    });
     if (error) return { error: error.message };
     return { error: null };
   }, []);
