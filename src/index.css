@@ -94,8 +94,8 @@ label {
   background: #0D1829;
   border-top: 1px solid #1C2F4A;
   border-radius: 24px 24px 0 0;
-  padding: 12px 20px 32px;
-  max-height: 85%;
+  padding: 16px 24px 36px;
+  max-height: 90%;
   overflow-y: auto;
 }
 
@@ -168,8 +168,10 @@ input[type="number"] {
 }
 
 .phone-frame-inner {
-  width: 390px;
-  max-height: 90vh;
+  width: 430px;
+  height: 85vh;
+  min-height: 680px;
+  max-height: 920px;
   background: #060C18;
   border-radius: 44px;
   border: 1px solid #1C2F4A;

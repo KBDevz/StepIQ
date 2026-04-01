@@ -197,30 +197,30 @@ export default function ActiveLevelScreen({
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
   return (
-    <div className="flex flex-col items-center px-5 py-6 relative" style={{ minHeight: '100%' }}>
+    <div className="flex flex-col items-center px-6 py-8 relative" style={{ minHeight: '100%' }}>
       <Badge>Level {state.currentLevel} of 5</Badge>
 
-      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-4">Level</p>
-      <p className="font-serif text-7xl text-[#EEF2FF] my-2">{state.currentLevel}</p>
-      <p className="font-mono text-sm text-[#5A7090] mb-4">
+      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-5">Level</p>
+      <p className="font-serif text-8xl text-[#EEF2FF] my-3">{state.currentLevel}</p>
+      <p className="font-mono text-sm text-[#5A7090] mb-5">
         {proto.spm} steps/min · {proto.bpm} BPM
       </p>
 
       <BeatDots activeBeat={levelActive ? activeBeat : -1} />
 
-      <div className="w-full mt-6 mb-6">
+      <div className="w-full mt-8 mb-8">
         <LevelTimer remaining={remaining} progress={progress} />
       </div>
 
-      <FormCard className="w-full mb-6">
-        <div className="grid grid-cols-2 gap-4">
+      <FormCard className="w-full mb-8">
+        <div className="grid grid-cols-2 gap-6">
           <div className="text-center">
             <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Stop HR</p>
-            <p className="font-mono text-lg text-[#FF8C42]">{state.stopHR} <span className="text-xs">bpm</span></p>
+            <p className="font-mono text-xl text-[#FF8C42]">{state.stopHR} <span className="text-xs">bpm</span></p>
           </div>
           <div className="text-center">
             <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Last HR</p>
-            <p className="font-mono text-lg text-[#EEF2FF]">
+            <p className="font-mono text-xl text-[#EEF2FF]">
               {lastHR ? <>{lastHR} <span className="text-xs text-[#5A7090]">bpm</span></> : '—'}
             </p>
           </div>

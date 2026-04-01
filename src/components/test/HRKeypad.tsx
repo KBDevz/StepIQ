@@ -35,10 +35,10 @@ export default function HRKeypad({
     : ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0', 'empty'];
 
   const btnBase: React.CSSProperties = {
-    height: '56px',
-    borderRadius: '12px',
+    height: '60px',
+    borderRadius: '14px',
     fontFamily: "'IBM Plex Mono', monospace",
-    fontSize: '1.25rem',
+    fontSize: '1.35rem',
     fontWeight: 500,
     display: 'flex',
     alignItems: 'center',
@@ -49,7 +49,7 @@ export default function HRKeypad({
   };
 
   return (
-    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', maxWidth: '320px', margin: '0 auto' }}>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px', width: '100%', maxWidth: '360px', margin: '0 auto' }}>
       {keys.map((key) => {
         if (key === 'empty') {
           return <div key={key} />;

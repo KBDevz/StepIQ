@@ -40,7 +40,7 @@ export default function StepGuide({ bpm }: StepGuideProps) {
   const current = BEATS[beat];
 
   return (
-    <div className="w-full max-w-[300px] bg-[#0D1829]/80 backdrop-blur-md border border-[#1C2F4A] rounded-2xl px-4 py-3">
+    <div className="w-full max-w-[360px] bg-[#0D1829]/80 backdrop-blur-md border border-[#1C2F4A] rounded-2xl px-5 py-4">
       {/* Label */}
       <p className="font-mono text-[10px] text-[#5A7090] uppercase tracking-[0.15em] text-center mb-2.5">
         Step Pattern
