@@ -59,7 +59,8 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
         }
 
         if (!res.ok) {
-          throw new Error(`API error: ${res.status}`);
+          const errBody = await res.text();
+          throw new Error(`API error ${res.status}: ${errBody.slice(0, 200)}`);
         }
 
         const body = await res.json();
