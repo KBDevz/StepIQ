@@ -10,6 +10,7 @@ import {
 
 interface LandingPageProps {
   onStart: () => void;
+  onHowItWorks: () => void;
 }
 
 // Sample data for the preview chart
@@ -207,7 +208,7 @@ function ResultPreviewCard() {
   );
 }
 
-export default function LandingPage({ onStart }: LandingPageProps) {
+export default function LandingPage({ onStart, onHowItWorks }: LandingPageProps) {
   const pills = ['Clinically Validated', 'Linear Regression', 'AI Report'];
 
   return (
@@ -277,6 +278,7 @@ export default function LandingPage({ onStart }: LandingPageProps) {
         {/* Right: links */}
         <div className="flex items-center gap-6">
           <span
+            onClick={onHowItWorks}
             className="hidden sm:inline font-mono cursor-pointer hover:text-[#EEF2FF] transition-colors"
             style={{ fontSize: '0.8rem', color: '#5A7090' }}
           >

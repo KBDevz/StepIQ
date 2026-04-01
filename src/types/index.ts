@@ -66,6 +66,7 @@ export interface RpeEntry {
 
 export type Screen =
   | 'landing'
+  | 'howItWorks'
   | 'setup'
   | 'instructions'
   | 'restingHR'
