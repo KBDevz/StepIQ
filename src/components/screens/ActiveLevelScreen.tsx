@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
 import Badge from '../ui/Badge';
@@ -17,11 +17,53 @@ interface ActiveLevelScreenProps {
   onTestEnd: (reason: string) => void;
 }
 
+// Audio helper — lives outside React render cycle
+function createAudioEngine() {
+  let ctx: AudioContext | null = null;
+
+  function getCtx(): AudioContext {
+    if (!ctx || ctx.state === 'closed') {
+      ctx = new AudioContext();
+    }
+    if (ctx.state === 'suspended') {
+      ctx.resume();
+    }
+    return ctx;
+  }
+
+  function beep(freq: number, vol: number, dur = 0.07) {
+    try {
+      const c = getCtx();
+      const osc = c.createOscillator();
+      const gain = c.createGain();
+      osc.connect(gain);
+      gain.connect(c.destination);
+      osc.frequency.value = freq;
+      gain.gain.setValueAtTime(vol, c.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
+      osc.start(c.currentTime);
+      osc.stop(c.currentTime + dur);
+    } catch {
+      // swallow audio errors
+    }
+  }
+
+  function countBeep(isLast: boolean) {
+    beep(isLast ? 1100 : 600, isLast ? 0.6 : 0.3, 0.12);
+  }
+
+  function close() {
+    ctx?.close();
+    ctx = null;
+  }
+
+  return { beep, countBeep, close };
+}
+
 export default function ActiveLevelScreen({
   state,
   logLevel,
   advanceLevel,
-  checkStopConditions: _,
   onTestEnd,
 }: ActiveLevelScreenProps) {
   const [activeBeat, setActiveBeat] = useState(-1);
@@ -32,142 +74,84 @@ export default function ActiveLevelScreen({
   const [remaining, setRemaining] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
 
-  // All interval/audio state managed via refs to avoid stale closure issues
-  const metronomeIntervalRef = useRef<number | null>(null);
-  const timerIntervalRef = useRef<number | null>(null);
-  const audioCtxRef = useRef<AudioContext | null>(null);
-  const endTimeRef = useRef(0);
-  const beatCountRef = useRef(0);
-  const levelCompleteRef = useRef(false);
+  // Refs for intervals — never go stale
+  const metronomeId = useRef<number>(0);
+  const timerId = useRef<number>(0);
+  const endTime = useRef(0);
+  const beatCount = useRef(0);
+  const audioRef = useRef<ReturnType<typeof createAudioEngine> | null>(null);
 
-  const getAudioCtx = useCallback(() => {
-    if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
-      audioCtxRef.current = new AudioContext();
-    }
-    if (audioCtxRef.current.state === 'suspended') {
-      audioCtxRef.current.resume();
-    }
-    return audioCtxRef.current;
-  }, []);
+  // Get or create audio engine
+  function audio() {
+    if (!audioRef.current) audioRef.current = createAudioEngine();
+    return audioRef.current;
+  }
 
-  const playBeep = useCallback(
-    (freq: number, vol: number, duration = 0.07) => {
-      try {
-        const ctx = getAudioCtx();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(vol, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
-        osc.start(ctx.currentTime);
-        osc.stop(ctx.currentTime + duration);
-      } catch {
-        // Audio may fail on some browsers, don't break the test
+  function stopAll() {
+    clearInterval(metronomeId.current);
+    clearInterval(timerId.current);
+    metronomeId.current = 0;
+    timerId.current = 0;
+  }
+
+  function startLevel(level: number) {
+    const p = getLevelProtocol(level);
+    const dur = state.devMode ? DEV_LEVEL_DURATION : LEVEL_DURATION;
+
+    // Stop any running intervals
+    stopAll();
+
+    // Reset UI state
+    setLevelActive(true);
+    setShowSheet(false);
+    setShowCountdown(false);
+    setTotalTime(dur);
+    setRemaining(dur);
+
+    // -- Metronome --
+    beatCount.current = 0;
+    const msPerBeat = 60000 / p.bpm;
+
+    const tick = () => {
+      const beat = beatCount.current % 4;
+      const isAccent = beat === 0;
+      audio().beep(isAccent ? 880 : 660, isAccent ? 0.5 : 0.3);
+      setActiveBeat(beat);
+      beatCount.current++;
+    };
+
+    tick(); // first beat immediate
+    metronomeId.current = window.setInterval(tick, msPerBeat);
+
+    // -- Timer --
+    endTime.current = Date.now() + dur * 1000;
+    timerId.current = window.setInterval(() => {
+      const left = Math.max(0, Math.ceil((endTime.current - Date.now()) / 1000));
+      setRemaining(left);
+      if (left <= 0) {
+        // Level complete
+        clearInterval(metronomeId.current);
+        clearInterval(timerId.current);
+        metronomeId.current = 0;
+        timerId.current = 0;
+        setLevelActive(false);
+        setActiveBeat(-1);
+        setShowSheet(true);
       }
-    },
-    [getAudioCtx],
-  );
+    }, 100);
+  }
 
-  const playCountBeep = useCallback(
-    (isLast: boolean) => {
-      playBeep(isLast ? 1100 : 600, isLast ? 0.6 : 0.3, 0.12);
-    },
-    [playBeep],
-  );
-
-  const stopMetronome = useCallback(() => {
-    if (metronomeIntervalRef.current !== null) {
-      clearInterval(metronomeIntervalRef.current);
-      metronomeIntervalRef.current = null;
-    }
-    beatCountRef.current = 0;
-  }, []);
-
-  const stopTimer = useCallback(() => {
-    if (timerIntervalRef.current !== null) {
-      clearInterval(timerIntervalRef.current);
-      timerIntervalRef.current = null;
-    }
-  }, []);
-
-  const handleLevelEnd = useCallback(() => {
-    stopMetronome();
-    stopTimer();
-    setLevelActive(false);
-    setActiveBeat(-1);
-    setShowSheet(true);
-  }, [stopMetronome, stopTimer]);
-
-  // Keep handleLevelEnd in a ref so the timer interval always calls the latest version
-  const handleLevelEndRef = useRef(handleLevelEnd);
-  handleLevelEndRef.current = handleLevelEnd;
-
-  const startMetronome = useCallback(
-    (bpm: number) => {
-      stopMetronome();
-      beatCountRef.current = 0;
-      const interval = 60000 / bpm;
-
-      const tick = () => {
-        const beat = beatCountRef.current % 4;
-        const isAccent = beat === 0;
-        playBeep(isAccent ? 880 : 660, isAccent ? 0.5 : 0.3);
-        setActiveBeat(beat);
-        beatCountRef.current++;
-      };
-
-      tick(); // first beat immediately
-      metronomeIntervalRef.current = window.setInterval(tick, interval);
-    },
-    [playBeep, stopMetronome],
-  );
-
-  const startTimer = useCallback(
-    (seconds: number) => {
-      stopTimer();
-      levelCompleteRef.current = false;
-      setTotalTime(seconds);
-      setRemaining(seconds);
-      endTimeRef.current = Date.now() + seconds * 1000;
-
-      timerIntervalRef.current = window.setInterval(() => {
-        const left = Math.max(0, Math.ceil((endTimeRef.current - Date.now()) / 1000));
-        setRemaining(left);
-        if (left <= 0 && !levelCompleteRef.current) {
-          levelCompleteRef.current = true;
-          handleLevelEndRef.current();
-        }
-      }, 200);
-    },
-    [stopTimer],
-  );
-
-  const startLevel = useCallback(
-    (level: number) => {
-      const p = getLevelProtocol(level);
-      const dur = state.devMode ? DEV_LEVEL_DURATION : LEVEL_DURATION;
-      setLevelActive(true);
-      setShowSheet(false);
-      setShowCountdown(false);
-      startTimer(dur);
-      startMetronome(p.bpm);
-    },
-    [state.devMode, startTimer, startMetronome],
-  );
-
-  // Keep startLevel in a ref so callbacks always access latest
+  // Expose startLevel via ref so InlineCountdown callback can access latest
   const startLevelRef = useRef(startLevel);
   startLevelRef.current = startLevel;
 
   // Start level 1 on mount
   useEffect(() => {
-    startLevelRef.current(state.currentLevel);
+    startLevel(state.currentLevel);
     return () => {
-      // Cleanup all intervals
-      if (metronomeIntervalRef.current !== null) clearInterval(metronomeIntervalRef.current);
-      if (timerIntervalRef.current !== null) clearInterval(timerIntervalRef.current);
+      stopAll();
+      audioRef.current?.close();
+      audioRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -175,44 +159,40 @@ export default function ActiveLevelScreen({
   const proto = getLevelProtocol(state.currentLevel);
   const progress = totalTime > 0 ? remaining / totalTime : 1;
 
-  const handleEntryConfirm = useCallback(
-    (hr: number, rpe: number) => {
-      logLevel(hr, rpe);
-      setShowSheet(false);
+  function handleEntryConfirm(hr: number, rpe: number) {
+    logLevel(hr, rpe);
+    setShowSheet(false);
 
-      setTimeout(() => {
-        if (rpe >= 7) {
-          onTestEnd(`RPE ${rpe} reached stop zone`);
-          return;
-        }
-        if (hr >= state.stopHR && state.data.length + 1 >= 3) {
-          onTestEnd(`HR ${hr} bpm exceeded 85% max HR (${state.stopHR} bpm)`);
-          return;
-        }
-        if (state.currentLevel >= 5) {
-          onTestEnd('All 5 levels completed');
-          return;
-        }
+    // Check stop conditions
+    if (rpe >= 7) {
+      onTestEnd(`RPE ${rpe} reached stop zone`);
+      return;
+    }
+    if (hr >= state.stopHR && state.data.length + 1 >= 3) {
+      onTestEnd(`HR ${hr} bpm exceeded 85% max HR (${state.stopHR} bpm)`);
+      return;
+    }
+    if (state.currentLevel >= 5) {
+      onTestEnd('All 5 levels completed');
+      return;
+    }
 
-        const next = state.currentLevel + 1;
-        advanceLevel();
-        setNextLevel(next);
-        setShowCountdown(true);
-      }, 50);
-    },
-    [logLevel, state.stopHR, state.data.length, state.currentLevel, advanceLevel, onTestEnd],
-  );
+    // Continue to next level
+    const next = state.currentLevel + 1;
+    advanceLevel();
+    setNextLevel(next);
+    setShowCountdown(true);
+  }
 
-  const handleCountdownComplete = useCallback(() => {
+  function handleCountdownComplete() {
     setShowCountdown(false);
     startLevelRef.current(nextLevel);
-  }, [nextLevel]);
+  }
 
-  const handleEndEarly = useCallback(() => {
-    stopMetronome();
-    stopTimer();
+  function handleEndEarly() {
+    stopAll();
     onTestEnd('Test ended early by user');
-  }, [stopMetronome, stopTimer, onTestEnd]);
+  }
 
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
@@ -259,7 +239,7 @@ export default function ActiveLevelScreen({
         <InlineCountdown
           level={nextLevel}
           onComplete={handleCountdownComplete}
-          playCountBeep={playCountBeep}
+          playCountBeep={audio().countBeep}
         />
       )}
     </div>

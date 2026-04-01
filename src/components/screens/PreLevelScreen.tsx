@@ -12,33 +12,40 @@ interface PreLevelScreenProps {
 export default function PreLevelScreen({ level, countdownSeconds, onComplete, playCountBeep }: PreLevelScreenProps) {
   const [count, setCount] = useState(countdownSeconds);
   const proto = getLevelProtocol(level);
-  const completedRef = useRef(false);
+
+  // Use refs to avoid the effect depending on callback identity
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const playCountBeepRef = useRef(playCountBeep);
+  playCountBeepRef.current = playCountBeep;
 
   useEffect(() => {
-    completedRef.current = false;
     setCount(countdownSeconds);
+    let done = false;
 
     const interval = setInterval(() => {
       setCount((c) => {
         const next = c - 1;
         if (next <= 0) {
           clearInterval(interval);
-          if (!completedRef.current) {
-            completedRef.current = true;
-            setTimeout(onComplete, 0);
+          if (!done) {
+            done = true;
+            setTimeout(() => onCompleteRef.current(), 0);
           }
           return 0;
         }
-        playCountBeep(next <= 1);
+        playCountBeepRef.current(next <= 1);
         return next;
       });
     }, 1000);
 
-    // Beep for initial count
-    playCountBeep(countdownSeconds <= 1);
+    playCountBeepRef.current(countdownSeconds <= 1);
 
-    return () => clearInterval(interval);
-  }, [countdownSeconds, onComplete, playCountBeep]);
+    return () => {
+      clearInterval(interval);
+      done = true;
+    };
+  }, [countdownSeconds]);
 
   return (
     <div className="flex flex-col items-center justify-center px-5 min-h-screen">

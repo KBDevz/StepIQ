@@ -10,31 +10,38 @@ interface InlineCountdownProps {
 export default function InlineCountdown({ level, onComplete, playCountBeep }: InlineCountdownProps) {
   const [count, setCount] = useState(3);
   const proto = getLevelProtocol(level);
-  const completedRef = useRef(false);
+
+  const onCompleteRef = useRef(onComplete);
+  onCompleteRef.current = onComplete;
+  const playCountBeepRef = useRef(playCountBeep);
+  playCountBeepRef.current = playCountBeep;
 
   useEffect(() => {
-    completedRef.current = false;
     setCount(3);
-    playCountBeep(false);
+    let done = false;
+    playCountBeepRef.current(false);
 
     const interval = setInterval(() => {
       setCount((c) => {
         const next = c - 1;
         if (next <= 0) {
           clearInterval(interval);
-          if (!completedRef.current) {
-            completedRef.current = true;
-            setTimeout(onComplete, 0);
+          if (!done) {
+            done = true;
+            setTimeout(() => onCompleteRef.current(), 0);
           }
           return 0;
         }
-        playCountBeep(next <= 1);
+        playCountBeepRef.current(next <= 1);
         return next;
       });
     }, 1000);
 
-    return () => clearInterval(interval);
-  }, [level, onComplete, playCountBeep]);
+    return () => {
+      clearInterval(interval);
+      done = true;
+    };
+  }, [level]);
 
   return (
     <div className="fixed inset-0 z-50 bg-[#060C18]/90 backdrop-blur-sm flex flex-col items-center justify-center">
