@@ -57,20 +57,26 @@ export default function App() {
     );
   }
 
-  // All test flow screens
+  // Setup screen renders full-width with its own two-column layout
+  if (screen === 'setup') {
+    return (
+      <SetupScreen
+        state={state}
+        updateSetup={updateSetup}
+        toggleDevMode={toggleDevMode}
+        onBegin={() => {
+          metronome.resumeAudio();
+          setScreen('instructions');
+        }}
+        onLogoClick={() => setScreen('landing')}
+        onHowItWorks={() => setScreen('howItWorks')}
+      />
+    );
+  }
+
+  // All other test flow screens
   const screenContent = (
     <>
-      {screen === 'setup' && (
-        <SetupScreen
-          state={state}
-          updateSetup={updateSetup}
-          toggleDevMode={toggleDevMode}
-          onBegin={() => {
-            metronome.resumeAudio();
-            setScreen('instructions');
-          }}
-        />
-      )}
       {screen === 'instructions' && (
         <InstructionsScreen
           state={state}
@@ -115,7 +121,7 @@ export default function App() {
   );
 
   // Determine if this is a screen that benefits from a narrow container
-  const isNarrowScreen = screen === 'setup' || screen === 'instructions' || screen === 'restingHR';
+  const isNarrowScreen = screen === 'instructions' || screen === 'restingHR';
   const isResultsScreen = screen === 'results';
 
   return (
