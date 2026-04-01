@@ -17,13 +17,13 @@ export default function EntrySheet({ level, onConfirm }: EntrySheetProps) {
   const hrValid = !isNaN(hrNum) && hrNum >= 40 && hrNum <= 230;
 
   return (
-    <div className="fixed inset-0 z-40 flex items-end justify-center">
+    <div className="entry-sheet-overlay">
       {/* Backdrop */}
-      <div className="absolute inset-0 bg-[#060C18]/70 backdrop-blur-sm" />
+      <div className="entry-sheet-backdrop" />
 
       {/* Sheet */}
       <div
-        className="relative w-full max-w-[460px] bg-[#0D1829] border-t border-[#1C2F4A] rounded-t-3xl px-5 pt-3 pb-8 animate-slideUp max-h-[85vh] overflow-y-auto"
+        className="entry-sheet-panel animate-slideUp"
       >
         {/* Drag handle */}
         <div className="flex justify-center mb-4">

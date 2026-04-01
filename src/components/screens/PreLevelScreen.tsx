@@ -48,7 +48,7 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
   }, [countdownSeconds]);
 
   return (
-    <div className="flex flex-col items-center justify-center px-5 min-h-screen">
+    <div className="flex flex-col items-center justify-center px-5" style={{ minHeight: '100%' }}>
       <Badge>Level {level} of 5</Badge>
 
       <p className="font-mono text-sm text-[#5A7090] mt-4 mb-1">

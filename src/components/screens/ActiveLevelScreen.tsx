@@ -197,7 +197,7 @@ export default function ActiveLevelScreen({
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
   return (
-    <div className="flex flex-col items-center px-5 py-6 min-h-screen relative">
+    <div className="flex flex-col items-center px-5 py-6 relative" style={{ minHeight: '100%' }}>
       <Badge>Level {state.currentLevel} of 5</Badge>
 
       <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-4">Level</p>

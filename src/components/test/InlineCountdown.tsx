@@ -44,7 +44,7 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
   }, [level]);
 
   return (
-    <div className="fixed inset-0 z-50 bg-[#060C18]/90 backdrop-blur-sm flex flex-col items-center justify-center">
+    <div className="inline-countdown-overlay">
       <p className="font-mono text-sm text-[#5A7090] uppercase tracking-wider mb-2">
         Level {level} — {proto.spm} steps/min · {proto.bpm} BPM
       </p>
