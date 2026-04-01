@@ -12,7 +12,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     'Use a 30cm (12 inch) step. A standard stair step works.',
     'Step to the beat: Left up, Right up, Left down, Right down. One cycle per 4 beats.',
     'Each level is 2 minutes. At level end a panel slides up — enter your HR and select your RPE.',
-    'Have a heart rate monitor ready — watch, chest strap, or manual pulse.',
+    'Have a heart rate monitor ready — watch or chest strap.',
     `Test stops at HR >= ${state.stopHR} bpm (85% max) after minimum 3 levels, or RPE >= 7.`,
     'Stop immediately if you feel chest pain, dizziness, or severe breathlessness.',
   ];
