@@ -197,25 +197,29 @@ export default function ActiveLevelScreen({
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
   return (
-    <div className="flex flex-col items-center px-6 relative" style={{ minHeight: '100%' }}>
-      {/* Top section — vertically centered content */}
-      <div className="flex-1 flex flex-col items-center justify-center w-full">
-        <Badge>Level {state.currentLevel} of 5</Badge>
+    <div className="flex flex-col items-center px-6 relative" style={{ flex: 1 }}>
+      {/* Top spacer */}
+      <div style={{ flex: 1 }} />
 
-        <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-6">Level</p>
-        <p className="font-serif text-[120px] leading-none text-[#EEF2FF] my-4">{state.currentLevel}</p>
-        <p className="font-mono text-sm text-[#5A7090] mb-6">
-          {proto.spm} steps/min · {proto.bpm} BPM
-        </p>
+      {/* Centered content */}
+      <Badge>Level {state.currentLevel} of 5</Badge>
 
-        <BeatDots activeBeat={levelActive ? activeBeat : -1} />
+      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-6">Level</p>
+      <p className="font-serif text-[120px] leading-none text-[#EEF2FF] my-4">{state.currentLevel}</p>
+      <p className="font-mono text-sm text-[#5A7090] mb-6">
+        {proto.spm} steps/min · {proto.bpm} BPM
+      </p>
 
-        <div className="w-full mt-10 mb-10">
-          <LevelTimer remaining={remaining} progress={progress} />
-        </div>
+      <BeatDots activeBeat={levelActive ? activeBeat : -1} />
+
+      <div className="w-full mt-10 mb-10">
+        <LevelTimer remaining={remaining} progress={progress} />
       </div>
 
-      {/* Bottom section — pinned to bottom */}
+      {/* Bottom spacer — smaller than top to push content slightly above center */}
+      <div style={{ flex: 0.3 }} />
+
+      {/* Bottom section */}
       <div className="w-full" style={{ paddingBottom: '32px' }}>
         <FormCard className="w-full mb-6">
           <div className="grid grid-cols-2 gap-6">

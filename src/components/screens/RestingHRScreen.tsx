@@ -13,9 +13,11 @@ export default function RestingHRScreen({ onConfirm, onSkip }: RestingHRScreenPr
   const valid = !isNaN(num) && num >= 30 && num <= 120;
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '32px 28px', minHeight: '100%' }}>
-      {/* Top content — vertically centered */}
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', width: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '0 28px', flex: 1 }}>
+      {/* Top spacer */}
+      <div style={{ flex: 1 }} />
+      {/* Centered content */}
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%' }}>
         {/* Eyebrow */}
         <span
           className="font-mono"
@@ -49,9 +51,11 @@ export default function RestingHRScreen({ onConfirm, onSkip }: RestingHRScreenPr
           <p className="font-mono" style={{ fontSize: '0.65rem', color: '#FF4444', marginTop: '12px' }}>Valid range: 30–120 bpm</p>
         )}
       </div>
+      {/* Bottom spacer */}
+      <div style={{ flex: 0.4 }} />
 
-      {/* Bottom buttons — pinned to bottom */}
-      <div style={{ width: '100%', paddingTop: '20px', paddingBottom: '8px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      {/* Bottom buttons */}
+      <div style={{ width: '100%', paddingBottom: '32px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <Button onClick={() => valid && onConfirm(num)} disabled={!valid}>
           Confirm
         </Button>

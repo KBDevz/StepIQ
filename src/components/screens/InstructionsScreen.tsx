@@ -18,7 +18,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 28px', minHeight: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 28px', flex: 1 }}>
       {/* Eyebrow */}
       <span
         className="font-mono"
