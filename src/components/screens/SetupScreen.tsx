@@ -336,6 +336,15 @@ function SetupForm({
 /* ── Main SetupScreen ── */
 export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks }: SetupScreenProps) {
   const [ageStr, setAgeStr] = useState(String(state.age));
+  const devPressTimer = useRef<number | null>(null);
+
+  const handleDevPressStart = useCallback(() => {
+    devPressTimer.current = window.setTimeout(() => { toggleDevMode(); }, 600);
+  }, [toggleDevMode]);
+
+  const handleDevPressEnd = useCallback(() => {
+    if (devPressTimer.current) { clearTimeout(devPressTimer.current); devPressTimer.current = null; }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden setup-page-enter">
@@ -351,8 +360,15 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
         {/* Left column — branding (desktop only) */}
         <div className="setup-left-col">
           <div style={{ maxWidth: '400px' }}>
-            {/* Logo */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+            {/* Logo — long press to toggle dev mode */}
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', cursor: 'default', userSelect: 'none' }}
+              onMouseDown={handleDevPressStart}
+              onMouseUp={handleDevPressEnd}
+              onMouseLeave={handleDevPressEnd}
+              onTouchStart={handleDevPressStart}
+              onTouchEnd={handleDevPressEnd}
+            >
               <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(0,229,160,0.12)', border: '1px solid rgba(0,229,160,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
                   <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />

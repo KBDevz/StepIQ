@@ -10,6 +10,7 @@ import RestingHRScreen from './components/screens/RestingHRScreen';
 import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
+import NavBar from './components/ui/NavBar';
 
 export default function App() {
   const {
@@ -74,6 +75,16 @@ export default function App() {
     );
   }
 
+  // Determine max-width for each screen type
+  const getMaxWidth = () => {
+    if (screen === 'results') return '720px';
+    if (screen === 'instructions' || screen === 'restingHR') return '520px';
+    return '520px';
+  };
+
+  // Should vertically center? (not for results which scrolls, not for active test)
+  const shouldCenter = screen === 'instructions' || screen === 'restingHR';
+
   // All other test flow screens
   const screenContent = (
     <>
@@ -120,10 +131,6 @@ export default function App() {
     </>
   );
 
-  // Determine if this is a screen that benefits from a narrow container
-  const isNarrowScreen = screen === 'instructions' || screen === 'restingHR';
-  const isResultsScreen = screen === 'results';
-
   return (
     <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden">
       {/* Background grid */}
@@ -145,12 +152,26 @@ export default function App() {
         }}
       />
 
-      {/* Centered content — responsive max-widths, no phone frame */}
+      {/* Nav bar for test flow screens */}
+      <NavBar
+        onStart={() => {}}
+        onHowItWorks={() => setScreen('howItWorks')}
+        onLogoClick={() => setScreen('landing')}
+      />
+
+      {/* Centered content */}
       <div
-        className="relative z-10 mx-auto min-h-screen"
+        className="relative z-10 mx-auto"
         style={{
-          maxWidth: isResultsScreen ? '720px' : isNarrowScreen ? '480px' : '520px',
-          padding: '0 20px',
+          maxWidth: getMaxWidth(),
+          padding: '0 28px',
+          paddingTop: '72px',
+          minHeight: '100vh',
+          ...(shouldCenter ? {
+            display: 'flex',
+            flexDirection: 'column' as const,
+            justifyContent: 'center',
+          } : {}),
         }}
       >
         {screenContent}
