@@ -2,9 +2,11 @@ interface NavBarProps {
   onStart: () => void;
   onHowItWorks: () => void;
   onLogoClick?: () => void;
+  startLabel?: string;
+  subtleStart?: boolean;
 }
 
-export default function NavBar({ onStart, onHowItWorks, onLogoClick }: NavBarProps) {
+export default function NavBar({ onStart, onHowItWorks, onLogoClick, startLabel, subtleStart }: NavBarProps) {
   return (
     <>
       <nav
@@ -54,20 +56,30 @@ export default function NavBar({ onStart, onHowItWorks, onLogoClick }: NavBarPro
           >
             How it works
           </span>
-          <button
-            onClick={onStart}
-            className="font-mono cursor-pointer transition-all hover:bg-[#00E5A0]/10"
-            style={{
-              fontSize: '0.75rem',
-              color: '#00E5A0',
-              border: '1px solid #00E5A0',
-              background: 'transparent',
-              padding: '8px 20px',
-              borderRadius: '8px',
-            }}
-          >
-            Start Assessment
-          </button>
+          {subtleStart ? (
+            <span
+              onClick={onStart}
+              className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
+              style={{ fontSize: '0.65rem', color: '#5A7090' }}
+            >
+              {startLabel || 'Start New Test'}
+            </span>
+          ) : (
+            <button
+              onClick={onStart}
+              className="font-mono cursor-pointer transition-all hover:bg-[#00E5A0]/10"
+              style={{
+                fontSize: '0.75rem',
+                color: '#00E5A0',
+                border: '1px solid #00E5A0',
+                background: 'transparent',
+                padding: '8px 20px',
+                borderRadius: '8px',
+              }}
+            >
+              {startLabel || 'Start Assessment'}
+            </button>
+          )}
         </div>
       </nav>
 

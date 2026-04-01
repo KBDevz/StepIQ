@@ -410,6 +410,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
   const [loading, setLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [showReport, setShowReport] = useState(false);
+  const [hasSubmittedContact, setHasSubmittedContact] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const vo2Max = calcVO2Max(state.data, state.maxHR);
@@ -485,12 +486,23 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
 
   const handleLeadSubmit = () => {
     setLeadCaptured(true);
+    setHasSubmittedContact(true);
     handleGenerateClick();
   };
 
   const handleSkip = () => {
     setLeadCaptured(true);
     handleGenerateClick();
+  };
+
+  const handleReportGateSubmit = (data: { firstName: string; lastName: string; email: string; phone: string; smsOptIn: boolean }) => {
+    console.log('Report gate lead captured:', data);
+    setFirstName(data.firstName);
+    setLastName(data.lastName);
+    setEmail(data.email);
+    setPhone(data.phone);
+    setSmsOptIn(data.smsOptIn);
+    setHasSubmittedContact(true);
   };
 
   // Card style shared across data cards
@@ -520,6 +532,8 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
         onStart={onNewTest}
         onHowItWorks={onHowItWorks}
         onLogoClick={onNewTest}
+        startLabel="Start New Test"
+        subtleStart
       />
 
       <div className="relative z-10" style={{ paddingTop: '72px' }}>
@@ -692,28 +706,20 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
               )}
 
               {showReport && report && (
-                <AIReportPanel report={report} vo2Max={vo2Max} classification={classification} />
+                <AIReportPanel
+                  report={report}
+                  vo2Max={vo2Max}
+                  classification={classification}
+                  hasSubmittedContact={hasSubmittedContact}
+                  onContactSubmit={handleReportGateSubmit}
+                  defaultFirstName={firstName}
+                  defaultLastName={lastName}
+                />
               )}
             </div>
 
-            {/* New test button */}
-            <div style={{ marginTop: '32px', marginBottom: '48px' }}>
-              <button
-                onClick={onNewTest}
-                className="font-mono"
-                style={{
-                  width: '100%', padding: '14px',
-                  background: 'transparent', color: '#5A7090',
-                  border: '1px solid #1C2F4A', borderRadius: '10px',
-                  fontSize: '0.8rem', cursor: 'pointer',
-                  transition: 'all 0.2s',
-                }}
-                onMouseEnter={(e) => { (e.target as HTMLElement).style.borderColor = '#5A7090'; (e.target as HTMLElement).style.color = '#EEF2FF'; }}
-                onMouseLeave={(e) => { (e.target as HTMLElement).style.borderColor = '#1C2F4A'; (e.target as HTMLElement).style.color = '#5A7090'; }}
-              >
-                Take New Test
-              </button>
-            </div>
+            {/* Bottom spacing */}
+            <div style={{ height: '48px' }} />
           </div>
 
           {/* ── RIGHT COLUMN (desktop only) ── */}
