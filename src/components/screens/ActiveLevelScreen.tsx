@@ -238,7 +238,7 @@ export default function ActiveLevelScreen({
   return (
     <div style={{ display: 'flex', flexDirection: 'column', flex: 1, position: 'relative' }}>
 
-      {/* ZONE 1 — Top bar */}
+      {/* ZONE 1 — Top bar with End Test button */}
       <div style={{
         display: 'flex', alignItems: 'center', justifyContent: 'space-between',
         padding: '14px 24px', height: '52px', flexShrink: 0,
@@ -254,10 +254,37 @@ export default function ActiveLevelScreen({
         >
           Level {state.currentLevel} of 5
         </span>
-        <span className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090' }}>
-          {proto.spm} spm · {proto.bpm} BPM
-        </span>
+        {!showEntry && (
+          <button
+            onClick={handleEndEarly}
+            className="font-mono"
+            style={{
+              fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.1em',
+              color: '#FF4444', background: 'rgba(255,68,68,0.1)',
+              border: '1px solid rgba(255,68,68,0.3)', borderRadius: '20px',
+              padding: '4px 12px', fontWeight: 600, cursor: 'pointer',
+              transition: 'background 0.2s',
+            }}
+            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = 'rgba(255,68,68,0.2)'; }}
+            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'rgba(255,68,68,0.1)'; }}
+          >
+            End Test
+          </button>
+        )}
       </div>
+
+      {/* Info line below top bar */}
+      {!showEntry && (
+        <div style={{ textAlign: 'center', padding: '0 24px', flexShrink: 0 }}>
+          <p className="font-mono" style={{
+            fontSize: '0.55rem', color: '#5A7090', letterSpacing: '0.05em',
+          }}>
+            {state.currentLevel < 3
+              ? 'Complete at least 3 levels for the most accurate score'
+              : `${proto.spm} spm · ${proto.bpm} BPM`}
+          </p>
+        </div>
+      )}
 
       {/* ZONE 2 — Level number (shifts up when entry panel visible) */}
       <div style={{
@@ -336,25 +363,8 @@ export default function ActiveLevelScreen({
         )}
       </div>
 
-      {/* ZONE 8 — End test early (hidden when entry panel visible) */}
-      {!showEntry && (
-        <div style={{ textAlign: 'center', padding: '4px 0 16px', flexShrink: 0 }}>
-          <button
-            onClick={handleEndEarly}
-            className="font-mono"
-            style={{
-              display: 'inline-block', background: 'transparent', border: 'none',
-              color: '#5A7090', fontSize: '0.65rem', textTransform: 'uppercase',
-              letterSpacing: '0.1em', padding: '8px 16px', borderRadius: '6px',
-              cursor: 'pointer', transition: 'color 0.2s',
-            }}
-            onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#C4D4E8'; }}
-            onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; }}
-          >
-            End Test Early
-          </button>
-        </div>
-      )}
+      {/* Bottom spacing */}
+      <div style={{ height: '16px', flexShrink: 0 }} />
 
       {/* Overlays */}
       {showCountdown && (
