@@ -231,29 +231,165 @@ function LeadCaptureCard({
   );
 }
 
-/* ── Success State ── */
-function LeadSuccessState({ firstName, email }: { firstName: string; email: string }) {
+/* ── Success State (with generating / ready / error states) ── */
+function LeadSuccessState({
+  firstName,
+  email,
+  loading,
+  report,
+  reportError,
+  onViewReport,
+}: {
+  firstName: string;
+  email: string;
+  loading: boolean;
+  report: AIReport | null;
+  reportError: string | null;
+  onViewReport: () => void;
+}) {
+  const [elapsed, setElapsed] = useState(0);
+  const estimatedSeconds = 15;
+
+  useEffect(() => {
+    if (!loading) { setElapsed(0); return; }
+    setElapsed(0);
+    const interval = setInterval(() => setElapsed((e) => e + 1), 1000);
+    return () => clearInterval(interval);
+  }, [loading]);
+
+  const remaining = Math.max(0, estimatedSeconds - elapsed);
+
   return (
     <div
       style={{
         position: 'sticky', top: '100px',
         background: 'linear-gradient(145deg, #0D2238 0%, #0D1829 100%)',
-        border: '1px solid rgba(0,229,160,0.25)',
-        borderRadius: '20px', padding: '48px 36px', textAlign: 'center',
+        border: `1px solid ${report ? 'rgba(0,229,160,0.4)' : reportError ? 'rgba(255,68,68,0.3)' : 'rgba(0,229,160,0.25)'}`,
+        borderRadius: '20px', padding: '40px 36px', textAlign: 'center',
         boxShadow: '0 20px 60px rgba(0,0,0,0.4)',
+        transition: 'border-color 0.3s',
       }}
     >
-      <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(0,229,160,0.15)', border: '1px solid rgba(0,229,160,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
-        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-          <polyline points="20 6 9 17 4 12" />
-        </svg>
-      </div>
-      <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
-        You're all set{firstName ? `, ${firstName}` : ''}!
-      </h3>
-      <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7 }}>
-        Your report is generating below.{email ? ` We'll send a copy to ${email}.` : ''}
-      </p>
+      {/* ── Generating state ── */}
+      {loading && !report && (
+        <>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(0,229,160,0.1)', border: '1px solid rgba(0,229,160,0.2)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ animation: 'spin 1.5s linear infinite' }}>
+              <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" />
+            </svg>
+          </div>
+
+          <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
+            Generating your report{firstName ? `, ${firstName}` : ''}...
+          </h3>
+
+          <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7, marginBottom: '24px' }}>
+            Our AI is analyzing your test data and building a personalized fitness protocol.
+          </p>
+
+          {/* Waveform animation */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '3px', height: '40px', marginBottom: '20px' }}>
+            {Array.from({ length: 20 }).map((_, i) => (
+              <div
+                key={i}
+                style={{
+                  width: '3px',
+                  borderRadius: '2px',
+                  background: '#00E5A0',
+                  animation: `waveform 1.2s ease-in-out ${i * 0.06}s infinite`,
+                  opacity: 0.6,
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Countdown */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}>
+            <div style={{ width: '100%', maxWidth: '200px', height: '4px', background: '#152238', borderRadius: '2px', overflow: 'hidden' }}>
+              <div style={{
+                height: '100%', background: '#00E5A0', borderRadius: '2px',
+                width: `${Math.min(100, (elapsed / estimatedSeconds) * 100)}%`,
+                transition: 'width 1s linear',
+              }} />
+            </div>
+            <span className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', whiteSpace: 'nowrap' }}>
+              {remaining > 0 ? `~${remaining}s` : 'Almost done...'}
+            </span>
+          </div>
+        </>
+      )}
+
+      {/* ── Report ready state ── */}
+      {report && !loading && (
+        <>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(0,229,160,0.15)', border: '1px solid rgba(0,229,160,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+
+          <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
+            Your report is ready{firstName ? `, ${firstName}` : ''}!
+          </h3>
+          <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7, marginBottom: '24px' }}>
+            Your personalized AI fitness report has been generated.{email ? ` A copy will be sent to ${email}.` : ''}
+          </p>
+
+          <button
+            onClick={onViewReport}
+            className="font-mono uppercase"
+            style={{
+              width: '100%', padding: '16px',
+              background: '#00E5A0', color: '#060C18',
+              fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.12em',
+              borderRadius: '10px', border: 'none', cursor: 'pointer',
+              boxShadow: '0 0 40px rgba(0,229,160,0.3)',
+              transition: 'all 0.2s',
+            }}
+            onMouseEnter={(e) => { (e.target as HTMLElement).style.transform = 'translateY(-2px)'; (e.target as HTMLElement).style.boxShadow = '0 0 60px rgba(0,229,160,0.45)'; }}
+            onMouseLeave={(e) => { (e.target as HTMLElement).style.transform = 'translateY(0)'; (e.target as HTMLElement).style.boxShadow = '0 0 40px rgba(0,229,160,0.3)'; }}
+          >
+            View My Report ↓
+          </button>
+        </>
+      )}
+
+      {/* ── Error state ── */}
+      {reportError && !loading && !report && (
+        <>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#FF4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="15" y1="9" x2="9" y2="15" />
+              <line x1="9" y1="9" x2="15" y2="15" />
+            </svg>
+          </div>
+
+          <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
+            Something went wrong
+          </h3>
+          <p className="font-mono" style={{ fontSize: '0.72rem', color: '#FF4444', lineHeight: 1.7 }}>
+            {reportError}
+          </p>
+        </>
+      )}
+
+      {/* ── Idle / waiting state (captured but not yet generating) ── */}
+      {!loading && !report && !reportError && (
+        <>
+          <div style={{ width: '56px', height: '56px', borderRadius: '50%', background: 'rgba(0,229,160,0.15)', border: '1px solid rgba(0,229,160,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 20px' }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          </div>
+          <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
+            You're all set{firstName ? `, ${firstName}` : ''}!
+          </h3>
+          <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7 }}>
+            Your report will begin generating shortly.
+          </p>
+        </>
+      )}
     </div>
   );
 }
@@ -480,7 +616,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
                   loading={loading}
                 />
               ) : (
-                <LeadSuccessState firstName={firstName} email={email} />
+                <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
               )}
             </div>
 
@@ -591,7 +727,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
                 loading={loading}
               />
             ) : (
-              <LeadSuccessState firstName={firstName} email={email} />
+              <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => reportRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })} />
             )}
           </div>
         </div>
@@ -638,6 +774,16 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
         @keyframes leadPulse {
           0%, 100% { border-color: rgba(0,229,160,0.25); }
           50% { border-color: rgba(0,229,160,0.5); }
+        }
+
+        @keyframes waveform {
+          0%, 100% { height: 4px; opacity: 0.3; }
+          50% { height: 28px; opacity: 0.8; }
+        }
+
+        @keyframes spin {
+          from { transform: rotate(0deg); }
+          to { transform: rotate(360deg); }
         }
 
         /* Tablet */
