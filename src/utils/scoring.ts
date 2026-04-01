@@ -60,7 +60,7 @@ function getAgeGroup(age: number): string {
   return '60-65';
 }
 
-const CLASSIFICATION_NAMES = ['Poor', 'Below Average', 'Average', 'Good', 'Excellent'] as const;
+export const CLASSIFICATION_NAMES = ['Poor', 'Below Average', 'Average', 'Good', 'Excellent'] as const;
 const CLASSIFICATION_COLORS: Record<string, { color: string; bgColor: string }> = {
   'Poor':          { color: '#FF4444', bgColor: 'rgba(255,68,68,0.15)' },
   'Below Average': { color: '#FF8C42', bgColor: 'rgba(255,140,66,0.15)' },
@@ -68,6 +68,12 @@ const CLASSIFICATION_COLORS: Record<string, { color: string; bgColor: string }> 
   'Good':          { color: '#06D6A0', bgColor: 'rgba(6,214,160,0.15)' },
   'Excellent':     { color: '#00E5A0', bgColor: 'rgba(0,229,160,0.15)' },
 };
+
+export function getThresholds(age: number, sex: 'male' | 'female'): number[] {
+  const thresholds = sex === 'male' ? MALE_THRESHOLDS : FEMALE_THRESHOLDS;
+  const group = getAgeGroup(age);
+  return thresholds[group];
+}
 
 export function classify(vo2: number, age: number, sex: 'male' | 'female'): ClassificationResult {
   const thresholds = sex === 'male' ? MALE_THRESHOLDS : FEMALE_THRESHOLDS;

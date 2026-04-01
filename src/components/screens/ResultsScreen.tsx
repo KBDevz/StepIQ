@@ -1,6 +1,6 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { TestState, AIReport } from '../../types';
-import { calcVO2Max, classify } from '../../utils/scoring';
+import { calcVO2Max, classify, getThresholds, CLASSIFICATION_NAMES } from '../../utils/scoring';
 import { buildReportPrompt } from '../../utils/reportPrompt';
 import NavBar from '../ui/NavBar';
 import RegressionChart from '../results/RegressionChart';
@@ -404,6 +404,67 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
               <span className="font-mono uppercase" style={{ display: 'inline-block', marginTop: '12px', fontSize: '0.75rem', fontWeight: 700, letterSpacing: '0.1em', color: classification.color, background: classification.bgColor, border: `1px solid ${classification.color}30`, padding: '8px 24px', borderRadius: '24px' }}>
                 {classification.name}
               </span>
+
+              {/* Fitness Classification Scale */}
+              {(() => {
+                const thresholds = getThresholds(state.age, state.sex);
+                const scaleColors = ['#FF4444', '#FF8C42', '#FFD166', '#06D6A0', '#00E5A0'];
+                const activeIdx = CLASSIFICATION_NAMES.indexOf(classification.name as typeof CLASSIFICATION_NAMES[number]);
+
+                return (
+                  <div style={{ marginTop: '24px', width: '100%', maxWidth: '420px', marginLeft: 'auto', marginRight: 'auto' }}>
+                    {/* Scale bar */}
+                    <div style={{ display: 'flex', gap: '3px', marginBottom: '10px', borderRadius: '8px', overflow: 'hidden' }}>
+                      {CLASSIFICATION_NAMES.map((name, i) => (
+                        <div
+                          key={name}
+                          style={{
+                            flex: 1,
+                            height: i === activeIdx ? '10px' : '6px',
+                            background: i === activeIdx ? scaleColors[i] : `${scaleColors[i]}30`,
+                            transition: 'all 0.3s',
+                            borderRadius: '4px',
+                            boxShadow: i === activeIdx ? `0 0 12px ${scaleColors[i]}50` : 'none',
+                            alignSelf: 'center',
+                          }}
+                        />
+                      ))}
+                    </div>
+
+                    {/* Labels */}
+                    <div style={{ display: 'flex', gap: '3px' }}>
+                      {CLASSIFICATION_NAMES.map((name, i) => (
+                        <div
+                          key={name}
+                          style={{
+                            flex: 1,
+                            textAlign: 'center',
+                          }}
+                        >
+                          <p className="font-mono" style={{
+                            fontSize: '0.55rem',
+                            fontWeight: i === activeIdx ? 700 : 400,
+                            color: i === activeIdx ? scaleColors[i] : '#5A7090',
+                            lineHeight: 1.3,
+                            transition: 'all 0.3s',
+                          }}>
+                            {name}
+                          </p>
+                          <p className="font-mono" style={{
+                            fontSize: '0.5rem',
+                            color: i === activeIdx ? `${scaleColors[i]}AA` : '#3A506A',
+                            marginTop: '2px',
+                          }}>
+                            {i === 0 ? `<${thresholds[0]}` :
+                             i === 4 ? `≥${thresholds[3]}` :
+                             `${thresholds[i - 1]}–${thresholds[i] - 1}`}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
             </div>
 
             {/* Lead capture on mobile (above chart) */}
