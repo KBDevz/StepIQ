@@ -35,32 +35,57 @@ export default function ResultsScreen({ state, stopReason, onNewTest }: ResultsS
       try {
         const prompt = buildReportPrompt(state, vo2Max, classification, stopReason);
 
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'x-api-key': key,
-            'anthropic-version': '2023-06-01',
-            'anthropic-dangerous-direct-browser-access': 'true',
-          },
-          body: JSON.stringify({
-            model: 'claude-3-5-sonnet-latest',
-            max_tokens: 1800,
-            messages: [{ role: 'user', content: prompt }],
-          }),
-        });
+        // Try models in order of preference
+        const models = [
+          'claude-sonnet-4-5-20250514',
+          'claude-3-5-sonnet-20241022',
+          'claude-3-5-sonnet-latest',
+          'claude-3-5-haiku-20241022',
+          'claude-3-haiku-20240307',
+        ];
 
-        if (res.status === 401 || res.status === 403) {
-          setApiKey('');
-          setKeyError('Invalid API key. Please try again.');
-          setShowKeyModal(true);
-          setLoading(false);
-          return;
-        }
+        let res: Response | null = null;
+        let lastError = '';
 
-        if (!res.ok) {
+        for (const model of models) {
+          res = await fetch('https://api.anthropic.com/v1/messages', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': key,
+              'anthropic-version': '2023-06-01',
+              'anthropic-dangerous-direct-browser-access': 'true',
+            },
+            body: JSON.stringify({
+              model,
+              max_tokens: 1800,
+              messages: [{ role: 'user', content: prompt }],
+            }),
+          });
+
+          if (res.status === 401 || res.status === 403) {
+            setApiKey('');
+            setKeyError('Invalid API key. Please try again.');
+            setShowKeyModal(true);
+            setLoading(false);
+            return;
+          }
+
+          if (res.ok) break; // success — use this response
+
+          // Model not found — try next
+          if (res.status === 404) {
+            lastError = `Model ${model} not available`;
+            continue;
+          }
+
+          // Other error — don't retry
           const errBody = await res.text();
           throw new Error(`API error ${res.status}: ${errBody.slice(0, 200)}`);
+        }
+
+        if (!res || !res.ok) {
+          throw new Error(lastError || 'No available model found for your API key');
         }
 
         const body = await res.json();
