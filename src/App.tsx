@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useTestState } from './hooks/useTestState';
 import { useMetronome } from './hooks/useMetronome';
 import { useAuth } from './hooks/useAuth';
@@ -11,6 +11,7 @@ import RestingHRScreen from './components/screens/RestingHRScreen';
 import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
+import SetPasswordPage from './components/screens/SetPasswordPage';
 import PhoneFrame from './components/ui/PhoneFrame';
 import AuthModal from './components/ui/AuthModal';
 
@@ -33,6 +34,15 @@ export default function App() {
   const [stopReason, setStopReason] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
+  const [authModalEmail, setAuthModalEmail] = useState('');
+
+  // Check URL for /set-password route on mount
+  useEffect(() => {
+    const path = window.location.pathname;
+    if (path === '/set-password') {
+      setScreen('setPassword');
+    }
+  }, [setScreen]);
 
   const handleTestEnd = useCallback(
     (reason: string) => {
@@ -42,8 +52,9 @@ export default function App() {
     [setScreen],
   );
 
-  const openSignIn = useCallback(() => {
+  const openSignIn = useCallback((prefillEmail?: string) => {
     setAuthModalMode('signin');
+    if (prefillEmail) setAuthModalEmail(prefillEmail);
     setShowAuthModal(true);
   }, []);
 
@@ -55,9 +66,22 @@ export default function App() {
   // Shared auth props for all NavBars
   const authNavProps = {
     userName: auth.profile?.first_name || null,
-    onSignIn: openSignIn,
+    onSignIn: () => openSignIn(),
     onSignOut: auth.signOut,
   };
+
+  // ── SET PASSWORD PAGE ──
+  if (screen === 'setPassword') {
+    return (
+      <SetPasswordPage
+        onUpdatePassword={auth.updatePassword}
+        onComplete={() => {
+          window.history.replaceState({}, '', '/');
+          setScreen('landing');
+        }}
+      />
+    );
+  }
 
   // ── MARKETING PAGES: full viewport width ──
 
@@ -72,7 +96,8 @@ export default function App() {
         {showAuthModal && (
           <AuthModal
             initialMode={authModalMode}
-            onClose={() => setShowAuthModal(false)}
+            initialEmail={authModalEmail}
+            onClose={() => { setShowAuthModal(false); setAuthModalEmail(''); }}
             onSignUp={auth.signUp}
             onSignIn={auth.signIn}
             onResetPassword={auth.resetPassword}
@@ -94,7 +119,8 @@ export default function App() {
         {showAuthModal && (
           <AuthModal
             initialMode={authModalMode}
-            onClose={() => setShowAuthModal(false)}
+            initialEmail={authModalEmail}
+            onClose={() => { setShowAuthModal(false); setAuthModalEmail(''); }}
             onSignUp={auth.signUp}
             onSignIn={auth.signIn}
             onResetPassword={auth.resetPassword}
@@ -124,7 +150,8 @@ export default function App() {
         {showAuthModal && (
           <AuthModal
             initialMode={authModalMode}
-            onClose={() => setShowAuthModal(false)}
+            initialEmail={authModalEmail}
+            onClose={() => { setShowAuthModal(false); setAuthModalEmail(''); }}
             onSignUp={auth.signUp}
             onSignIn={auth.signIn}
             onResetPassword={auth.resetPassword}
@@ -146,14 +173,17 @@ export default function App() {
           onHowItWorks={() => setScreen('howItWorks')}
           authNavProps={authNavProps}
           isLoggedIn={!!auth.user}
+          userId={auth.user?.id || null}
           userProfile={auth.profile}
           onOpenSignIn={openSignIn}
           onOpenSignUp={openSignUp}
+          signUpFromLead={auth.signUpFromLead}
         />
         {showAuthModal && (
           <AuthModal
             initialMode={authModalMode}
-            onClose={() => setShowAuthModal(false)}
+            initialEmail={authModalEmail}
+            onClose={() => { setShowAuthModal(false); setAuthModalEmail(''); }}
             onSignUp={auth.signUp}
             onSignIn={auth.signIn}
             onResetPassword={auth.resetPassword}
@@ -205,7 +235,8 @@ export default function App() {
       {showAuthModal && (
         <AuthModal
           initialMode={authModalMode}
-          onClose={() => setShowAuthModal(false)}
+          initialEmail={authModalEmail}
+          onClose={() => { setShowAuthModal(false); setAuthModalEmail(''); }}
           onSignUp={auth.signUp}
           onSignIn={auth.signIn}
           onResetPassword={auth.resetPassword}

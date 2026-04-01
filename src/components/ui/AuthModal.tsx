@@ -13,6 +13,7 @@ interface AuthModalProps {
   onSignIn: (email: string, password: string) => Promise<{ error: string | null }>;
   onResetPassword: (email: string) => Promise<{ error: string | null }>;
   initialMode?: 'signin' | 'signup';
+  initialEmail?: string;
 }
 
 export default function AuthModal({
@@ -21,11 +22,12 @@ export default function AuthModal({
   onSignIn,
   onResetPassword,
   initialMode = 'signin',
+  initialEmail = '',
 }: AuthModalProps) {
   const [mode, setMode] = useState<'signin' | 'signup' | 'forgot'>(initialMode);
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(initialEmail);
   const [password, setPassword] = useState('');
   const [mobile, setMobile] = useState('');
   const [smsOptIn, setSmsOptIn] = useState(false);

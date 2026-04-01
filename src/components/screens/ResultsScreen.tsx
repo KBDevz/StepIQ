@@ -2,6 +2,7 @@ import { useState, useCallback, useRef, useEffect } from 'react';
 import type { TestState, AIReport } from '../../types';
 import { calcVO2Max, classify, getThresholds, CLASSIFICATION_NAMES } from '../../utils/scoring';
 import { buildReportPrompt } from '../../utils/reportPrompt';
+import { saveTestResult } from '../../lib/testResults';
 import NavBar from '../ui/NavBar';
 import RegressionChart from '../results/RegressionChart';
 import AIReportPanel from '../results/AIReportPanel';
@@ -14,9 +15,17 @@ interface ResultsScreenProps {
   onHowItWorks: () => void;
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
   isLoggedIn?: boolean;
+  userId?: string | null;
   userProfile?: { first_name: string; last_name: string; email: string } | null;
-  onOpenSignIn?: () => void;
+  onOpenSignIn?: (prefillEmail?: string) => void;
   onOpenSignUp?: () => void;
+  signUpFromLead?: (params: {
+    email: string;
+    firstName: string;
+    lastName: string;
+    mobile?: string;
+    smsOptIn?: boolean;
+  }) => Promise<{ error: string | null; user: any; isDuplicate: boolean }>;
 }
 
 /* ── Lead Capture Card ── */
@@ -34,6 +43,8 @@ function LeadCaptureCard({
   onSubmit,
   onSkip,
   loading,
+  authError,
+  onSignInInstead,
 }: {
   firstName: string;
   setFirstName: (s: string) => void;
@@ -48,6 +59,8 @@ function LeadCaptureCard({
   onSubmit: () => void;
   onSkip: () => void;
   loading: boolean;
+  authError?: string | null;
+  onSignInInstead?: () => void;
 }) {
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -63,7 +76,6 @@ function LeadCaptureCard({
 
   const handleSubmit = () => {
     if (validate()) {
-      console.log('Lead captured:', { firstName, lastName, email, phone, smsOptIn });
       onSubmit();
     }
   };
@@ -164,6 +176,20 @@ function LeadCaptureCard({
           onBlur={(e) => { e.target.style.borderColor = errors.email ? '#FF4444' : '#1C2F4A'; e.target.style.boxShadow = 'none'; }}
         />
         {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.email}</p>}
+        {authError && (
+          <div style={{ marginTop: '6px' }}>
+            <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444' }}>{authError}</p>
+            {onSignInInstead && (
+              <span
+                onClick={onSignInInstead}
+                className="font-mono"
+                style={{ fontSize: '0.6rem', color: '#00E5A0', cursor: 'pointer', marginTop: '2px', display: 'inline-block' }}
+              >
+                Sign in instead →
+              </span>
+            )}
+          </div>
+        )}
       </div>
 
       {/* Phone */}
@@ -245,6 +271,7 @@ function LeadSuccessState({
   report,
   reportError,
   onViewReport,
+  accountCreated,
 }: {
   firstName: string;
   email: string;
@@ -252,6 +279,7 @@ function LeadSuccessState({
   report: AIReport | null;
   reportError: string | null;
   onViewReport: () => void;
+  accountCreated?: boolean;
 }) {
   const [elapsed, setElapsed] = useState(0);
   const estimatedSeconds = 15;
@@ -389,10 +417,12 @@ function LeadSuccessState({
             </svg>
           </div>
           <h3 className="font-serif" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
-            You're all set{firstName ? `, ${firstName}` : ''}!
+            {accountCreated ? `Account created, ${firstName}!` : `You're all set${firstName ? `, ${firstName}` : ''}!`}
           </h3>
           <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.7 }}>
-            Your report will begin generating shortly.
+            {accountCreated
+              ? `Your results are saved to your StepIQ account. Check your email to set your password and access your dashboard anytime.`
+              : 'Your report will begin generating shortly.'}
           </p>
         </>
       )}
@@ -401,7 +431,7 @@ function LeadSuccessState({
 }
 
 /* ── Main Results Screen ── */
-export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks, authNavProps, isLoggedIn, userProfile, onOpenSignIn }: ResultsScreenProps) {
+export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks, authNavProps, isLoggedIn, userId, userProfile, onOpenSignIn, signUpFromLead }: ResultsScreenProps) {
   const [firstName, setFirstName] = useState(userProfile?.first_name || state.name?.split(' ')[0] || '');
   const [lastName, setLastName] = useState(userProfile?.last_name || state.name?.split(' ').slice(1).join(' ') || '');
   const [email, setEmail] = useState(userProfile?.email || '');
@@ -416,6 +446,9 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
   const [reportError, setReportError] = useState<string | null>(null);
   const [showReport, setShowReport] = useState(false);
   const [hasSubmittedContact, setHasSubmittedContact] = useState(!!isLoggedIn);
+  const [authError, setAuthError] = useState<string | null>(null);
+  const [isDuplicateEmail, setIsDuplicateEmail] = useState(false);
+  const [accountCreated, setAccountCreated] = useState(false);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const vo2Max = calcVO2Max(state.data, state.maxHR);
@@ -489,16 +522,54 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
     else setShowKeyModal(true);
   }, [apiKey, generateReport]);
 
-  // Auto-generate report for logged-in users
+  // Auto-save result for logged-in users and generate report
   const autoGenRef = useRef(false);
   useEffect(() => {
-    if (isLoggedIn && !autoGenRef.current) {
+    if (isLoggedIn && userId && !autoGenRef.current) {
       autoGenRef.current = true;
+      // Save test result in background
+      saveTestResult(userId, state, vo2Max, classification, stopReason)
+        .then(({ id }) => { if (id) console.log('Test result saved:', id); });
       handleGenerateClick();
     }
-  }, [isLoggedIn, handleGenerateClick]);
+  }, [isLoggedIn, userId, state, vo2Max, classification, stopReason, handleGenerateClick]);
 
-  const handleLeadSubmit = () => {
+  // Lead form submit — create Supabase account, save result, generate report
+  const handleLeadSubmit = async () => {
+    setAuthError(null);
+    setIsDuplicateEmail(false);
+
+    if (signUpFromLead) {
+      setLoading(true);
+      const result = await signUpFromLead({
+        email,
+        firstName,
+        lastName,
+        mobile: phone || undefined,
+        smsOptIn,
+      });
+
+      if (result.error) {
+        setLoading(false);
+        if (result.isDuplicate) {
+          setAuthError('An account with this email already exists.');
+          setIsDuplicateEmail(true);
+        } else {
+          setAuthError(result.error);
+        }
+        return;
+      }
+
+      // Account created — save test result
+      if (result.user) {
+        setAccountCreated(true);
+        const saveResult = await saveTestResult(result.user.id, state, vo2Max, classification, stopReason);
+        if (saveResult.id) console.log('Test result saved:', saveResult.id);
+      }
+
+      setLoading(false);
+    }
+
     setLeadCaptured(true);
     setHasSubmittedContact(true);
     handleGenerateClick();
@@ -509,14 +580,33 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
     handleGenerateClick();
   };
 
-  const handleReportGateSubmit = (data: { firstName: string; lastName: string; email: string; phone: string; smsOptIn: boolean }) => {
-    console.log('Report gate lead captured:', data);
+  const handleSignInInstead = () => {
+    if (onOpenSignIn) onOpenSignIn(email);
+  };
+
+  const handleReportGateSubmit = async (data: { firstName: string; lastName: string; email: string; phone: string; smsOptIn: boolean }) => {
     setFirstName(data.firstName);
     setLastName(data.lastName);
     setEmail(data.email);
     setPhone(data.phone);
     setSmsOptIn(data.smsOptIn);
     setHasSubmittedContact(true);
+
+    // Also create account from the report gate
+    if (signUpFromLead) {
+      const result = await signUpFromLead({
+        email: data.email,
+        firstName: data.firstName,
+        lastName: data.lastName,
+        mobile: data.phone || undefined,
+        smsOptIn: data.smsOptIn,
+      });
+      if (!result.error && result.user) {
+        setAccountCreated(true);
+        const saveResult = await saveTestResult(result.user.id, state, vo2Max, classification, stopReason);
+        if (saveResult.id) console.log('Test result saved from report gate:', saveResult.id);
+      }
+    }
   };
 
   // Card style shared across data cards
@@ -646,16 +736,18 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                     smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
                     onSubmit={handleLeadSubmit} onSkip={handleSkip}
                     loading={loading}
+                    authError={authError}
+                    onSignInInstead={isDuplicateEmail ? handleSignInInstead : undefined}
                   />
                   {!isLoggedIn && onOpenSignIn && (
                     <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '12px' }}>
                       Already have an account?{' '}
-                      <span onClick={onOpenSignIn} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
+                      <span onClick={() => onOpenSignIn?.()} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
                     </p>
                   )}
                 </>
               ) : (
-                <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
+                <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} accountCreated={accountCreated} />
               )}
             </div>
 
@@ -761,12 +853,12 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 {!isLoggedIn && onOpenSignIn && (
                   <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '12px' }}>
                     Already have an account?{' '}
-                    <span onClick={onOpenSignIn} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
+                    <span onClick={() => onOpenSignIn?.()} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
                   </p>
                 )}
               </>
             ) : (
-              <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
+              <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} accountCreated={accountCreated} />
             )}
           </div>
         </div>

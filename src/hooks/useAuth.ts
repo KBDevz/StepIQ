@@ -68,7 +68,7 @@ export function useAuth() {
         },
       });
 
-      if (error) return { error: error.message };
+      if (error) return { error: error.message, user: null };
 
       // Insert profile row
       if (data.user) {
@@ -83,7 +83,66 @@ export function useAuth() {
         await fetchProfile(data.user.id);
       }
 
-      return { error: null };
+      return { error: null, user: data.user };
+    },
+    [fetchProfile],
+  );
+
+  /**
+   * Auto-create account from lead capture form.
+   * Uses a random temp password; sends password reset email so user can set their own.
+   */
+  const signUpFromLead = useCallback(
+    async (params: {
+      email: string;
+      firstName: string;
+      lastName: string;
+      mobile?: string;
+      smsOptIn?: boolean;
+    }) => {
+      const tempPassword = crypto.randomUUID();
+
+      const { data, error } = await supabase.auth.signUp({
+        email: params.email,
+        password: tempPassword,
+        options: {
+          data: {
+            first_name: params.firstName,
+            last_name: params.lastName,
+          },
+        },
+      });
+
+      if (error) {
+        // Check for duplicate email
+        const isDuplicate =
+          error.message.toLowerCase().includes('already registered') ||
+          error.message.toLowerCase().includes('already been registered') ||
+          error.message.toLowerCase().includes('user already registered');
+        return { error: error.message, user: null, isDuplicate };
+      }
+
+      if (data.user) {
+        // Create profile row
+        await supabase.from('profiles').upsert({
+          id: data.user.id,
+          first_name: params.firstName,
+          last_name: params.lastName,
+          email: params.email,
+          mobile: params.mobile || null,
+          sms_opt_in: params.smsOptIn || false,
+        });
+
+        await fetchProfile(data.user.id);
+
+        // Send password setup email
+        const appUrl = window.location.origin;
+        await supabase.auth.resetPasswordForEmail(params.email, {
+          redirectTo: `${appUrl}/set-password`,
+        });
+      }
+
+      return { error: null, user: data.user, isDuplicate: false };
     },
     [fetchProfile],
   );
@@ -106,13 +165,21 @@ export function useAuth() {
     return { error: null };
   }, []);
 
+  const updatePassword = useCallback(async (newPassword: string) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    if (error) return { error: error.message };
+    return { error: null };
+  }, []);
+
   return {
     user,
     profile,
     loading,
     signUp,
+    signUpFromLead,
     signIn,
     signOut,
     resetPassword,
+    updatePassword,
   };
 }

@@ -72,4 +72,5 @@ export type Screen =
   | 'restingHR'
   | 'preLevel'
   | 'activeLevel'
-  | 'results';
+  | 'results'
+  | 'setPassword';
