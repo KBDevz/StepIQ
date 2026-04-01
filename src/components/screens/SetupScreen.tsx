@@ -85,7 +85,6 @@ function SetupForm({
   ageStr: string;
   setAgeStr: (s: string) => void;
 }) {
-  const [showAdvanced, setShowAdvanced] = useState(false);
   const pressTimer = useRef<number | null>(null);
   const ageValid = state.age >= 13 && state.age <= 80;
 
@@ -228,74 +227,48 @@ function SetupForm({
         </div>
       </div>
 
-      {/* Advanced options */}
-      <button
-        type="button"
-        onClick={() => setShowAdvanced(!showAdvanced)}
-        className="font-mono"
+      {/* Beta blocker / HR medication toggle */}
+      <div
         style={{
-          display: 'flex', alignItems: 'center', gap: '6px',
-          fontSize: '0.7rem', color: '#5A7090', background: 'none', border: 'none',
-          cursor: 'pointer', marginBottom: '20px', padding: 0,
-          transition: 'color 0.2s',
+          background: '#060C18', border: '1px solid #1C2F4A', borderRadius: '10px',
+          padding: '14px 16px', marginBottom: '20px',
         }}
-        onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#EEF2FF'; }}
-        onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; }}
       >
-        <svg
-          width="12" height="12" viewBox="0 0 24 24"
-          fill="none" stroke="currentColor" strokeWidth="2"
-          style={{ transition: 'transform 0.2s', transform: showAdvanced ? 'rotate(90deg)' : 'rotate(0deg)' }}
-        >
-          <polyline points="9 18 15 12 9 6" />
-        </svg>
-        Advanced options
-      </button>
-
-      {showAdvanced && (
-        <div
-          className="animate-fadeIn"
-          style={{
-            background: '#060C18', border: '1px solid #1C2F4A', borderRadius: '10px',
-            padding: '14px 16px', marginBottom: '20px',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <div style={{ flex: 1, marginRight: '16px' }}>
-              <p className="font-mono" style={{ fontSize: '0.8rem', color: state.betaBlocker ? '#FF8C42' : '#EEF2FF' }}>
-                Beta blocker or HR medication
-              </p>
-              <p className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090', marginTop: '2px' }}>
-                Adjusts max HR formula (Londeree & Moeschberger)
-              </p>
-            </div>
-            <button
-              type="button"
-              onClick={() => updateSetup({ betaBlocker: !state.betaBlocker })}
-              style={{
-                position: 'relative', width: '48px', height: '28px', borderRadius: '14px',
-                border: 'none', cursor: 'pointer', transition: 'background 0.2s',
-                background: state.betaBlocker ? '#FF8C42' : '#1C2F4A',
-                flexShrink: 0,
-              }}
-            >
-              <span style={{
-                position: 'absolute', top: '4px',
-                left: state.betaBlocker ? '24px' : '4px',
-                width: '20px', height: '20px', borderRadius: '50%',
-                background: '#fff', transition: 'left 0.2s',
-              }} />
-            </button>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ flex: 1, marginRight: '16px' }}>
+            <p className="font-mono" style={{ fontSize: '0.8rem', color: state.betaBlocker ? '#FF8C42' : '#EEF2FF' }}>
+              Beta blocker or HR medication
+            </p>
+            <p className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090', marginTop: '4px', lineHeight: 1.5 }}>
+              Toggle if you take beta blockers or heart rate medication
+            </p>
           </div>
-          {state.betaBlocker && (
-            <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,140,66,0.1)', border: '1px solid rgba(255,140,66,0.2)' }}>
-              <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42' }}>
-                Max HR: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
-              </p>
-            </div>
-          )}
+          <button
+            type="button"
+            onClick={() => updateSetup({ betaBlocker: !state.betaBlocker })}
+            style={{
+              position: 'relative', width: '48px', height: '28px', borderRadius: '14px',
+              border: 'none', cursor: 'pointer', transition: 'background 0.2s',
+              background: state.betaBlocker ? '#FF8C42' : '#1C2F4A',
+              flexShrink: 0,
+            }}
+          >
+            <span style={{
+              position: 'absolute', top: '4px',
+              left: state.betaBlocker ? '24px' : '4px',
+              width: '20px', height: '20px', borderRadius: '50%',
+              background: '#fff', transition: 'left 0.2s',
+            }} />
+          </button>
         </div>
-      )}
+        {state.betaBlocker && (
+          <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,140,66,0.1)', border: '1px solid rgba(255,140,66,0.2)' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42' }}>
+              Max HR: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
+            </p>
+          </div>
+        )}
+      </div>
 
       {/* Submit button */}
       <button
