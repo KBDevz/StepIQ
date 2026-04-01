@@ -20,6 +20,7 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* ── Typography classes ── */
 .font-serif {
   font-family: 'Libre Baskerville', serif;
 }
@@ -28,7 +29,16 @@ body {
   font-family: 'IBM Plex Mono', monospace;
 }
 
-/* Custom scrollbar */
+/* Force font on form elements (browsers don't inherit) */
+input,
+button,
+select,
+textarea,
+label {
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+/* ── Custom scrollbar ── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -40,16 +50,10 @@ body {
   border-radius: 2px;
 }
 
-/* Animations */
+/* ── Animations ── */
 @keyframes slideUp {
-  from {
-    transform: translateY(100%);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 @keyframes fadeIn {
@@ -65,7 +69,7 @@ body {
   animation: fadeIn 0.4s ease-out;
 }
 
-/* Remove number input spinners */
+/* ── Remove number input spinners ── */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -73,4 +77,92 @@ input[type="number"]::-webkit-inner-spin-button {
 }
 input[type="number"] {
   -moz-appearance: textfield;
+}
+
+/* ── Page background (shared across all pages) ── */
+.page-bg {
+  background-color: #060C18;
+  background-image:
+    linear-gradient(rgba(28,47,74,0.2) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(28,47,74,0.2) 1px, transparent 1px);
+  background-size: 40px 40px;
+  min-height: 100vh;
+  position: relative;
+}
+
+.page-bg::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%);
+  z-index: 0;
+}
+
+/* ── Phone Frame layout ── */
+.phone-frame-outer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 24px;
+  position: relative;
+  z-index: 1;
+}
+
+.phone-frame-inner {
+  width: 390px;
+  min-height: 700px;
+  max-height: 90vh;
+  background: #060C18;
+  border-radius: 44px;
+  border: 1px solid #1C2F4A;
+  box-shadow: 0 60px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(28,47,74,0.6);
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.phone-frame-content {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Tablet: centered, no frame chrome */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .phone-frame-inner {
+    width: 100%;
+    max-width: 460px;
+    min-height: auto;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  .phone-frame-content {
+    overflow: visible;
+  }
+}
+
+/* Mobile: no frame at all */
+@media (max-width: 767px) {
+  .phone-frame-outer {
+    padding: 0;
+    align-items: stretch;
+  }
+  .phone-frame-inner {
+    width: 100%;
+    min-height: 100vh;
+    max-height: none;
+    border-radius: 0;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+  }
+  .phone-frame-content {
+    overflow: visible;
+  }
 }

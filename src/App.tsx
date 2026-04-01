@@ -10,7 +10,7 @@ import RestingHRScreen from './components/screens/RestingHRScreen';
 import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
-import NavBar from './components/ui/NavBar';
+import PhoneFrame from './components/ui/PhoneFrame';
 
 export default function App() {
   const {
@@ -37,7 +37,8 @@ export default function App() {
     [setScreen],
   );
 
-  // Landing page renders full-width, outside any wrapper
+  // ── MARKETING PAGES: full viewport width ──
+
   if (screen === 'landing') {
     return (
       <LandingPage
@@ -47,7 +48,6 @@ export default function App() {
     );
   }
 
-  // How It Works page — full-width marketing page
   if (screen === 'howItWorks') {
     return (
       <HowItWorksPage
@@ -58,7 +58,8 @@ export default function App() {
     );
   }
 
-  // Setup screen renders full-width with its own two-column layout
+  // ── SETUP: its own full-width two-column layout ──
+
   if (screen === 'setup') {
     return (
       <SetupScreen
@@ -75,7 +76,8 @@ export default function App() {
     );
   }
 
-  // Results screen renders full-width with its own two-column layout
+  // ── RESULTS: full-width two-column layout ──
+
   if (screen === 'results') {
     return (
       <ResultsScreen
@@ -86,18 +88,10 @@ export default function App() {
     );
   }
 
-  // Determine max-width for each screen type
-  const getMaxWidth = () => {
-    if (screen === 'instructions' || screen === 'restingHR') return '520px';
-    return '520px';
-  };
+  // ── TEST FLOW SCREENS: inside PhoneFrame ──
 
-  // Should vertically center? (not for active test)
-  const shouldCenter = screen === 'instructions' || screen === 'restingHR';
-
-  // All other test flow screens
-  const screenContent = (
-    <>
+  return (
+    <PhoneFrame>
       {screen === 'instructions' && (
         <InstructionsScreen
           state={state}
@@ -131,54 +125,6 @@ export default function App() {
           onTestEnd={handleTestEnd}
         />
       )}
-    </>
-  );
-
-  return (
-    <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden">
-      {/* Background grid */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(rgba(28,47,74,0.15) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(28,47,74,0.15) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)',
-        }}
-      />
-
-      {/* Nav bar for test flow screens */}
-      <NavBar
-        onStart={() => {}}
-        onHowItWorks={() => setScreen('howItWorks')}
-        onLogoClick={() => setScreen('landing')}
-      />
-
-      {/* Centered content */}
-      <div
-        className="relative z-10 mx-auto"
-        style={{
-          maxWidth: getMaxWidth(),
-          padding: '0 28px',
-          paddingTop: '72px',
-          minHeight: '100vh',
-          ...(shouldCenter ? {
-            display: 'flex',
-            flexDirection: 'column' as const,
-            justifyContent: 'center',
-          } : {}),
-        }}
-      >
-        {screenContent}
-      </div>
-    </div>
+    </PhoneFrame>
   );
 }

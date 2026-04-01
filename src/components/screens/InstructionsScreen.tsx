@@ -1,5 +1,4 @@
 import type { TestState } from '../../types';
-import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 
 interface InstructionsScreenProps {
@@ -10,7 +9,7 @@ interface InstructionsScreenProps {
 
 export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
   const instructions = [
-    'Use a 30cm step (approx 12 inches). A standard stair step works.',
+    'Use a 30cm (12 inch) step. A standard stair step works.',
     'Step to the beat: Left up, Right up, Left down, Right down. One cycle per 4 beats.',
     'Each level is 2 minutes. At level end a panel slides up — enter your HR and select your RPE.',
     'Have a heart rate monitor ready — watch, chest strap, or manual pulse.',
@@ -19,32 +18,90 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   ];
 
   return (
-    <div className="flex flex-col px-5 py-8 min-h-screen">
-      <Badge>Protocol</Badge>
+    <div style={{ display: 'flex', flexDirection: 'column', padding: '28px', minHeight: '100%' }}>
+      {/* Eyebrow */}
+      <span
+        className="font-mono"
+        style={{
+          display: 'inline-block',
+          fontSize: '0.6rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.16em',
+          color: '#00E5A0',
+          marginBottom: '12px',
+        }}
+      >
+        Protocol
+      </span>
 
-      <h2 className="font-serif text-2xl text-[#EEF2FF] mt-4 mb-1">Chester Step Test</h2>
-      <p className="font-mono text-xs text-[#5A7090] mb-6">5 Levels, 2 min each</p>
+      <h2
+        className="font-serif"
+        style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', marginBottom: '4px' }}
+      >
+        Chester Step Test
+      </h2>
+      <p
+        className="font-mono"
+        style={{ fontSize: '0.65rem', color: '#5A7090', marginBottom: '24px' }}
+      >
+        5 Levels, 2 min each
+      </p>
 
       {state.betaBlocker && (
-        <div className="mb-5 p-4 rounded-xl bg-[#FF8C42]/10 border border-[#FF8C42]/25">
-          <p className="font-mono text-xs text-[#FF8C42] leading-relaxed">
-            Beta blocker adjustment active — Max HR calculated using Londeree formula: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
+        <div
+          style={{
+            marginBottom: '20px',
+            padding: '12px 14px',
+            borderRadius: '12px',
+            background: 'rgba(255,140,66,0.08)',
+            border: '1px solid rgba(255,140,66,0.25)',
+          }}
+        >
+          <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42', lineHeight: 1.6 }}>
+            Beta blocker adjustment active — Max HR: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
           </p>
         </div>
       )}
 
-      <div className="space-y-3 mb-8">
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '28px' }}>
         {instructions.map((text, i) => (
-          <div key={i} className="flex gap-3">
-            <span className="flex-shrink-0 w-6 h-6 rounded-full bg-[#152238] border border-[#1C2F4A] flex items-center justify-center font-mono text-xs text-[#5A7090]">
-              {i + 1}
-            </span>
-            <p className="font-mono text-sm text-[#EEF2FF]/80 leading-relaxed pt-0.5">{text}</p>
+          <div key={i}>
+            <div style={{ display: 'flex', gap: '12px', padding: '12px 0' }}>
+              <span
+                className="font-mono"
+                style={{
+                  flexShrink: 0,
+                  width: '24px',
+                  height: '24px',
+                  borderRadius: '50%',
+                  background: 'rgba(0,229,160,0.08)',
+                  border: '1px solid rgba(0,229,160,0.3)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.62rem',
+                  fontWeight: 700,
+                  color: '#00E5A0',
+                  marginTop: '1px',
+                }}
+              >
+                {i + 1}
+              </span>
+              <p
+                className="font-mono"
+                style={{ fontSize: '0.78rem', color: '#EEF2FF', lineHeight: 1.6, flex: 1 }}
+              >
+                {text}
+              </p>
+            </div>
+            {i < instructions.length - 1 && (
+              <div style={{ height: '1px', background: '#1C2F4A', marginLeft: '36px', opacity: 0.5 }} />
+            )}
           </div>
         ))}
       </div>
 
-      <div className="mt-auto space-y-3">
+      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
         <Button onClick={onBegin}>Begin Test</Button>
         <Button variant="ghost" onClick={onBack}>Back</Button>
       </div>
