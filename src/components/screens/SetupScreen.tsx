@@ -9,6 +9,7 @@ interface SetupScreenProps {
   onBegin: () => void;
   onLogoClick: () => void;
   onHowItWorks: () => void;
+  authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
 /* ── Progress Steps ── */
@@ -307,7 +308,7 @@ function SetupForm({
 }
 
 /* ── Main SetupScreen ── */
-export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks }: SetupScreenProps) {
+export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps }: SetupScreenProps) {
   const [ageStr, setAgeStr] = useState(String(state.age));
   const devPressTimer = useRef<number | null>(null);
 
@@ -325,7 +326,7 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
       <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(28,47,74,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(28,47,74,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div className="fixed inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)' }} />
 
-      <NavBar onStart={onBegin} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} />
+      <NavBar onStart={onBegin} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} {...authNavProps} />
 
       {/* ── Desktop: two-column layout ── */}
       <div className="setup-layout relative z-10" style={{ minHeight: '100vh', paddingTop: '72px' }}>

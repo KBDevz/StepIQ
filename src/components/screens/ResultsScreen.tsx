@@ -12,6 +12,11 @@ interface ResultsScreenProps {
   stopReason: string;
   onNewTest: () => void;
   onHowItWorks: () => void;
+  authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
+  isLoggedIn?: boolean;
+  userProfile?: { first_name: string; last_name: string; email: string } | null;
+  onOpenSignIn?: () => void;
+  onOpenSignUp?: () => void;
 }
 
 /* ── Lead Capture Card ── */
@@ -396,13 +401,13 @@ function LeadSuccessState({
 }
 
 /* ── Main Results Screen ── */
-export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks }: ResultsScreenProps) {
-  const [firstName, setFirstName] = useState(state.name?.split(' ')[0] || '');
-  const [lastName, setLastName] = useState(state.name?.split(' ').slice(1).join(' ') || '');
-  const [email, setEmail] = useState('');
+export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks, authNavProps, isLoggedIn, userProfile, onOpenSignIn }: ResultsScreenProps) {
+  const [firstName, setFirstName] = useState(userProfile?.first_name || state.name?.split(' ')[0] || '');
+  const [lastName, setLastName] = useState(userProfile?.last_name || state.name?.split(' ').slice(1).join(' ') || '');
+  const [email, setEmail] = useState(userProfile?.email || '');
   const [phone, setPhone] = useState('');
   const [smsOptIn, setSmsOptIn] = useState(false);
-  const [leadCaptured, setLeadCaptured] = useState(false);
+  const [leadCaptured, setLeadCaptured] = useState(!!isLoggedIn);
   const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_ANTHROPIC_API_KEY || '');
   const [showKeyModal, setShowKeyModal] = useState(false);
   const [keyError, setKeyError] = useState<string | null>(null);
@@ -410,7 +415,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
   const [loading, setLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
   const [showReport, setShowReport] = useState(false);
-  const [hasSubmittedContact, setHasSubmittedContact] = useState(false);
+  const [hasSubmittedContact, setHasSubmittedContact] = useState(!!isLoggedIn);
   const reportRef = useRef<HTMLDivElement>(null);
 
   const vo2Max = calcVO2Max(state.data, state.maxHR);
@@ -484,6 +489,15 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
     else setShowKeyModal(true);
   }, [apiKey, generateReport]);
 
+  // Auto-generate report for logged-in users
+  const autoGenRef = useRef(false);
+  useEffect(() => {
+    if (isLoggedIn && !autoGenRef.current) {
+      autoGenRef.current = true;
+      handleGenerateClick();
+    }
+  }, [isLoggedIn, handleGenerateClick]);
+
   const handleLeadSubmit = () => {
     setLeadCaptured(true);
     setHasSubmittedContact(true);
@@ -534,6 +548,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
         onLogoClick={onNewTest}
         startLabel="Start New Test"
         subtleStart
+        {...authNavProps}
       />
 
       <div className="relative z-10" style={{ paddingTop: '72px' }}>
@@ -622,15 +637,23 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
             {/* Lead capture on mobile (above chart) */}
             <div className="results-mobile-lead">
               {!leadCaptured ? (
-                <LeadCaptureCard
-                  firstName={firstName} setFirstName={setFirstName}
-                  lastName={lastName} setLastName={setLastName}
-                  email={email} setEmail={setEmail}
-                  phone={phone} setPhone={setPhone}
-                  smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
-                  onSubmit={handleLeadSubmit} onSkip={handleSkip}
-                  loading={loading}
-                />
+                <>
+                  <LeadCaptureCard
+                    firstName={firstName} setFirstName={setFirstName}
+                    lastName={lastName} setLastName={setLastName}
+                    email={email} setEmail={setEmail}
+                    phone={phone} setPhone={setPhone}
+                    smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
+                    onSubmit={handleLeadSubmit} onSkip={handleSkip}
+                    loading={loading}
+                  />
+                  {!isLoggedIn && onOpenSignIn && (
+                    <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '12px' }}>
+                      Already have an account?{' '}
+                      <span onClick={onOpenSignIn} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
+                    </p>
+                  )}
+                </>
               ) : (
                 <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
               )}
@@ -725,15 +748,23 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
           {/* ── RIGHT COLUMN (desktop only) ── */}
           <div className="results-right">
             {!leadCaptured ? (
-              <LeadCaptureCard
-                firstName={firstName} setFirstName={setFirstName}
-                lastName={lastName} setLastName={setLastName}
-                email={email} setEmail={setEmail}
-                phone={phone} setPhone={setPhone}
-                smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
-                onSubmit={handleLeadSubmit} onSkip={handleSkip}
-                loading={loading}
-              />
+              <>
+                <LeadCaptureCard
+                  firstName={firstName} setFirstName={setFirstName}
+                  lastName={lastName} setLastName={setLastName}
+                  email={email} setEmail={setEmail}
+                  phone={phone} setPhone={setPhone}
+                  smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
+                  onSubmit={handleLeadSubmit} onSkip={handleSkip}
+                  loading={loading}
+                />
+                {!isLoggedIn && onOpenSignIn && (
+                  <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '12px' }}>
+                    Already have an account?{' '}
+                    <span onClick={onOpenSignIn} style={{ color: '#00E5A0', cursor: 'pointer' }}>Sign in</span>
+                  </p>
+                )}
+              </>
             ) : (
               <LeadSuccessState firstName={firstName} email={email} loading={loading} report={report} reportError={reportError} onViewReport={() => setShowReport(true)} />
             )}

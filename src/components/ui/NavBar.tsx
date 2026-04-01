@@ -4,9 +4,21 @@ interface NavBarProps {
   onLogoClick?: () => void;
   startLabel?: string;
   subtleStart?: boolean;
+  userName?: string | null;
+  onSignIn?: () => void;
+  onSignOut?: () => void;
 }
 
-export default function NavBar({ onStart, onHowItWorks, onLogoClick, startLabel, subtleStart }: NavBarProps) {
+export default function NavBar({
+  onStart,
+  onHowItWorks,
+  onLogoClick,
+  startLabel,
+  subtleStart,
+  userName,
+  onSignIn,
+  onSignOut,
+}: NavBarProps) {
   return (
     <>
       <nav
@@ -56,6 +68,31 @@ export default function NavBar({ onStart, onHowItWorks, onLogoClick, startLabel,
           >
             How it works
           </span>
+
+          {/* Auth section */}
+          {userName ? (
+            <div className="flex items-center gap-4">
+              <span className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF' }}>
+                {userName}
+              </span>
+              <span
+                onClick={onSignOut}
+                className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
+                style={{ fontSize: '0.65rem', color: '#5A7090' }}
+              >
+                Sign Out
+              </span>
+            </div>
+          ) : onSignIn ? (
+            <span
+              onClick={onSignIn}
+              className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
+              style={{ fontSize: '0.72rem', color: '#5A7090' }}
+            >
+              Sign In
+            </span>
+          ) : null}
+
           {subtleStart ? (
             <span
               onClick={onStart}

@@ -13,6 +13,7 @@ import NavBar from '../ui/NavBar';
 interface HowItWorksPageProps {
   onStart: () => void;
   onHowItWorks: () => void;
+  authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
   onLogoClick: () => void;
 }
 
@@ -209,7 +210,7 @@ const scienceCards = [
 ];
 
 /* ── Page component ── */
-export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick }: HowItWorksPageProps) {
+export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, authNavProps }: HowItWorksPageProps) {
   const [tableSex, setTableSex] = useState<'male' | 'female'>('male');
   const tableData = tableSex === 'male' ? maleData : femaleData;
 
@@ -219,7 +220,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick }: H
       <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(28,47,74,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(28,47,74,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       <div className="fixed inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)' }} />
 
-      <NavBar onStart={onStart} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} />
+      <NavBar onStart={onStart} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} {...authNavProps} />
 
       <div className="relative z-10">
 

@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { useTestState } from './hooks/useTestState';
 import { useMetronome } from './hooks/useMetronome';
+import { useAuth } from './hooks/useAuth';
 import { PRE_COUNTDOWN, DEV_PRE_COUNTDOWN } from './utils/protocol';
 import LandingPage from './components/screens/LandingPage';
 import HowItWorksPage from './components/screens/HowItWorksPage';
@@ -11,6 +12,7 @@ import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
 import PhoneFrame from './components/ui/PhoneFrame';
+import AuthModal from './components/ui/AuthModal';
 
 export default function App() {
   const {
@@ -27,7 +29,10 @@ export default function App() {
   } = useTestState();
 
   const metronome = useMetronome();
+  const auth = useAuth();
   const [stopReason, setStopReason] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
 
   const handleTestEnd = useCallback(
     (reason: string) => {
@@ -37,24 +42,65 @@ export default function App() {
     [setScreen],
   );
 
+  const openSignIn = useCallback(() => {
+    setAuthModalMode('signin');
+    setShowAuthModal(true);
+  }, []);
+
+  const openSignUp = useCallback(() => {
+    setAuthModalMode('signup');
+    setShowAuthModal(true);
+  }, []);
+
+  // Shared auth props for all NavBars
+  const authNavProps = {
+    userName: auth.profile?.first_name || null,
+    onSignIn: openSignIn,
+    onSignOut: auth.signOut,
+  };
+
   // ── MARKETING PAGES: full viewport width ──
 
   if (screen === 'landing') {
     return (
-      <LandingPage
-        onStart={() => setScreen('setup')}
-        onHowItWorks={() => setScreen('howItWorks')}
-      />
+      <>
+        <LandingPage
+          onStart={() => setScreen('setup')}
+          onHowItWorks={() => setScreen('howItWorks')}
+          authNavProps={authNavProps}
+        />
+        {showAuthModal && (
+          <AuthModal
+            initialMode={authModalMode}
+            onClose={() => setShowAuthModal(false)}
+            onSignUp={auth.signUp}
+            onSignIn={auth.signIn}
+            onResetPassword={auth.resetPassword}
+          />
+        )}
+      </>
     );
   }
 
   if (screen === 'howItWorks') {
     return (
-      <HowItWorksPage
-        onStart={() => setScreen('setup')}
-        onHowItWorks={() => setScreen('howItWorks')}
-        onLogoClick={() => setScreen('landing')}
-      />
+      <>
+        <HowItWorksPage
+          onStart={() => setScreen('setup')}
+          onHowItWorks={() => setScreen('howItWorks')}
+          onLogoClick={() => setScreen('landing')}
+          authNavProps={authNavProps}
+        />
+        {showAuthModal && (
+          <AuthModal
+            initialMode={authModalMode}
+            onClose={() => setShowAuthModal(false)}
+            onSignUp={auth.signUp}
+            onSignIn={auth.signIn}
+            onResetPassword={auth.resetPassword}
+          />
+        )}
+      </>
     );
   }
 
@@ -62,17 +108,29 @@ export default function App() {
 
   if (screen === 'setup') {
     return (
-      <SetupScreen
-        state={state}
-        updateSetup={updateSetup}
-        toggleDevMode={toggleDevMode}
-        onBegin={() => {
-          metronome.resumeAudio();
-          setScreen('instructions');
-        }}
-        onLogoClick={() => setScreen('landing')}
-        onHowItWorks={() => setScreen('howItWorks')}
-      />
+      <>
+        <SetupScreen
+          state={state}
+          updateSetup={updateSetup}
+          toggleDevMode={toggleDevMode}
+          onBegin={() => {
+            metronome.resumeAudio();
+            setScreen('instructions');
+          }}
+          onLogoClick={() => setScreen('landing')}
+          onHowItWorks={() => setScreen('howItWorks')}
+          authNavProps={authNavProps}
+        />
+        {showAuthModal && (
+          <AuthModal
+            initialMode={authModalMode}
+            onClose={() => setShowAuthModal(false)}
+            onSignUp={auth.signUp}
+            onSignIn={auth.signIn}
+            onResetPassword={auth.resetPassword}
+          />
+        )}
+      </>
     );
   }
 
@@ -80,52 +138,79 @@ export default function App() {
 
   if (screen === 'results') {
     return (
-      <ResultsScreen
-        state={state}
-        stopReason={stopReason}
-        onNewTest={resetTest}
-        onHowItWorks={() => setScreen('howItWorks')}
-      />
+      <>
+        <ResultsScreen
+          state={state}
+          stopReason={stopReason}
+          onNewTest={resetTest}
+          onHowItWorks={() => setScreen('howItWorks')}
+          authNavProps={authNavProps}
+          isLoggedIn={!!auth.user}
+          userProfile={auth.profile}
+          onOpenSignIn={openSignIn}
+          onOpenSignUp={openSignUp}
+        />
+        {showAuthModal && (
+          <AuthModal
+            initialMode={authModalMode}
+            onClose={() => setShowAuthModal(false)}
+            onSignUp={auth.signUp}
+            onSignIn={auth.signIn}
+            onResetPassword={auth.resetPassword}
+          />
+        )}
+      </>
     );
   }
 
   // ── TEST FLOW SCREENS: inside PhoneFrame ──
 
   return (
-    <PhoneFrame>
-      {screen === 'instructions' && (
-        <InstructionsScreen
-          state={state}
-          onBegin={() => setScreen('restingHR')}
-          onBack={() => setScreen('setup')}
+    <>
+      <PhoneFrame>
+        {screen === 'instructions' && (
+          <InstructionsScreen
+            state={state}
+            onBegin={() => setScreen('restingHR')}
+            onBack={() => setScreen('setup')}
+          />
+        )}
+        {screen === 'restingHR' && (
+          <RestingHRScreen
+            onConfirm={(hr) => {
+              setRestingHR(hr);
+              setScreen('preLevel');
+            }}
+            onSkip={() => setScreen('preLevel')}
+          />
+        )}
+        {screen === 'preLevel' && (
+          <PreLevelScreen
+            level={state.currentLevel}
+            countdownSeconds={state.devMode ? DEV_PRE_COUNTDOWN : PRE_COUNTDOWN}
+            onComplete={() => setScreen('activeLevel')}
+            playCountBeep={metronome.playCountBeep}
+          />
+        )}
+        {screen === 'activeLevel' && (
+          <ActiveLevelScreen
+            state={state}
+            logLevel={logLevel}
+            advanceLevel={advanceLevel}
+            checkStopConditions={checkStopConditions}
+            onTestEnd={handleTestEnd}
+          />
+        )}
+      </PhoneFrame>
+      {showAuthModal && (
+        <AuthModal
+          initialMode={authModalMode}
+          onClose={() => setShowAuthModal(false)}
+          onSignUp={auth.signUp}
+          onSignIn={auth.signIn}
+          onResetPassword={auth.resetPassword}
         />
       )}
-      {screen === 'restingHR' && (
-        <RestingHRScreen
-          onConfirm={(hr) => {
-            setRestingHR(hr);
-            setScreen('preLevel');
-          }}
-          onSkip={() => setScreen('preLevel')}
-        />
-      )}
-      {screen === 'preLevel' && (
-        <PreLevelScreen
-          level={state.currentLevel}
-          countdownSeconds={state.devMode ? DEV_PRE_COUNTDOWN : PRE_COUNTDOWN}
-          onComplete={() => setScreen('activeLevel')}
-          playCountBeep={metronome.playCountBeep}
-        />
-      )}
-      {screen === 'activeLevel' && (
-        <ActiveLevelScreen
-          state={state}
-          logLevel={logLevel}
-          advanceLevel={advanceLevel}
-          checkStopConditions={checkStopConditions}
-          onTestEnd={handleTestEnd}
-        />
-      )}
-    </PhoneFrame>
+    </>
   );
 }

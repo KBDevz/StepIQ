@@ -12,6 +12,7 @@ import NavBar from '../ui/NavBar';
 interface LandingPageProps {
   onStart: () => void;
   onHowItWorks: () => void;
+  authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
 // Sample data for the preview chart
@@ -209,7 +210,7 @@ function ResultPreviewCard() {
   );
 }
 
-export default function LandingPage({ onStart, onHowItWorks }: LandingPageProps) {
+export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
   const pills = ['Clinically Validated', 'Linear Regression', 'AI Report'];
 
   return (
@@ -234,7 +235,7 @@ export default function LandingPage({ onStart, onHowItWorks }: LandingPageProps)
         }}
       />
 
-      <NavBar onStart={onStart} onHowItWorks={onHowItWorks} />
+      <NavBar onStart={onStart} onHowItWorks={onHowItWorks} {...authNavProps} />
 
       {/* ── HERO SECTION ── */}
       <div
