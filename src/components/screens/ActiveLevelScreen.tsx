@@ -30,11 +30,12 @@ function createAudioEngine() {
     return ctx;
   }
 
-  function beep(freq: number, vol: number, dur = 0.07) {
+  function beep(freq: number, vol: number, dur = 0.08) {
     try {
       const c = getCtx();
       const osc = c.createOscillator();
       const gain = c.createGain();
+      osc.type = 'sine';
       osc.connect(gain);
       gain.connect(c.destination);
       osc.frequency.value = freq;
@@ -122,10 +123,19 @@ export default function ActiveLevelScreen({
     levelStartBeat.current = beatCount.current;
     const msPerBeat = 60000 / p.bpm;
 
+    // Beat tones: UP (880Hz) / DOWN (560Hz) with slight volume variation
+    const BEAT_TONES: [number, number][] = [
+      [880, 0.5],   // Beat 1: Left UP  — high, loudest
+      [880, 0.4],   // Beat 2: Right UP — high, slightly softer
+      [560, 0.45],  // Beat 3: Left DOWN — low, medium
+      [560, 0.35],  // Beat 4: Right DOWN — low, softest
+    ];
+    const toneDur = Math.min(0.08, msPerBeat * 0.00015);
+
     const tick = () => {
       const beat = beatCount.current % 4;
-      const isAccent = beat === 0;
-      audio().beep(isAccent ? 880 : 660, isAccent ? 0.5 : 0.3);
+      const [freq, vol] = BEAT_TONES[beat];
+      audio().beep(freq, vol, toneDur);
       setActiveBeat(beat);
 
       const beatsSinceStart = beatCount.current - levelStartBeat.current;
