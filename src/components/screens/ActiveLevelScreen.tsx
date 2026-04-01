@@ -5,7 +5,7 @@ import { onBeat, speakHRAlert, cancelSpeech } from '../../utils/voiceCoach';
 import BeatDots from '../test/BeatDots';
 import StepCues from '../test/StepCues';
 import LevelTimer from '../test/LevelTimer';
-import EntrySheet from '../test/EntrySheet';
+import InlineEntryPanel from '../test/InlineEntryPanel';
 import InlineCountdown from '../test/InlineCountdown';
 
 interface ActiveLevelScreenProps {
@@ -67,7 +67,7 @@ export default function ActiveLevelScreen({
   onTestEnd,
 }: ActiveLevelScreenProps) {
   const [activeBeat, setActiveBeat] = useState(-1);
-  const [showSheet, setShowSheet] = useState(false);
+  const [showEntry, setShowEntry] = useState(false);
   const [showCountdown, setShowCountdown] = useState(false);
   const [levelActive, setLevelActive] = useState(true);
   const [nextLevel, setNextLevel] = useState(0);
@@ -113,7 +113,7 @@ export default function ActiveLevelScreen({
 
     currentLevelRef.current = level;
     setLevelActive(true);
-    setShowSheet(false);
+    setShowEntry(false);
     setShowCountdown(false);
     setHrAlert(false);
     hrAlertFired.current = false;
@@ -123,12 +123,11 @@ export default function ActiveLevelScreen({
     levelStartBeat.current = beatCount.current;
     const msPerBeat = 60000 / p.bpm;
 
-    // Beat tones: UP (880Hz) / DOWN (560Hz) with slight volume variation
     const BEAT_TONES: [number, number][] = [
-      [880, 0.5],   // Beat 1: Left UP  — high, loudest
-      [880, 0.4],   // Beat 2: Right UP — high, slightly softer
-      [560, 0.45],  // Beat 3: Left DOWN — low, medium
-      [560, 0.35],  // Beat 4: Right DOWN — low, softest
+      [880, 0.5],
+      [880, 0.4],
+      [560, 0.45],
+      [560, 0.35],
     ];
     const toneDur = Math.min(0.08, msPerBeat * 0.00015);
 
@@ -138,8 +137,11 @@ export default function ActiveLevelScreen({
       audio().beep(freq, vol, toneDur);
       setActiveBeat(beat);
 
-      const beatsSinceStart = beatCount.current - levelStartBeat.current;
-      onBeat(beatsSinceStart, currentLevelRef.current);
+      // Voice coaching only on level 1
+      if (currentLevelRef.current === 1) {
+        const beatsSinceStart = beatCount.current - levelStartBeat.current;
+        onBeat(beatsSinceStart, currentLevelRef.current);
+      }
 
       beatCount.current++;
     };
@@ -152,9 +154,11 @@ export default function ActiveLevelScreen({
       const left = Math.max(0, Math.ceil((endTime.current - Date.now()) / 1000));
       setRemaining(left);
 
+      // At 10 seconds: show HR alert + open inline entry panel
       if (left <= 10 && left > 0 && !hrAlertFired.current) {
         hrAlertFired.current = true;
         setHrAlert(true);
+        setShowEntry(true);
         speakHRAlert();
       }
 
@@ -162,7 +166,7 @@ export default function ActiveLevelScreen({
         stopTimer();
         setLevelActive(false);
         setHrAlert(false);
-        setShowSheet(true);
+        // Entry panel stays open — metronome keeps running
       }
     }, 100);
   }
@@ -184,27 +188,36 @@ export default function ActiveLevelScreen({
   const progress = totalTime > 0 ? remaining / totalTime : 1;
 
   function handleEntryConfirm(hr: number, rpe: number) {
-    stopMetronome();
+    // Don't stop metronome — it keeps running through transition
     cancelSpeech();
-    setActiveBeat(-1);
 
     logLevel(hr, rpe);
-    setShowSheet(false);
+    setShowEntry(false);
+    setHrAlert(false);
 
     if (rpe >= 7) {
+      stopMetronome();
+      setActiveBeat(-1);
       onTestEnd(`RPE ${rpe} reached stop zone`);
       return;
     }
     if (hr >= state.stopHR && state.data.length + 1 >= 3) {
+      stopMetronome();
+      setActiveBeat(-1);
       onTestEnd(`HR ${hr} bpm exceeded 85% max HR (${state.stopHR} bpm)`);
       return;
     }
     if (state.currentLevel >= 5) {
+      stopMetronome();
+      setActiveBeat(-1);
       onTestEnd('All 5 levels completed');
       return;
     }
 
+    // Immediate transition to next level
     const next = state.currentLevel + 1;
+    stopMetronome();
+    setActiveBeat(-1);
     advanceLevel();
     setNextLevel(next);
     setShowCountdown(true);
@@ -246,10 +259,12 @@ export default function ActiveLevelScreen({
         </span>
       </div>
 
-      {/* ZONE 2 — Level number (flex-grow centers it) */}
+      {/* ZONE 2 — Level number (shifts up when entry panel visible) */}
       <div style={{
         flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center',
         flexShrink: 1, minHeight: 0,
+        transform: showEntry ? 'translateY(-20px)' : 'none',
+        transition: 'transform 0.3s ease',
       }}>
         <span className="font-serif" style={{
           fontSize: '9rem', lineHeight: 1, color: '#EEF2FF', fontWeight: 700,
@@ -259,12 +274,20 @@ export default function ActiveLevelScreen({
       </div>
 
       {/* ZONE 3 — Step cue indicator */}
-      <div style={{ padding: '0 24px', flexShrink: 0 }}>
+      <div style={{
+        padding: '0 24px', flexShrink: 0,
+        transform: showEntry ? 'translateY(-20px)' : 'none',
+        transition: 'transform 0.3s ease',
+      }}>
         <StepCues activeBeat={activeBeat} />
       </div>
 
       {/* ZONE 4 — Beat dots */}
-      <div style={{ flexShrink: 0 }}>
+      <div style={{
+        flexShrink: 0,
+        transform: showEntry ? 'translateY(-20px)' : 'none',
+        transition: 'transform 0.3s ease',
+      }}>
         <BeatDots activeBeat={activeBeat} />
       </div>
 
@@ -273,9 +296,14 @@ export default function ActiveLevelScreen({
         <LevelTimer remaining={remaining} progress={progress} alert={hrAlert} />
       </div>
 
-      {/* ZONE 6/7 — HR alert OR info card */}
+      {/* ZONE 6/7 — HR alert text OR info card OR inline entry panel */}
       <div style={{ padding: '12px 24px', flexShrink: 0, minHeight: '60px' }}>
-        {hrAlert && levelActive ? (
+        {showEntry ? (
+          <InlineEntryPanel
+            level={state.currentLevel}
+            onConfirm={handleEntryConfirm}
+          />
+        ) : hrAlert && levelActive ? (
           <p
             className="font-mono"
             style={{
@@ -308,29 +336,27 @@ export default function ActiveLevelScreen({
         )}
       </div>
 
-      {/* ZONE 8 — End test early */}
-      <div style={{ textAlign: 'center', padding: '4px 0 16px', flexShrink: 0 }}>
-        <button
-          onClick={handleEndEarly}
-          className="font-mono"
-          style={{
-            display: 'inline-block', background: 'transparent', border: 'none',
-            color: '#5A7090', fontSize: '0.65rem', textTransform: 'uppercase',
-            letterSpacing: '0.1em', padding: '8px 16px', borderRadius: '6px',
-            cursor: 'pointer', transition: 'color 0.2s',
-          }}
-          onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#C4D4E8'; }}
-          onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; }}
-        >
-          End Test Early
-        </button>
-      </div>
-
-      {/* Overlays */}
-      {showSheet && (
-        <EntrySheet level={state.currentLevel} onConfirm={handleEntryConfirm} />
+      {/* ZONE 8 — End test early (hidden when entry panel visible) */}
+      {!showEntry && (
+        <div style={{ textAlign: 'center', padding: '4px 0 16px', flexShrink: 0 }}>
+          <button
+            onClick={handleEndEarly}
+            className="font-mono"
+            style={{
+              display: 'inline-block', background: 'transparent', border: 'none',
+              color: '#5A7090', fontSize: '0.65rem', textTransform: 'uppercase',
+              letterSpacing: '0.1em', padding: '8px 16px', borderRadius: '6px',
+              cursor: 'pointer', transition: 'color 0.2s',
+            }}
+            onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#C4D4E8'; }}
+            onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; }}
+          >
+            End Test Early
+          </button>
+        </div>
       )}
 
+      {/* Overlays */}
       {showCountdown && (
         <InlineCountdown
           level={nextLevel}
