@@ -75,14 +75,24 @@ export default function App() {
     );
   }
 
+  // Results screen renders full-width with its own two-column layout
+  if (screen === 'results') {
+    return (
+      <ResultsScreen
+        state={state}
+        stopReason={stopReason}
+        onNewTest={resetTest}
+      />
+    );
+  }
+
   // Determine max-width for each screen type
   const getMaxWidth = () => {
-    if (screen === 'results') return '720px';
     if (screen === 'instructions' || screen === 'restingHR') return '520px';
     return '520px';
   };
 
-  // Should vertically center? (not for results which scrolls, not for active test)
+  // Should vertically center? (not for active test)
   const shouldCenter = screen === 'instructions' || screen === 'restingHR';
 
   // All other test flow screens
@@ -119,13 +129,6 @@ export default function App() {
           advanceLevel={advanceLevel}
           checkStopConditions={checkStopConditions}
           onTestEnd={handleTestEnd}
-        />
-      )}
-      {screen === 'results' && (
-        <ResultsScreen
-          state={state}
-          stopReason={stopReason}
-          onNewTest={resetTest}
         />
       )}
     </>
