@@ -197,39 +197,45 @@ export default function ActiveLevelScreen({
   const lastHR = state.data.length > 0 ? state.data[state.data.length - 1].hr : null;
 
   return (
-    <div className="flex flex-col items-center px-6 py-8 relative" style={{ minHeight: '100%' }}>
-      <Badge>Level {state.currentLevel} of 5</Badge>
+    <div className="flex flex-col items-center px-6 relative" style={{ minHeight: '100%' }}>
+      {/* Top section — vertically centered content */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
+        <Badge>Level {state.currentLevel} of 5</Badge>
 
-      <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-5">Level</p>
-      <p className="font-serif text-8xl text-[#EEF2FF] my-3">{state.currentLevel}</p>
-      <p className="font-mono text-sm text-[#5A7090] mb-5">
-        {proto.spm} steps/min · {proto.bpm} BPM
-      </p>
+        <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-6">Level</p>
+        <p className="font-serif text-[120px] leading-none text-[#EEF2FF] my-4">{state.currentLevel}</p>
+        <p className="font-mono text-sm text-[#5A7090] mb-6">
+          {proto.spm} steps/min · {proto.bpm} BPM
+        </p>
 
-      <BeatDots activeBeat={levelActive ? activeBeat : -1} />
+        <BeatDots activeBeat={levelActive ? activeBeat : -1} />
 
-      <div className="w-full mt-8 mb-8">
-        <LevelTimer remaining={remaining} progress={progress} />
+        <div className="w-full mt-10 mb-10">
+          <LevelTimer remaining={remaining} progress={progress} />
+        </div>
       </div>
 
-      <FormCard className="w-full mb-8">
-        <div className="grid grid-cols-2 gap-6">
-          <div className="text-center">
-            <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Stop HR</p>
-            <p className="font-mono text-xl text-[#FF8C42]">{state.stopHR} <span className="text-xs">bpm</span></p>
+      {/* Bottom section — pinned to bottom */}
+      <div className="w-full" style={{ paddingBottom: '32px' }}>
+        <FormCard className="w-full mb-6">
+          <div className="grid grid-cols-2 gap-6">
+            <div className="text-center">
+              <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Stop HR</p>
+              <p className="font-mono text-2xl text-[#FF8C42]">{state.stopHR} <span className="text-xs">bpm</span></p>
+            </div>
+            <div className="text-center">
+              <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Last HR</p>
+              <p className="font-mono text-2xl text-[#EEF2FF]">
+                {lastHR ? <>{lastHR} <span className="text-xs text-[#5A7090]">bpm</span></> : '—'}
+              </p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Last HR</p>
-            <p className="font-mono text-xl text-[#EEF2FF]">
-              {lastHR ? <>{lastHR} <span className="text-xs text-[#5A7090]">bpm</span></> : '—'}
-            </p>
-          </div>
-        </div>
-      </FormCard>
+        </FormCard>
 
-      <Button variant="ghost" onClick={handleEndEarly}>
-        End Test Early
-      </Button>
+        <Button variant="ghost" onClick={handleEndEarly}>
+          End Test Early
+        </Button>
+      </div>
 
       {showSheet && (
         <EntrySheet level={state.currentLevel} onConfirm={handleEntryConfirm} />

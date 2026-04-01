@@ -18,7 +18,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: '28px', minHeight: '100%' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 28px', minHeight: '100%' }}>
       {/* Eyebrow */}
       <span
         className="font-mono"
@@ -36,13 +36,13 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
 
       <h2
         className="font-serif"
-        style={{ fontSize: '1.6rem', fontWeight: 700, color: '#fff', marginBottom: '4px' }}
+        style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}
       >
         Chester Step Test
       </h2>
       <p
         className="font-mono"
-        style={{ fontSize: '0.65rem', color: '#5A7090', marginBottom: '24px' }}
+        style={{ fontSize: '0.7rem', color: '#5A7090', marginBottom: '28px' }}
       >
         5 Levels, 2 min each
       </p>

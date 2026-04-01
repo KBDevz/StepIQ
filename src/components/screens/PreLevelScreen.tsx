@@ -48,26 +48,31 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
   }, [countdownSeconds]);
 
   return (
-    <div className="flex flex-col items-center justify-center px-6" style={{ minHeight: '100%' }}>
-      <Badge>Level {level} of 5</Badge>
+    <div className="flex flex-col items-center px-6" style={{ minHeight: '100%' }}>
+      {/* Top spacer */}
+      <div className="flex-1 flex flex-col items-center justify-center w-full">
+        <Badge>Level {level} of 5</Badge>
 
-      <p className="font-mono text-sm text-[#5A7090] mt-5 mb-2">
-        {proto.spm} steps/min — {proto.bpm} BPM
-      </p>
+        <p className="font-mono text-sm text-[#5A7090] mt-6 mb-3">
+          {proto.spm} steps/min — {proto.bpm} BPM
+        </p>
 
-      <div className="relative my-6">
-        <span
-          className="font-serif text-[120px] leading-none text-[#EEF2FF] tabular-nums transition-transform duration-200"
-          style={{ transform: `scale(${count <= 3 ? 1.1 : 1})` }}
-        >
-          {count}
-        </span>
+        <div className="relative my-8">
+          <span
+            className="font-serif text-[140px] leading-none text-[#EEF2FF] tabular-nums transition-transform duration-200"
+            style={{ transform: `scale(${count <= 3 ? 1.1 : 1})` }}
+          >
+            {count}
+          </span>
+        </div>
+
+        <p className="font-mono text-sm text-[#5A7090] mb-8">Get ready...</p>
       </div>
 
-      <p className="font-mono text-sm text-[#5A7090] mb-6">Get ready...</p>
-
-      {/* Animated step guide — runs at the level's BPM */}
-      <StepGuide bpm={proto.bpm} />
+      {/* Step guide pinned towards bottom */}
+      <div className="w-full flex justify-center" style={{ paddingBottom: '40px' }}>
+        <StepGuide bpm={proto.bpm} />
+      </div>
     </div>
   );
 }
