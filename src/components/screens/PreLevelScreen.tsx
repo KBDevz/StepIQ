@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import Badge from '../ui/Badge';
+import StepGuide from '../test/StepGuide';
 import { getLevelProtocol } from '../../utils/protocol';
 
 interface PreLevelScreenProps {
@@ -13,7 +14,6 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
   const [count, setCount] = useState(countdownSeconds);
   const proto = getLevelProtocol(level);
 
-  // Use refs to avoid the effect depending on callback identity
   const onCompleteRef = useRef(onComplete);
   onCompleteRef.current = onComplete;
   const playCountBeepRef = useRef(playCountBeep);
@@ -51,20 +51,23 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
     <div className="flex flex-col items-center justify-center px-5 min-h-screen">
       <Badge>Level {level} of 5</Badge>
 
-      <p className="font-mono text-sm text-[#5A7090] mt-6 mb-2">
+      <p className="font-mono text-sm text-[#5A7090] mt-4 mb-1">
         {proto.spm} steps/min — {proto.bpm} BPM
       </p>
 
-      <div className="relative my-8">
+      <div className="relative my-4">
         <span
-          className="font-serif text-[120px] leading-none text-[#EEF2FF] tabular-nums transition-transform duration-200"
+          className="font-serif text-[100px] leading-none text-[#EEF2FF] tabular-nums transition-transform duration-200"
           style={{ transform: `scale(${count <= 3 ? 1.1 : 1})` }}
         >
           {count}
         </span>
       </div>
 
-      <p className="font-mono text-xs text-[#5A7090]">Get ready...</p>
+      <p className="font-mono text-xs text-[#5A7090] mb-4">Get ready...</p>
+
+      {/* Animated step guide — runs at the level's BPM */}
+      <StepGuide bpm={proto.bpm} />
     </div>
   );
 }
