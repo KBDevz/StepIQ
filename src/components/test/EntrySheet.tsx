@@ -35,15 +35,18 @@ export default function EntrySheet({ level, onConfirm }: EntrySheetProps) {
           <h3 className="font-serif text-2xl text-[#EEF2FF]">Level {level} Complete</h3>
           <p className="font-mono text-sm text-[#5A7090] mt-2">
             {phase === 'hr'
-              ? 'Enter your heart rate'
+              ? 'Keep your heart rate monitor in view'
               : `HR ${hrNum} bpm logged — now select your effort level`}
           </p>
         </div>
 
         {phase === 'hr' ? (
           <>
-            <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-3">
+            <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">
               Heart Rate (bpm)
+            </p>
+            <p className="font-mono text-[#5A7090] mb-3" style={{ fontSize: '0.62rem' }}>
+              Read from your monitor or count for 6 seconds × 10
             </p>
             <div className="text-center mb-5">
               <span className="font-mono text-6xl text-[#EEF2FF] tabular-nums">

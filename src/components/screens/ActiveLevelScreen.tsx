@@ -1,10 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
+import { onBeat, speakHRAlert, cancelSpeech } from '../../utils/voiceCoach';
 import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import FormCard from '../ui/FormCard';
 import BeatDots from '../test/BeatDots';
+import StepCues from '../test/StepCues';
 import LevelTimer from '../test/LevelTimer';
 import EntrySheet from '../test/EntrySheet';
 import InlineCountdown from '../test/InlineCountdown';
@@ -73,12 +75,16 @@ export default function ActiveLevelScreen({
   const [nextLevel, setNextLevel] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
+  const [hrAlert, setHrAlert] = useState(false);
+  const hrAlertFired = useRef(false);
 
   // Refs for intervals — never go stale
   const metronomeId = useRef<number>(0);
   const timerId = useRef<number>(0);
   const endTime = useRef(0);
   const beatCount = useRef(0);
+  const levelStartBeat = useRef(0);
+  const currentLevelRef = useRef(state.currentLevel);
   const audioRef = useRef<ReturnType<typeof createAudioEngine> | null>(null);
 
   // Get or create audio engine
@@ -87,11 +93,20 @@ export default function ActiveLevelScreen({
     return audioRef.current;
   }
 
-  function stopAll() {
+  function stopMetronome() {
     clearInterval(metronomeId.current);
-    clearInterval(timerId.current);
     metronomeId.current = 0;
+  }
+
+  function stopTimer() {
+    clearInterval(timerId.current);
     timerId.current = 0;
+  }
+
+  function stopAll() {
+    stopMetronome();
+    stopTimer();
+    cancelSpeech();
   }
 
   function startLevel(level: number) {
@@ -102,14 +117,17 @@ export default function ActiveLevelScreen({
     stopAll();
 
     // Reset UI state
+    currentLevelRef.current = level;
     setLevelActive(true);
     setShowSheet(false);
     setShowCountdown(false);
+    setHrAlert(false);
+    hrAlertFired.current = false;
     setTotalTime(dur);
     setRemaining(dur);
 
     // -- Metronome --
-    beatCount.current = 0;
+    levelStartBeat.current = beatCount.current;
     const msPerBeat = 60000 / p.bpm;
 
     const tick = () => {
@@ -117,6 +135,11 @@ export default function ActiveLevelScreen({
       const isAccent = beat === 0;
       audio().beep(isAccent ? 880 : 660, isAccent ? 0.5 : 0.3);
       setActiveBeat(beat);
+
+      // Voice coaching for first 4 cycles
+      const beatsSinceStart = beatCount.current - levelStartBeat.current;
+      onBeat(beatsSinceStart, currentLevelRef.current);
+
       beatCount.current++;
     };
 
@@ -128,15 +151,21 @@ export default function ActiveLevelScreen({
     timerId.current = window.setInterval(() => {
       const left = Math.max(0, Math.ceil((endTime.current - Date.now()) / 1000));
       setRemaining(left);
+
+      // HR alert at 10 seconds remaining
+      if (left <= 10 && left > 0 && !hrAlertFired.current) {
+        hrAlertFired.current = true;
+        setHrAlert(true);
+        speakHRAlert();
+      }
+
       if (left <= 0) {
-        // Level complete
-        clearInterval(metronomeId.current);
-        clearInterval(timerId.current);
-        metronomeId.current = 0;
-        timerId.current = 0;
+        // Level complete — stop timer but keep metronome running
+        stopTimer();
         setLevelActive(false);
-        setActiveBeat(-1);
+        setHrAlert(false);
         setShowSheet(true);
+        // Metronome keeps running! Do NOT stop it here.
       }
     }, 100);
   }
@@ -160,6 +189,11 @@ export default function ActiveLevelScreen({
   const progress = totalTime > 0 ? remaining / totalTime : 1;
 
   function handleEntryConfirm(hr: number, rpe: number) {
+    // NOW stop the metronome (after HR/RPE entry)
+    stopMetronome();
+    cancelSpeech();
+    setActiveBeat(-1);
+
     logLevel(hr, rpe);
     setShowSheet(false);
 
@@ -205,23 +239,45 @@ export default function ActiveLevelScreen({
       <Badge>Level {state.currentLevel} of 5</Badge>
 
       <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mt-6">Level</p>
-      <p className="font-serif text-[120px] leading-none text-[#EEF2FF] my-4">{state.currentLevel}</p>
-      <p className="font-mono text-sm text-[#5A7090] mb-6">
+      <p className="font-serif text-[100px] leading-none text-[#EEF2FF] my-2">{state.currentLevel}</p>
+      <p className="font-mono text-sm text-[#5A7090] mb-4">
         {proto.spm} steps/min · {proto.bpm} BPM
       </p>
 
-      <BeatDots activeBeat={levelActive ? activeBeat : -1} />
+      <BeatDots activeBeat={activeBeat} />
 
-      <div className="w-full mt-10 mb-10">
-        <LevelTimer remaining={remaining} progress={progress} />
+      {/* Step direction cues — synced to metronome */}
+      <div className="w-full mt-4 mb-4">
+        <StepCues activeBeat={activeBeat} />
       </div>
 
-      {/* Bottom spacer — smaller than top to push content slightly above center */}
-      <div style={{ flex: 0.3 }} />
+      <div className="w-full mb-6">
+        <LevelTimer remaining={remaining} progress={progress} alert={hrAlert} />
+      </div>
+
+      {/* HR alert message — only while level timer is running */}
+      {hrAlert && levelActive && (
+        <p
+          className="font-mono uppercase"
+          style={{
+            fontSize: '0.75rem',
+            letterSpacing: '0.08em',
+            color: '#FF8C42',
+            textAlign: 'center',
+            marginBottom: '12px',
+            animation: 'hrAlertPulse 0.8s ease-in-out infinite',
+          }}
+        >
+          Check your heart rate now
+        </p>
+      )}
+
+      {/* Bottom spacer */}
+      <div style={{ flex: 0.2 }} />
 
       {/* Bottom section */}
-      <div className="w-full" style={{ paddingBottom: '32px' }}>
-        <FormCard className="w-full mb-6">
+      <div className="w-full" style={{ paddingBottom: '24px' }}>
+        <FormCard className="w-full mb-4">
           <div className="grid grid-cols-2 gap-6">
             <div className="text-center">
               <p className="font-mono text-xs text-[#5A7090] uppercase tracking-wider mb-1">Stop HR</p>
@@ -252,6 +308,13 @@ export default function ActiveLevelScreen({
           playCountBeep={audio().countBeep}
         />
       )}
+
+      <style>{`
+        @keyframes hrAlertPulse {
+          0%, 100% { opacity: 1; }
+          50% { opacity: 0.5; }
+        }
+      `}</style>
     </div>
   );
 }
