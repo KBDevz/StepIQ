@@ -466,7 +466,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
               Ready to Find Out Where You Stand?
             </h2>
             <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
-              Takes 10 minutes. No account required. No equipment beyond a step.
+              Takes 10 minutes. No account required. Just a step and a heart rate monitor.
             </p>
 
             <button
