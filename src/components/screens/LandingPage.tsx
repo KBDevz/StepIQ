@@ -283,7 +283,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '24px',
                 }}
               >
-                Measure Your VO₂ Max
+                Estimate Your VO₂ Max
                 <br />
                 Without a Lab
               </h1>
@@ -299,9 +299,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '36px',
                 }}
               >
-                A guided 10-minute step test gives you your VO₂ max score,
-                fitness category, and a personalized 8-week plan — no lab,
-                no wearable required.
+                A guided 10-minute step test. An instant estimate of your
+                VO₂ max, fitness category, and personalized 8-week plan
+                — no lab needed.
               </p>
 
               {/* Feature pills */}
@@ -327,6 +327,22 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   </span>
                 ))}
               </div>
+
+              {/* HR notice */}
+              <p
+                className="font-mono landing-stagger-4"
+                style={{
+                  fontSize: '0.65rem',
+                  color: '#5A7090',
+                  fontStyle: 'italic',
+                  marginTop: '-30px',
+                  marginBottom: '40px',
+                  maxWidth: '440px',
+                  lineHeight: 1.6,
+                }}
+              >
+                You'll need a way to check your heart rate — a fitness watch, chest strap, or manual count works.
+              </p>
 
               {/* CTA button */}
               <div className="landing-stagger-5">
