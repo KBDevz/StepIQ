@@ -219,10 +219,10 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           <div className="hiw-section-pad hiw-section-v">
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
-                VO&#x2082; Max Is the Best Predictor of Longevity. Most People Can&rsquo;t Measure It.
+                VO&#x2082; Max Matters. Most People Never Measure It.
               </h2>
               <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, textAlign: 'center', maxWidth: '600px', margin: '0 auto 56px' }}>
-                Lab testing is expensive. Wearables are estimates. There hasn&rsquo;t been a credible middle ground &mdash; until now.
+                Lab testing is expensive and hard to access. Wearables are convenient but algorithmically estimated and unverified. The Chester Step Test has long been the clinically validated middle ground &mdash; StepIQ brings it into a simple at-home experience.
               </p>
 
               {/* Comparison cards */}
