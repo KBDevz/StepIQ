@@ -1,4 +1,3 @@
-// HowItWorksPage — updated 2026-04-02
 import { useState } from 'react';
 import {
   LineChart,
@@ -18,7 +17,7 @@ interface HowItWorksPageProps {
   onLogoClick: () => void;
 }
 
-/* ── Regression chart data (same as landing page) ── */
+/* ── Regression chart data ── */
 const sampleData = [
   { hr: 95, vo2: 17.3 },
   { hr: 115, vo2: 21.9 },
@@ -65,25 +64,25 @@ function ScienceChart() {
 }
 
 /* ── Classification data ── */
-const ageBands = ['15–19', '20–29', '30–39', '40–49', '50–59', '60–65'];
+const ageBands = ['15\u201319', '20\u201329', '30\u201339', '40\u201349', '50\u201359', '60\u201365'];
 
 const maleData = [
   { label: 'Excellent', color: '#00E5A0', values: ['60+', '55+', '50+', '46+', '44+', '40+'] },
-  { label: 'Good', color: '#06D6A0', values: ['48–59', '44–54', '40–49', '37–45', '35–43', '33–39'] },
-  { label: 'Average', color: '#FFD166', values: ['39–47', '35–43', '34–39', '32–36', '29–34', '25–32'] },
-  { label: 'Below Avg', color: '#FF8C42', values: ['30–38', '28–34', '26–33', '25–31', '23–28', '20–24'] },
+  { label: 'Good', color: '#06D6A0', values: ['48\u201359', '44\u201354', '40\u201349', '37\u201345', '35\u201343', '33\u201339'] },
+  { label: 'Average', color: '#FFD166', values: ['39\u201347', '35\u201343', '34\u201339', '32\u201336', '29\u201334', '25\u201332'] },
+  { label: 'Below Avg', color: '#FF8C42', values: ['30\u201338', '28\u201334', '26\u201333', '25\u201331', '23\u201328', '20\u201324'] },
   { label: 'Poor', color: '#FF4444', values: ['<30', '<28', '<26', '<25', '<23', '<20'] },
 ];
 
 const femaleData = [
   { label: 'Excellent', color: '#00E5A0', values: ['55+', '50+', '46+', '43+', '41+', '39+'] },
-  { label: 'Good', color: '#06D6A0', values: ['44–54', '40–49', '36–45', '34–42', '33–40', '31–38'] },
-  { label: 'Average', color: '#FFD166', values: ['36–43', '32–39', '30–35', '28–33', '26–32', '24–30'] },
-  { label: 'Below Avg', color: '#FF8C42', values: ['29–35', '27–31', '25–29', '22–27', '21–25', '19–23'] },
+  { label: 'Good', color: '#06D6A0', values: ['44\u201354', '40\u201349', '36\u201345', '34\u201342', '33\u201340', '31\u201338'] },
+  { label: 'Average', color: '#FFD166', values: ['36\u201343', '32\u201339', '30\u201335', '28\u201333', '26\u201332', '24\u201330'] },
+  { label: 'Below Avg', color: '#FF8C42', values: ['29\u201335', '27\u201331', '25\u201329', '22\u201327', '21\u201325', '19\u201323'] },
   { label: 'Poor', color: '#FF4444', values: ['<29', '<27', '<25', '<22', '<21', '<19'] },
 ];
 
-/* ── Steps data (3 steps) ── */
+/* ── 3 Steps data ── */
 const steps = [
   {
     title: 'Enter Your Details',
@@ -96,7 +95,7 @@ const steps = [
   },
   {
     title: 'Step to a Guided Pace',
-    desc: 'The app coaches you through up to 5 levels, each 2 minutes long, with a metronome and animated step guide. Most people complete 3\u20134 levels.',
+    desc: 'The app coaches you through up to 5 levels, each 2 minutes long, with a metronome and animated step guide. Most people complete 3 to 4 levels.',
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
@@ -114,10 +113,10 @@ const steps = [
   },
 ];
 
-/* ── Comparison cards data ── */
+/* ── Comparison cards ── */
 const comparisons = [
   {
-    title: 'Lab VO₂ Max Test',
+    title: 'Lab VO\u2082 Max Test',
     highlighted: false,
     icon: (
       <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -126,7 +125,7 @@ const comparisons = [
       </svg>
     ),
     pros: ['Gold standard accurate'],
-    cons: ['Requires specialist lab equipment', '$200–500 per test', 'Not repeatable at home'],
+    cons: ['Requires specialist lab equipment', '$200\u2013500 per test', 'Not repeatable at home'],
   },
   {
     title: 'Wearable Estimate',
@@ -161,25 +160,29 @@ const comparisons = [
 const scienceCards = [
   {
     title: 'Chester Step Test Protocol',
-    content:
-      'The Chester Step Test was developed by K. Sykes and is used in cardiac rehabilitation and occupational health worldwide. It uses a submaximal protocol — meaning it estimates your VO₂ max without pushing you to exhaustion, making it safe for a wide range of fitness levels.',
+    content: 'The Chester Step Test was developed by K. Sykes and is used in cardiac rehabilitation and occupational health worldwide. It uses a submaximal protocol \u2014 meaning it estimates your VO\u2082 max without pushing you to exhaustion, making it safe for a wide range of fitness levels.',
     chart: false,
   },
   {
     title: 'Linear Regression Scoring',
-    content:
-      'StepIQ plots your heart rate response at each level and fits a regression line to the data. That line is extrapolated to your predicted maximum heart rate — where it intersects is your VO₂ max estimate. More levels completed means a more accurate result.',
+    content: 'StepIQ plots your heart rate response at each level and fits a regression line to the data. That line is extrapolated to your predicted maximum heart rate \u2014 where it intersects is your VO\u2082 max estimate. More levels completed means a more accurate result.',
     chart: true,
   },
   {
-    title: 'Why VO₂ Max Matters',
-    content:
-      'VO₂ max is one of the strongest independent predictors of all-cause mortality — more predictive than blood pressure, cholesterol, or BMI in several large studies. Each 1 ml/kg/min improvement is associated with a meaningful reduction in cardiovascular risk.',
+    title: 'Why VO\u2082 Max Matters',
+    content: 'VO\u2082 max is one of the strongest independent predictors of all-cause mortality \u2014 more predictive than blood pressure, cholesterol, or BMI in several large studies. Each 1 ml/kg/min improvement is associated with a meaningful reduction in cardiovascular risk.',
     chart: false,
   },
 ];
 
-/* ── Page component ── */
+/* ── Section divider component ── */
+function Divider() {
+  return <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />;
+}
+
+/* ══════════════════════════════════════════════
+   PAGE COMPONENT
+   ══════════════════════════════════════════════ */
 export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, authNavProps }: HowItWorksPageProps) {
   const [tableSex, setTableSex] = useState<'male' | 'female'>('male');
   const tableData = tableSex === 'male' ? maleData : femaleData;
@@ -194,33 +197,32 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
 
       <div className="relative z-10">
 
-        {/* ────── SECTION 1: MINI HERO ────── */}
+        {/* ────── SECTION 1: HERO ────── */}
         <section className="hiw-section-pad" style={{ paddingTop: '152px', paddingBottom: '100px' }}>
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
             <p className="font-mono uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#00E5A0', marginBottom: '20px' }}>
               How It Works
             </p>
             <h1 className="font-serif" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '24px' }}>
-              Measure Your VO₂ Max — Without a Lab
+              Measure Your VO&#x2082; Max &mdash; Without a Lab
             </h1>
             <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto' }}>
-              Lab testing costs $500. Wearables are educated guesses. StepIQ uses the same clinically validated protocol used in cardiac rehabilitation — at home, in under 12 minutes.
+              Lab testing costs $500. Wearables are educated guesses. StepIQ uses the same clinically validated protocol used in cardiac rehabilitation &mdash; at home, in under 12 minutes.
             </p>
           </div>
         </section>
 
-        {/* ── Section divider ── */}
-        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+        <Divider />
 
         {/* ────── SECTION 2: THE PROBLEM ────── */}
         <section style={{ background: '#0D1829' }}>
           <div className="hiw-section-pad hiw-section-v">
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
               <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
-                VO₂ Max Is the Best Predictor of Longevity. Most People Can't Measure It.
+                VO&#x2082; Max Is the Best Predictor of Longevity. Most People Can&rsquo;t Measure It.
               </h2>
               <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, textAlign: 'center', maxWidth: '600px', margin: '0 auto 56px' }}>
-                Lab testing is expensive. Wearables are estimates. There hasn't been a credible middle ground — until now.
+                Lab testing is expensive. Wearables are estimates. There hasn&rsquo;t been a credible middle ground &mdash; until now.
               </p>
 
               {/* Comparison cards */}
@@ -290,10 +292,9 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
-        {/* ── Section divider ── */}
-        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+        <Divider />
 
-        {/* ────── SECTION 3: HOW IT WORKS ────── */}
+        {/* ────── SECTION 3: HOW IT WORKS (3 steps) ────── */}
         <section className="hiw-section-pad hiw-section-v">
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
             <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '64px' }}>
@@ -302,31 +303,32 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
 
             <div className="hiw-steps-grid">
               {steps.map((step, i) => (
-                <div key={step.title} className="relative" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
-                  {/* Connecting arrow on desktop */}
+                <div key={step.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                  {/* Connecting line on desktop */}
                   {i < steps.length - 1 && (
-                    <div className="hiw-step-arrow" />
+                    <div className="hiw-step-connector" />
                   )}
 
-                  {/* Number badge + icon */}
+                  {/* Number badge */}
                   <div
                     style={{
-                      width: '56px', height: '56px', borderRadius: '50%',
-                      background: 'rgba(0,229,160,0.08)', border: '1px solid rgba(0,229,160,0.25)',
+                      width: '48px', height: '48px', borderRadius: '50%',
+                      background: 'rgba(0,229,160,0.12)', border: '2px solid rgba(0,229,160,0.3)',
                       display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      marginBottom: '20px', position: 'relative',
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 700, color: '#00E5A0',
+                      marginBottom: '16px',
                     }}
                   >
-                    <span className="font-mono" style={{ position: 'absolute', top: '-8px', right: '-8px', width: '22px', height: '22px', borderRadius: '50%', background: '#00E5A0', color: '#060C18', fontSize: '0.65rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                      {i + 1}
-                    </span>
-                    {step.icon}
+                    {i + 1}
                   </div>
+
+                  {/* Icon */}
+                  <div style={{ marginBottom: '16px', opacity: 0.7 }}>{step.icon}</div>
 
                   <h3 className="font-mono uppercase" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', color: '#EEF2FF', marginBottom: '10px' }}>
                     {step.title}
                   </h3>
-                  <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '300px' }}>
+                  <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '280px' }}>
                     {step.desc}
                   </p>
                 </div>
@@ -335,8 +337,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
-        {/* ── Section divider ── */}
-        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+        <Divider />
 
         {/* ────── SECTION 4: THE SCIENCE ────── */}
         <section style={{ background: '#0D1829' }}>
@@ -362,14 +363,10 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                     <h3 className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EEF2FF', marginBottom: '16px' }}>
                       {card.title}
                     </h3>
-                    <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, marginBottom: card.chart ? '20px' : '0', flex: card.chart ? undefined : 1 }}>
+                    <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.8, marginBottom: card.chart ? '20px' : '0', flex: card.chart ? undefined : 1 }}>
                       {card.content}
                     </p>
-                    {card.chart && (
-                      <div style={{ marginBottom: '0' }}>
-                        <ScienceChart />
-                      </div>
-                    )}
+                    {card.chart && <ScienceChart />}
                   </div>
                 ))}
               </div>
@@ -377,8 +374,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
-        {/* ── Section divider ── */}
-        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+        <Divider />
 
         {/* ────── SECTION 5: CLASSIFICATIONS TABLE ────── */}
         <section className="hiw-section-pad hiw-section-v">
@@ -386,10 +382,10 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px' }}>
               Where Do You Rank?
             </h2>
-            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, textAlign: 'center', maxWidth: '560px', margin: '0 auto 12px' }}>
-              Fitness classifications based on Chester Step Test norms (K. Sykes). Used in clinical and occupational health settings worldwide.
+            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, textAlign: 'center', maxWidth: '560px', margin: '0 auto 8px' }}>
+              Fitness classifications based on Chester Step Test norms by K. Sykes.
             </p>
-            <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', textAlign: 'center', marginBottom: '24px' }}>
+            <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', textAlign: 'center', marginBottom: '32px' }}>
               Your exact score will be calculated after your test. Use this table to see where you might land.
             </p>
 
@@ -420,15 +416,15 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             </div>
 
             {/* Table */}
-            <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid #1C2F4A' }}>
+            <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid rgba(28,47,74,0.6)' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
                 <thead>
                   <tr>
-                    <th className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.1em', textAlign: 'left', padding: '14px 16px', borderBottom: '1px solid #1C2F4A', background: '#0a1220', fontWeight: 500 }}>
+                    <th className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.1em', textAlign: 'left', padding: '11px 13px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
                       CLASSIFICATION
                     </th>
                     {ageBands.map((band) => (
-                      <th key={band} className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.08em', textAlign: 'center', padding: '14px 12px', borderBottom: '1px solid #1C2F4A', background: '#0a1220', fontWeight: 500 }}>
+                      <th key={band} className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.08em', textAlign: 'center', padding: '11px 10px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
                         {band}
                       </th>
                     ))}
@@ -437,13 +433,13 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 <tbody>
                   {tableData.map((row, ri) => (
                     <tr key={row.label} style={{ background: ri % 2 === 0 ? '#0D1829' : '#0a1220' }}>
-                      <td style={{ padding: '12px 16px', borderLeft: `3px solid ${row.color}`, borderBottom: ri < tableData.length - 1 ? '1px solid #1C2F4A' : 'none' }}>
+                      <td style={{ padding: '10px 13px', borderLeft: `3px solid ${row.color}`, borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none' }}>
                         <span className="font-mono" style={{ fontSize: '0.72rem', fontWeight: 600, color: row.color }}>
                           {row.label}
                         </span>
                       </td>
                       {row.values.map((val, ci) => (
-                        <td key={ci} className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', textAlign: 'center', padding: '12px', borderBottom: ri < tableData.length - 1 ? '1px solid #1C2F4A' : 'none' }}>
+                        <td key={ci} className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', textAlign: 'center', padding: '10px', borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none' }}>
                           {val}
                         </td>
                       ))}
@@ -454,21 +450,19 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             </div>
 
             <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', opacity: 0.5, textAlign: 'center', marginTop: '16px' }}>
-              Values in ml · kg⁻¹ · min⁻¹
+              Values in ml &middot; kg&#x207B;&#xB9; &middot; min&#x207B;&#xB9;
             </p>
           </div>
         </section>
 
-        {/* ── Section divider ── */}
-        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+        <Divider />
 
         {/* ────── SECTION 6: FINAL CTA ────── */}
         <section style={{ position: 'relative' }}>
-          {/* Top gradient border */}
           <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,229,160,0.4), transparent)' }} />
 
           <div className="hiw-section-pad hiw-section-v" style={{ textAlign: 'center' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.98rem, 4.4vw, 2.75rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '20px' }}>
+            <h2 className="font-serif" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '20px' }}>
               Ready to Find Out Where You Stand?
             </h2>
             <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
@@ -490,10 +484,10 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 boxShadow: '0 0 40px rgba(0,229,160,0.3)',
               }}
             >
-              Start Your Assessment →
+              Start Your Assessment &rarr;
             </button>
 
-            <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', marginTop: '16px', letterSpacing: '0.05em' }}>
+            <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', marginTop: '12px' }}>
               Join thousands tracking their cardiovascular fitness with StepIQ.
             </p>
           </div>
@@ -515,28 +509,24 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         .hiw-steps-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 48px 80px;
+          gap: 48px;
+          position: relative;
         }
 
-        .hiw-step-arrow {
-          display: block;
-          position: absolute;
-          top: 28px;
-          right: -48px;
-          width: 16px;
-          height: 2px;
-          background: rgba(0,229,160,0.3);
+        .hiw-step-connector {
+          display: none;
         }
-        .hiw-step-arrow::after {
-          content: '';
-          position: absolute;
-          right: 0;
-          top: -3px;
-          width: 0;
-          height: 0;
-          border-left: 5px solid rgba(0,229,160,0.3);
-          border-top: 4px solid transparent;
-          border-bottom: 4px solid transparent;
+
+        @media (min-width: 768px) {
+          .hiw-step-connector {
+            display: block;
+            position: absolute;
+            top: 24px;
+            left: calc(33.33% * var(--step-i, 1) + 24px);
+            width: calc(33.33% - 48px);
+            height: 1px;
+            background: rgba(0,229,160,0.2);
+          }
         }
 
         .hiw-science-grid {
@@ -549,8 +539,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         @media (min-width: 768px) and (max-width: 1023px) {
           .hiw-section-pad { padding-left: 48px; padding-right: 48px; }
           .hiw-compare-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-          .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 40px; }
-          .hiw-step-arrow { right: -28px; width: 12px; }
+          .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
           .hiw-science-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
         }
 
@@ -560,7 +549,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           .hiw-section-v { padding-top: 48px; padding-bottom: 48px; }
           .hiw-compare-grid { grid-template-columns: 1fr; }
           .hiw-steps-grid { grid-template-columns: 1fr; gap: 40px; }
-          .hiw-step-arrow { display: none; }
           .hiw-science-grid { grid-template-columns: 1fr; }
         }
 
