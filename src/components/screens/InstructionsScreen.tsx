@@ -36,7 +36,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     },
     {
       title: 'Recording Your Data',
-      text: 'During the final 15 seconds of each level the app will alert you to check your heart rate. Record it from your monitor or count your pulse. Then select your RPE (effort level) before the next level begins.',
+      text: 'During the final 15 seconds of each level the app will alert you to check your heart rate. Record it from your monitor. Then select your RPE (effort level) before the next level begins.',
     },
     {
       title: 'Stop Conditions',
