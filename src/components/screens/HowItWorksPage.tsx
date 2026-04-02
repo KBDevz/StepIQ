@@ -195,11 +195,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
 
       <NavBar onStart={onStart} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} {...authNavProps} />
 
-      {/* DEBUG BANNER — remove after confirming file is served */}
-      <div style={{ position: 'fixed', top: 0, left: 0, right: 0, zIndex: 9999, background: '#FF0000', color: '#fff', textAlign: 'center', padding: '12px', fontFamily: 'monospace', fontSize: '18px', fontWeight: 'bold' }}>
-        THIS IS THE NEW FILE — IF YOU SEE THIS, VITE IS SERVING THE UPDATED CODE
-      </div>
-
       <div className="relative z-10">
 
         {/* ────── SECTION 1: HERO ────── */}
