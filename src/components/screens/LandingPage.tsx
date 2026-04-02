@@ -152,6 +152,18 @@ function ResultPreviewCard() {
 
       {/* VO2 number display */}
       <div className="mb-5">
+        <span
+          className="font-mono uppercase"
+          style={{
+            fontSize: '0.55rem',
+            letterSpacing: '0.16em',
+            color: '#5A7090',
+            display: 'block',
+            marginBottom: '4px',
+          }}
+        >
+          VO₂ Max Estimate
+        </span>
         <div
           className="font-serif"
           style={{
@@ -190,28 +202,19 @@ function ResultPreviewCard() {
         <PreviewChart />
       </div>
 
-      {/* Stat chips */}
-      <div className="flex items-center justify-center gap-2">
-        {['4 Levels', '56 mins', 'Age 35'].map((chip, i) => (
-          <span key={chip} className="flex items-center gap-2">
-            <span
-              className="font-mono"
-              style={{ fontSize: '0.65rem', color: '#5A7090' }}
-            >
-              {chip}
-            </span>
-            {i < 2 && (
-              <span style={{ color: '#1C2F4A', fontSize: '0.65rem' }}>·</span>
-            )}
-          </span>
-        ))}
-      </div>
+      {/* Descriptor line */}
+      <p
+        className="font-mono"
+        style={{ fontSize: '0.65rem', color: '#5A7090', textAlign: 'center' }}
+      >
+        4 of 5 levels · Age 35 · Male
+      </p>
     </div>
   );
 }
 
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
-  const pills = ['Clinically Validated', 'Linear Regression', 'AI Report'];
+  const pills = ['Free \u00b7 No Signup', 'Clinically Validated', 'Personalized Insights'];
 
   return (
     <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden">
@@ -267,7 +270,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '20px',
                 }}
               >
-                Chester Step Test · VO₂ Max Assessment
+                Chester Step Test · At-Home VO₂ Max Assessment
               </p>
 
               {/* Headline */}
@@ -280,11 +283,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '24px',
                 }}
               >
-                Know Your
+                Measure Your VO₂ Max
                 <br />
-                Cardiovascular Fitness
-                <br />
-                In 10 Minutes.
+                Without a Lab
               </h1>
 
               {/* Subheadline */}
@@ -298,10 +299,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '36px',
                 }}
               >
-                The Chester Step Test is the gold standard submaximal VO₂ max
-                assessment used in cardiac rehabilitation and occupational
-                health. Now available at home — no lab, just a step and a heart
-                rate monitor.
+                A guided 10-minute step test gives you your VO₂ max score,
+                fitness category, and a personalized 8-week plan — no lab,
+                no wearable required.
               </p>
 
               {/* Feature pills */}
@@ -355,7 +355,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                     marginTop: '12px',
                   }}
                 >
-                  No account required · Takes 10–12 minutes
+                  Free · No account · 10 minutes
                 </p>
               </div>
             </div>
@@ -405,6 +405,12 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .w-full[style*="padding: 0 64px"] {
             padding: 0 40px !important;
           }
+          .landing-right-col {
+            max-width: 480px;
+            margin: 0 auto;
+            transform: scale(0.8);
+            transform-origin: top center;
+          }
         }
 
         /* Mobile */
@@ -415,6 +421,10 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .w-full[style*="padding: 0 64px"] {
             padding: 0 24px !important;
           }
+        }
+
+        /* Hide card on small screens */
+        @media (max-width: 639px) {
           .landing-right-col {
             display: none;
           }
