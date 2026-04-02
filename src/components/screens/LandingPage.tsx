@@ -328,22 +328,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 ))}
               </div>
 
-              {/* HR notice */}
-              <p
-                className="font-mono landing-stagger-4"
-                style={{
-                  fontSize: '0.65rem',
-                  color: '#5A7090',
-                  fontStyle: 'italic',
-                  marginTop: '-30px',
-                  marginBottom: '40px',
-                  maxWidth: '440px',
-                  lineHeight: 1.6,
-                }}
-              >
-                You'll need a way to check your heart rate — a fitness watch, chest strap, or manual count works.
-              </p>
-
               {/* CTA button */}
               <div className="landing-stagger-5">
                 <button
