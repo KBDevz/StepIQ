@@ -82,60 +82,32 @@ const femaleData = [
   { label: 'Poor', color: '#FF4444', values: ['<29', '<27', '<25', '<22', '<21', '<19'] },
 ];
 
-/* ── Steps data ── */
+/* ── Steps data (3 steps) ── */
 const steps = [
   {
     title: 'Enter Your Details',
-    desc: 'Age, biological sex, and whether you take beta blockers. Takes under 30 seconds. No account needed.',
+    desc: 'Age, sex, and whether you take beta blockers. Takes 20 seconds.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
       </svg>
     ),
   },
   {
-    title: 'Find a Step',
-    desc: 'Any 30cm (12 inches) step works — a standard stair step is perfect. You\'ll also need a heart rate monitoring device (smartwatch, fitness band, or pulse oximeter).',
+    title: 'Step to a Guided Pace',
+    desc: 'The app coaches you through up to 5 levels, each 2 minutes long, with a metronome and animated step guide. Most people complete 3\u20134 levels.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
       </svg>
     ),
   },
   {
-    title: 'Step to the Beat',
-    desc: 'The app plays a precise metronome. Step up-up-down-down in time. An animated guide shows you the pattern before each level.',
+    title: 'Get Your Score and Insights',
+    desc: 'Your VO\u2082 max is calculated using linear regression across your heart rate data. You receive a fitness classification, AI analysis, and an 8-week training protocol.',
     icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Five Levels, Two Minutes Each',
-    desc: 'Each level increases the step rate. After each level you enter your heart rate and rate your exertion on a simple 1–10 scale.',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-      </svg>
-    ),
-  },
-  {
-    title: 'See Your Score',
-    desc: 'Linear regression extrapolates your VO₂ max from your heart rate response across levels. Classified against K. Sykes clinical norms.',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Generate Your AI Report',
-    desc: 'Get personalized observations about your test data, a clinically grounded 8-week training protocol, and your next target score.',
-    icon: (
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" /><polyline points="14 2 14 8 20 8" />
-        <path d="M9 15l2 2 4-4" />
       </svg>
     ),
   },
@@ -152,8 +124,8 @@ const comparisons = [
         <path d="M9 3h6" /><path d="M7 16h10" />
       </svg>
     ),
-    pros: ['Gold standard accuracy'],
-    cons: ['$200–500 per test', 'Requires specialist equipment', 'Not repeatable at home'],
+    pros: ['Gold standard accurate'],
+    cons: ['Requires specialist lab equipment', '$200–500 per test', 'Not repeatable at home'],
   },
   {
     title: 'Wearable Estimate',
@@ -163,8 +135,8 @@ const comparisons = [
         <rect x="6" y="4" width="12" height="16" rx="6" /><path d="M12 8v4l2 2" />
       </svg>
     ),
-    pros: ['Convenient, passive'],
-    cons: ['Algorithm-dependent', 'No validated protocol', 'Cannot be clinically verified'],
+    pros: ['Convenient and passive'],
+    cons: ['Algorithm-dependent, not validated', 'Cannot be clinically verified'],
   },
   {
     title: 'StepIQ',
@@ -175,10 +147,10 @@ const comparisons = [
       </svg>
     ),
     pros: [
-      'Clinically validated Chester Step Test',
-      'Submaximal — safe for all fitness levels',
+      'Clinically validated CST protocol',
+      'Safe submaximal test',
+      'Repeatable at home, free',
       'Linear regression scoring',
-      'Free and repeatable at home',
     ],
     cons: [],
   },
@@ -187,24 +159,21 @@ const comparisons = [
 /* ── Science cards ── */
 const scienceCards = [
   {
-    title: 'The Chester Step Test Protocol',
+    title: 'Chester Step Test Protocol',
     content:
-      'Developed by K. Sykes, the Chester Step Test is a validated submaximal cardiovascular assessment used in cardiac rehabilitation, occupational health screening, and sports medicine. Submaximal means it estimates your VO₂ max without pushing you to exhaustion — making it safe for a wide range of fitness levels and ages.',
-    footer: 'Reference: Sykes, K. (1998). Chester Step Test Resource Pack.',
+      'The Chester Step Test was developed by K. Sykes and is used in cardiac rehabilitation and occupational health worldwide. It uses a submaximal protocol — meaning it estimates your VO₂ max without pushing you to exhaustion, making it safe for a wide range of fitness levels.',
     chart: false,
   },
   {
     title: 'Linear Regression Scoring',
     content:
-      'StepIQ plots your heart rate response at each level and fits a least-squares regression line to the data. That line is extrapolated to your predicted maximum heart rate. Where it intersects is your estimated VO₂ max. The more levels completed, the more accurate the result — which is why a minimum of 3 levels is required.',
-    footer: null,
+      'StepIQ plots your heart rate response at each level and fits a regression line to the data. That line is extrapolated to your predicted maximum heart rate — where it intersects is your VO₂ max estimate. More levels completed means a more accurate result.',
     chart: true,
   },
   {
     title: 'Why VO₂ Max Matters',
     content:
-      'VO₂ max is consistently ranked as one of the strongest independent predictors of all-cause mortality — more predictive than blood pressure, cholesterol, or BMI in several large studies. Research suggests each 1 ml/kg/min improvement is associated with meaningful reduction in cardiovascular risk. Knowing your number is the prerequisite to improving it.',
-    footer: 'Based on research published in JAMA, NEJM, and Mayo Clinic Proceedings.',
+      'VO₂ max is one of the strongest independent predictors of all-cause mortality — more predictive than blood pressure, cholesterol, or BMI in several large studies. Each 1 ml/kg/min improvement is associated with a meaningful reduction in cardiovascular risk.',
     chart: false,
   },
 ];
@@ -225,29 +194,32 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
       <div className="relative z-10">
 
         {/* ────── SECTION 1: MINI HERO ────── */}
-        <section className="hiw-section-pad" style={{ paddingTop: '152px', paddingBottom: '80px' }}>
+        <section className="hiw-section-pad" style={{ paddingTop: '152px', paddingBottom: '100px' }}>
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
             <p className="font-mono uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#00E5A0', marginBottom: '20px' }}>
               How It Works
             </p>
-            <h1 className="font-serif" style={{ fontSize: 'clamp(2rem, 5vw, 3rem)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '24px' }}>
-              A Clinically Validated Fitness Test. At Home.
+            <h1 className="font-serif" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '24px' }}>
+              Measure Your VO₂ Max — Without a Lab
             </h1>
-            <p className="font-mono" style={{ fontSize: '0.85rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '560px', margin: '0 auto' }}>
-              The Chester Step Test has been used in cardiac rehabilitation and occupational health for decades. StepIQ brings it to your living room.
+            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto' }}>
+              Lab testing costs $500. Wearables are educated guesses. StepIQ uses the same clinically validated protocol used in cardiac rehabilitation — at home, in under 12 minutes.
             </p>
           </div>
         </section>
 
+        {/* ── Section divider ── */}
+        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+
         {/* ────── SECTION 2: THE PROBLEM ────── */}
         <section style={{ background: '#0D1829' }}>
-          <div className="hiw-section-pad" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+          <div className="hiw-section-pad hiw-section-v">
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="font-serif" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
+              <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
                 VO₂ Max Is the Best Predictor of Longevity. Most People Can't Measure It.
               </h2>
-              <p className="font-mono" style={{ fontSize: '0.85rem', color: '#5A7090', lineHeight: 1.8, textAlign: 'center', maxWidth: '600px', margin: '0 auto 56px' }}>
-                Lab tests are expensive and inaccessible. Wearable estimates are convenient but scientifically unverified. There has been no middle ground — until now.
+              <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, textAlign: 'center', maxWidth: '600px', margin: '0 auto 56px' }}>
+                Lab testing is expensive. Wearables are estimates. There hasn't been a credible middle ground — until now.
               </p>
 
               {/* Comparison cards */}
@@ -317,41 +289,43 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
-        {/* ────── SECTION 3: HOW THE TEST WORKS ────── */}
-        <section className="hiw-section-pad" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+        {/* ── Section divider ── */}
+        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+
+        {/* ────── SECTION 3: HOW IT WORKS ────── */}
+        <section className="hiw-section-pad hiw-section-v">
           <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '56px' }}>
-              Six Steps to Your VO₂ Max Score
+            <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '64px' }}>
+              How It Works
             </h2>
 
             <div className="hiw-steps-grid">
               {steps.map((step, i) => (
-                <div key={step.title} className="relative" style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
-                  {/* Connecting line on desktop — between columns */}
+                <div key={step.title} className="relative" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center' }}>
+                  {/* Connecting arrow on desktop */}
                   {i < steps.length - 1 && (
-                    <div className="hiw-step-connector" />
+                    <div className="hiw-step-arrow" />
                   )}
 
-                  {/* Number badge */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
-                    <div
-                      style={{
-                        width: '36px', height: '36px', borderRadius: '50%',
-                        background: 'rgba(0,229,160,0.12)', border: '1px solid rgba(0,229,160,0.3)',
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        fontFamily: 'IBM Plex Mono', fontSize: '0.8rem', fontWeight: 700, color: '#00E5A0',
-                        flexShrink: 0,
-                      }}
-                    >
+                  {/* Number badge + icon */}
+                  <div
+                    style={{
+                      width: '56px', height: '56px', borderRadius: '50%',
+                      background: 'rgba(0,229,160,0.08)', border: '1px solid rgba(0,229,160,0.25)',
+                      display: 'flex', alignItems: 'center', justifyContent: 'center',
+                      marginBottom: '20px', position: 'relative',
+                    }}
+                  >
+                    <span className="font-mono" style={{ position: 'absolute', top: '-8px', right: '-8px', width: '22px', height: '22px', borderRadius: '50%', background: '#00E5A0', color: '#060C18', fontSize: '0.65rem', fontWeight: 700, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                       {i + 1}
-                    </div>
-                    <div style={{ opacity: 0.6 }}>{step.icon}</div>
+                    </span>
+                    {step.icon}
                   </div>
 
-                  <h3 className="font-mono uppercase" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', color: '#EEF2FF', marginBottom: '8px' }}>
+                  <h3 className="font-mono uppercase" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', color: '#EEF2FF', marginBottom: '10px' }}>
                     {step.title}
                   </h3>
-                  <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7 }}>
+                  <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '300px' }}>
                     {step.desc}
                   </p>
                 </div>
@@ -360,11 +334,14 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
+        {/* ── Section divider ── */}
+        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+
         {/* ────── SECTION 4: THE SCIENCE ────── */}
         <section style={{ background: '#0D1829' }}>
-          <div className="hiw-section-pad" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+          <div className="hiw-section-pad hiw-section-v">
             <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="font-serif" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '56px' }}>
+              <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '56px' }}>
                 Built on Clinical Science
               </h2>
 
@@ -384,18 +361,13 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                     <h3 className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EEF2FF', marginBottom: '16px' }}>
                       {card.title}
                     </h3>
-                    <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.8, marginBottom: card.chart || card.footer ? '20px' : '0', flex: card.chart ? undefined : 1 }}>
+                    <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, marginBottom: card.chart ? '20px' : '0', flex: card.chart ? undefined : 1 }}>
                       {card.content}
                     </p>
                     {card.chart && (
                       <div style={{ marginBottom: '0' }}>
                         <ScienceChart />
                       </div>
-                    )}
-                    {card.footer && (
-                      <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', opacity: 0.6, marginTop: 'auto', paddingTop: '16px', borderTop: '1px solid #1C2F4A' }}>
-                        {card.footer}
-                      </p>
                     )}
                   </div>
                 ))}
@@ -404,14 +376,20 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
+        {/* ── Section divider ── */}
+        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+
         {/* ────── SECTION 5: CLASSIFICATIONS TABLE ────── */}
-        <section className="hiw-section-pad" style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+        <section className="hiw-section-pad hiw-section-v">
           <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.6rem, 4vw, 2.4rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px' }}>
+            <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px' }}>
               Where Do You Rank?
             </h2>
-            <p className="font-mono" style={{ fontSize: '0.8rem', color: '#5A7090', lineHeight: 1.7, textAlign: 'center', maxWidth: '560px', margin: '0 auto 36px' }}>
+            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, textAlign: 'center', maxWidth: '560px', margin: '0 auto 12px' }}>
               Fitness classifications based on Chester Step Test norms (K. Sykes). Used in clinical and occupational health settings worldwide.
+            </p>
+            <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', textAlign: 'center', marginBottom: '24px' }}>
+              Your exact score will be calculated after your test. Use this table to see where you might land.
             </p>
 
             {/* Sex toggle */}
@@ -480,17 +458,20 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
+        {/* ── Section divider ── */}
+        <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />
+
         {/* ────── SECTION 6: FINAL CTA ────── */}
         <section style={{ position: 'relative' }}>
           {/* Top gradient border */}
           <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,229,160,0.4), transparent)' }} />
 
-          <div className="hiw-section-pad" style={{ paddingTop: '100px', paddingBottom: '100px', textAlign: 'center' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '20px' }}>
+          <div className="hiw-section-pad hiw-section-v" style={{ textAlign: 'center' }}>
+            <h2 className="font-serif" style={{ fontSize: 'clamp(1.98rem, 4.4vw, 2.75rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '20px' }}>
               Ready to Find Out Where You Stand?
             </h2>
-            <p className="font-mono" style={{ fontSize: '0.85rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
-              Takes 10 to 12 minutes. No account required. Just a step and a heart rate monitoring device.
+            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
+              Takes 10 minutes. No account required. No equipment beyond a step.
             </p>
 
             <button
@@ -512,7 +493,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             </button>
 
             <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', marginTop: '16px', letterSpacing: '0.05em' }}>
-              Free · Clinically validated · AI-powered report
+              Join thousands tracking their cardiovascular fitness with StepIQ.
             </p>
           </div>
         </section>
@@ -522,6 +503,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
       {/* ── Responsive styles ── */}
       <style>{`
         .hiw-section-pad { padding-left: 64px; padding-right: 64px; }
+        .hiw-section-v { padding-top: 100px; padding-bottom: 100px; }
 
         .hiw-compare-grid {
           display: grid;
@@ -532,11 +514,28 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         .hiw-steps-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
-          gap: 48px 56px;
+          gap: 48px 80px;
         }
 
-        .hiw-step-connector {
-          display: none;
+        .hiw-step-arrow {
+          display: block;
+          position: absolute;
+          top: 28px;
+          right: -48px;
+          width: 16px;
+          height: 2px;
+          background: rgba(0,229,160,0.3);
+        }
+        .hiw-step-arrow::after {
+          content: '';
+          position: absolute;
+          right: 0;
+          top: -3px;
+          width: 0;
+          height: 0;
+          border-left: 5px solid rgba(0,229,160,0.3);
+          border-top: 4px solid transparent;
+          border-bottom: 4px solid transparent;
         }
 
         .hiw-science-grid {
@@ -549,15 +548,18 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         @media (min-width: 768px) and (max-width: 1023px) {
           .hiw-section-pad { padding-left: 48px; padding-right: 48px; }
           .hiw-compare-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
-          .hiw-steps-grid { grid-template-columns: repeat(2, 1fr); gap: 40px; }
+          .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 40px; }
+          .hiw-step-arrow { right: -28px; width: 12px; }
           .hiw-science-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
         }
 
         /* Mobile */
         @media (max-width: 767px) {
           .hiw-section-pad { padding-left: 24px; padding-right: 24px; }
+          .hiw-section-v { padding-top: 48px; padding-bottom: 48px; }
           .hiw-compare-grid { grid-template-columns: 1fr; }
-          .hiw-steps-grid { grid-template-columns: 1fr; gap: 32px; }
+          .hiw-steps-grid { grid-template-columns: 1fr; gap: 40px; }
+          .hiw-step-arrow { display: none; }
           .hiw-science-grid { grid-template-columns: 1fr; }
         }
 
