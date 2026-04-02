@@ -339,7 +339,7 @@ export default function ActiveLevelScreen({
               animation: 'hrAlertPulse 0.8s ease-in-out infinite',
             }}
           >
-            Check your heart rate
+            Check your heart rate now — record it before the level ends
           </p>
         ) : (
           <div style={{

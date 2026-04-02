@@ -68,5 +68,5 @@ export function onBeat(beatsSinceLevelStart: number, currentLevel: number) {
  */
 export function speakHRAlert() {
   cancelSpeech();
-  speak('Check your heart rate');
+  speak('Check your heart rate now. Record it before the level ends.');
 }

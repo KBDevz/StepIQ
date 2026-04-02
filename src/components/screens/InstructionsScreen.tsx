@@ -7,14 +7,47 @@ interface InstructionsScreenProps {
   onBack: () => void;
 }
 
+const LEVEL_PILLS = [
+  { label: 'L1', rate: '15/min' },
+  { label: 'L2', rate: '20/min' },
+  { label: 'L3', rate: '25/min' },
+  { label: 'L4', rate: '30/min' },
+  { label: 'L5', rate: '35/min' },
+];
+
 export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
+  const betaBlockerFormula = state.betaBlocker
+    ? `Your predicted max HR is calculated using the Londeree formula: 164 \u2212 (0.7 \u00d7 ${state.age}) = ${state.maxHR} bpm. Stop HR (85%): ${state.stopHR} bpm`
+    : null;
+
   const instructions = [
-    'Use a 30cm (12 inch) step. A standard stair step works.',
-    'Step to the beat: Left up, Right up, Left down, Right down. One cycle per 4 beats.',
-    'Each level is 2 minutes. At level end a panel slides up — enter your HR and select your RPE.',
-    'Have a heart rate monitoring device ready — smartwatch, fitness band, or pulse oximeter.',
-    `Test stops at HR >= ${state.stopHR} bpm (85% max) after minimum 3 levels, or RPE >= 7.`,
-    'Stop immediately if you feel chest pain, dizziness, or severe breathlessness.',
+    {
+      title: 'The Step',
+      text: 'Use a 30cm step (approx 12 inches). A standard stair step works perfectly.',
+    },
+    {
+      title: 'The Pattern',
+      text: 'Step to the beat: Left up, Right up, Left down, Right down. One full cycle = 4 beats. Maintain upright posture and avoid talking during stages.',
+    },
+    {
+      title: 'The Levels',
+      text: 'Most individuals will not complete all 5 levels \u2014 this is normal and expected.',
+      hasPills: true,
+    },
+    {
+      title: 'Recording Your Data',
+      text: 'During the final 15 seconds of each level the app will alert you to check your heart rate. Record it from your monitor or count your pulse. Then select your RPE (effort level) before the next level begins.',
+    },
+    {
+      title: 'Stop Conditions',
+      text: betaBlockerFormula
+        ? `The test stops automatically once at least 3 levels are completed AND either:\n\u00b7 Your HR reaches 85% of your predicted max (${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n\u00b7 Your RPE reaches 7 or above\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
+        : `The test stops automatically once at least 3 levels are completed AND either:\n\u00b7 Your HR reaches 85% of your predicted max (220 \u2212 ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n\u00b7 Your RPE reaches 7 or above\nYou may also end the test early at any time.`,
+    },
+    {
+      title: 'Safety',
+      text: 'Stop immediately if you experience chest pain, dizziness, severe shortness of breath, or feel unwell. This test is submaximal \u2014 you should never reach complete exhaustion.',
+    },
   ];
 
   return (
@@ -58,13 +91,13 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
           }}
         >
           <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42', lineHeight: 1.6 }}>
-            Beta blocker adjustment active — Max HR: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
+            Beta blocker adjustment active — using Londeree formula for max HR calculation
           </p>
         </div>
       )}
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '28px' }}>
-        {instructions.map((text, i) => (
+        {instructions.map((item, i) => (
           <div key={i}>
             <div style={{ display: 'flex', gap: '12px', padding: '12px 0' }}>
               <span
@@ -87,12 +120,45 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
               >
                 {i + 1}
               </span>
-              <p
-                className="font-mono"
-                style={{ fontSize: '0.78rem', color: '#EEF2FF', lineHeight: 1.6, flex: 1 }}
-              >
-                {text}
-              </p>
+              <div style={{ flex: 1 }}>
+                <p
+                  className="font-mono"
+                  style={{ fontSize: '0.68rem', fontWeight: 600, color: '#00E5A0', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                >
+                  {item.title}
+                </p>
+                {item.hasPills && (
+                  <>
+                    <p className="font-mono" style={{ fontSize: '0.75rem', color: '#EEF2FF', lineHeight: 1.6, marginBottom: '8px' }}>
+                      5 levels, 2 minutes each, increasing in pace:
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
+                      {LEVEL_PILLS.map((pill) => (
+                        <span
+                          key={pill.label}
+                          className="font-mono"
+                          style={{
+                            fontSize: '0.6rem',
+                            color: '#00E5A0',
+                            background: 'rgba(0,229,160,0.08)',
+                            border: '1px solid rgba(0,229,160,0.2)',
+                            borderRadius: '20px',
+                            padding: '3px 10px',
+                          }}
+                        >
+                          {pill.label} · {pill.rate}
+                        </span>
+                      ))}
+                    </div>
+                  </>
+                )}
+                <p
+                  className="font-mono"
+                  style={{ fontSize: '0.75rem', color: '#EEF2FF', lineHeight: 1.6, whiteSpace: 'pre-line' }}
+                >
+                  {item.text}
+                </p>
+              </div>
             </div>
             {i < instructions.length - 1 && (
               <div style={{ height: '1px', background: '#1C2F4A', marginLeft: '36px', opacity: 0.5 }} />
@@ -102,7 +168,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
       </div>
 
       <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
-        <Button onClick={onBegin}>Begin Test</Button>
+        <Button onClick={onBegin}>Continue</Button>
         <Button variant="ghost" onClick={onBack}>Back</Button>
       </div>
     </div>

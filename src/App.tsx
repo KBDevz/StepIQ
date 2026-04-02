@@ -12,6 +12,7 @@ import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
 import SetPasswordPage from './components/screens/SetPasswordPage';
+import ChecklistScreen from './components/screens/ChecklistScreen';
 import PhoneFrame from './components/ui/PhoneFrame';
 import AuthModal from './components/ui/AuthModal';
 
@@ -201,8 +202,14 @@ export default function App() {
         {screen === 'instructions' && (
           <InstructionsScreen
             state={state}
-            onBegin={() => setScreen('restingHR')}
+            onBegin={() => setScreen('checklist')}
             onBack={() => setScreen('setup')}
+          />
+        )}
+        {screen === 'checklist' && (
+          <ChecklistScreen
+            onBegin={() => setScreen('restingHR')}
+            onBack={() => setScreen('instructions')}
           />
         )}
         {screen === 'restingHR' && (

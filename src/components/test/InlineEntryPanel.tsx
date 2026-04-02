@@ -45,11 +45,26 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
     >
       {phase === 'hr' ? (
         <>
-          {/* HR Header */}
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '10px' }}>
-            <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090' }}>
-              Enter Heart Rate
+          {/* Level Complete Header */}
+          <div style={{ marginBottom: '6px' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 600, color: '#EEF2FF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+              Level {level} Complete
             </p>
+            <p className="font-mono" style={{ fontSize: '0.55rem', color: '#5A7090', marginTop: '2px' }}>
+              Enter the HR you recorded in the final 15 seconds
+            </p>
+          </div>
+
+          {/* HR Header */}
+          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
+            <div>
+              <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090' }}>
+                Heart Rate
+              </p>
+              <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', fontStyle: 'italic', marginTop: '1px' }}>
+                Recorded from final 15 seconds of the level
+              </p>
+            </div>
             <span className="font-mono" style={{ fontSize: '1.8rem', fontWeight: 700, color: '#EEF2FF', fontVariantNumeric: 'tabular-nums', minWidth: '70px', textAlign: 'right' }}>
               {hrValue || '—'}
               <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090', marginLeft: '4px' }}>bpm</span>

@@ -69,6 +69,7 @@ export type Screen =
   | 'howItWorks'
   | 'setup'
   | 'instructions'
+  | 'checklist'
   | 'restingHR'
   | 'preLevel'
   | 'activeLevel'
