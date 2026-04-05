@@ -1,10 +1,11 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import type { TestState, AIReport } from '../../types';
-import { calcVO2Max, classify, getThresholds, CLASSIFICATION_NAMES } from '../../utils/scoring';
+import { calcVO2Max, classify, getThresholds, CLASSIFICATION_NAMES, calculateHRZones } from '../../utils/scoring';
 import { buildReportPrompt } from '../../utils/reportPrompt';
 import { saveTestResult } from '../../lib/testResults';
 import NavBar from '../ui/NavBar';
 import RegressionChart from '../results/RegressionChart';
+import HRZonesCard from '../results/HRZonesCard';
 import AIReportPanel from '../results/AIReportPanel';
 import APIKeyModal from '../results/APIKeyModal';
 
@@ -455,6 +456,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
   const classification = classify(vo2Max, state.age, state.sex);
   const vo2Display = Math.round(vo2Max * 10) / 10;
   const hrFormula = state.betaBlocker ? 'Adjusted (Londeree)' : 'Standard (220-age)';
+  const hrZones = calculateHRZones(state.maxHR, vo2Max, state.restingHR, state.betaBlocker);
 
   // Scroll to report when user clicks "View My Report"
   useEffect(() => {
@@ -811,6 +813,9 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 </div>
               ))}
             </div>
+
+            {/* HR Zones */}
+            <HRZonesCard zones={hrZones} betaBlocker={state.betaBlocker} />
 
             {/* AI Report (only shown after user clicks "View My Report") */}
             <div ref={reportRef}>

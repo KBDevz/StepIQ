@@ -117,18 +117,28 @@ function getTrainingParams(classification: string): TrainingParams {
   }
 }
 
-// ── Compute HR Training Zones ──
-function computeHRZones(maxHR: number): string {
+// ── Compute HR Training Zones (Karvonen method) ──
+function computeHRZones(maxHR: number, restingHR: number | null, vo2Max: number, betaBlocker: boolean): string {
+  const rhr = restingHR || 60;
+  const hrr = maxHR - rhr;
+  const karvonen = (pct: number) => Math.round(hrr * pct + rhr);
+  const bbOffset = betaBlocker ? -12 : 0;
+
+  let z2High = 0.70;
+  if (vo2Max >= 40) z2High = 0.75;
+
   const zones = [
-    { name: 'Zone 1', label: 'Recovery', low: 0.50, high: 0.60 },
-    { name: 'Zone 2', label: 'Aerobic Base', low: 0.60, high: 0.70 },
-    { name: 'Zone 3', label: 'Aerobic Development', low: 0.70, high: 0.80 },
-    { name: 'Zone 4', label: 'Threshold', low: 0.80, high: 0.90 },
-    { name: 'Zone 5', label: 'VO2 Max', low: 0.90, high: 1.00 },
+    { name: 'Zone 1', label: 'Recovery', low: karvonen(0.50) + bbOffset, high: karvonen(0.60) + bbOffset },
+    { name: 'Zone 2', label: 'Fat Burning', low: karvonen(0.60) + bbOffset, high: karvonen(z2High) + bbOffset },
+    { name: 'Zone 3', label: 'Aerobic', low: karvonen(z2High) + bbOffset, high: karvonen(0.80) + bbOffset },
+    { name: 'Zone 4', label: 'Threshold', low: karvonen(0.80) + bbOffset, high: karvonen(0.90) + bbOffset },
+    { name: 'Zone 5', label: 'Maximum', low: karvonen(0.90) + bbOffset, high: maxHR + bbOffset },
   ];
-  return zones
-    .map(z => `  ${z.name}: ${Math.round(z.low * 100)}-${Math.round(z.high * 100)}% max HR = ${Math.round(maxHR * z.low)}-${Math.round(maxHR * z.high)} bpm (${z.label})`)
-    .join('\n');
+
+  const lines = zones.map(z => `  ${z.name}: ${z.low}-${z.high} bpm (${z.label})`).join('\n');
+  return lines + `\n  Fat Burning Zone: ${zones[1].low}-${zones[1].high} bpm (Zone 2)` +
+    `\n  Method: Karvonen heart rate reserve (resting HR: ${rhr} bpm)` +
+    (betaBlocker ? '\n  Note: Zones adjusted -12 bpm for beta blocker medication' : '');
 }
 
 export function buildReportPrompt(
@@ -159,7 +169,7 @@ export function buildReportPrompt(
   const finalLevel = state.data[state.data.length - 1];
   const rpeCalibration = computeRPECalibration(finalLevel.hr, finalLevel.rpe, state.maxHR);
   const training = getTrainingParams(classification.name);
-  const hrZones = computeHRZones(state.maxHR);
+  const hrZones = computeHRZones(state.maxHR, state.restingHR, vo2Max, state.betaBlocker);
 
   const prompt = `You are a clinical exercise physiologist analyzing a Chester Step Test result.
 Return ONLY raw JSON (no markdown, no code fences, no extra text).
@@ -189,8 +199,10 @@ Results:
 HR Efficiency Assessment: ${hrTrend}
 RPE Calibration Assessment: ${rpeCalibration}
 
-HR Training Zones (actual bpm for this patient):
+HR Training Zones (Karvonen method, personalized from test data):
 ${hrZones}
+
+IMPORTANT: Use these EXACT bpm numbers in all protocol intensity specifications. Never use generic percentages alone. Format intensity as: "Zone N - [min]-[max] bpm - RPE X-Y"
 
 VO2 improvement target: ${vo2Target} ml/kg/min (9% improvement)
 

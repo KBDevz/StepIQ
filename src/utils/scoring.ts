@@ -89,3 +89,52 @@ export function classify(vo2: number, age: number, sex: 'male' | 'female'): Clas
   const name = CLASSIFICATION_NAMES[idx];
   return { name, ...CLASSIFICATION_COLORS[name] };
 }
+
+// ── HR Zone Calculation (Karvonen Method) ──
+
+export interface HRZones {
+  maxHR: number;
+  zone1: { min: number; max: number };
+  zone2: { min: number; max: number };
+  zone3: { min: number; max: number };
+  zone4: { min: number; max: number };
+  zone5: { min: number; max: number };
+  fatBurnMin: number;
+  fatBurnMax: number;
+}
+
+export function calculateHRZones(
+  predictedMaxHR: number,
+  vo2Max: number,
+  restingHR: number | null,
+  betaBlocker: boolean,
+): HRZones {
+  const rhr = restingHR || 60;
+  const hrr = predictedMaxHR - rhr;
+
+  const karvonen = (pct: number) => Math.round(hrr * pct + rhr);
+
+  const bbOffset = betaBlocker ? -12 : 0;
+
+  const zones: HRZones = {
+    maxHR: predictedMaxHR,
+    zone1: { min: karvonen(0.50) + bbOffset, max: karvonen(0.60) + bbOffset },
+    zone2: { min: karvonen(0.60) + bbOffset, max: karvonen(0.70) + bbOffset },
+    zone3: { min: karvonen(0.70) + bbOffset, max: karvonen(0.80) + bbOffset },
+    zone4: { min: karvonen(0.80) + bbOffset, max: karvonen(0.90) + bbOffset },
+    zone5: { min: karvonen(0.90) + bbOffset, max: predictedMaxHR + bbOffset },
+    fatBurnMin: karvonen(0.60) + bbOffset,
+    fatBurnMax: karvonen(0.70) + bbOffset,
+  };
+
+  // Adjust Zone 2 upper boundary based on fitness level
+  if (vo2Max >= 40) {
+    zones.zone2.max = karvonen(0.75) + bbOffset;
+    zones.zone3.min = karvonen(0.75) + bbOffset;
+    zones.fatBurnMax = karvonen(0.75) + bbOffset;
+  } else if (vo2Max >= 30) {
+    zones.zone2.max = karvonen(0.70) + bbOffset;
+  }
+
+  return zones;
+}
