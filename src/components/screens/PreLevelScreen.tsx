@@ -128,9 +128,9 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
 
   // ── Explanation phase (Level 1 only) ──
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', flex: 1, padding: '24px 24px 32px' }}>
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, padding: '24px 24px 32px' }}>
       {/* Top section */}
-      <div style={{ textAlign: 'center', marginBottom: '24px', marginTop: '12px' }}>
+      <div style={{ textAlign: 'center', width: '100%', marginBottom: '24px', marginTop: '12px' }}>
         <Badge>Level 1 of 5</Badge>
         <h2
           className="font-serif"
@@ -144,12 +144,14 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
       </div>
 
       {/* Step animation — centered */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '24px' }}>
-        <StepGuide bpm={proto.bpm} />
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: '24px' }}>
+        <div style={{ width: '100%', maxWidth: '360px' }}>
+          <StepGuide bpm={proto.bpm} />
+        </div>
       </div>
 
       {/* Explanation bullets */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', width: '100%', maxWidth: '360px' }}>
         {[
           {
             icon: (
@@ -186,7 +188,7 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
       </div>
 
       {/* Ready button */}
-      <div style={{ marginTop: 'auto' }}>
+      <div style={{ marginTop: 'auto', width: '100%' }}>
         <Button onClick={handleReady}>I'm Ready — Start Level 1</Button>
       </div>
     </div>
