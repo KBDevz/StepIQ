@@ -24,11 +24,11 @@ export default function NavBar({
       <nav
         className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between hiw-nav-pad"
         style={{
-          height: '72px',
-          background: 'rgba(6,12,24,0.8)',
+          height: '64px',
+          background: 'rgba(15,14,19,0.85)',
           backdropFilter: 'blur(12px)',
           WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid rgba(28,47,74,0.6)',
+          borderBottom: '1px solid var(--border)',
         }}
       >
         <div
@@ -38,33 +38,35 @@ export default function NavBar({
           <div
             className="flex items-center justify-center"
             style={{
-              width: '40px',
-              height: '40px',
-              borderRadius: '10px',
-              background: 'rgba(0,229,160,0.12)',
-              border: '1px solid rgba(0,229,160,0.25)',
+              width: '32px',
+              height: '32px',
+              borderRadius: '8px',
+              background: 'var(--accent-dark)',
+              border: '1px solid rgba(0,184,162,0.3)',
             }}
           >
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
               <path
                 d="M3 12h4l3-9 4 18 3-9h4"
-                stroke="#00E5A0"
+                stroke="var(--accent)"
                 strokeWidth="2"
                 strokeLinecap="round"
                 strokeLinejoin="round"
               />
             </svg>
           </div>
-          <span className="font-serif" style={{ fontSize: '1.4rem', color: '#fff' }}>
+          <span className="font-serif" style={{ fontSize: '1.1rem', color: 'var(--text)', fontWeight: 700 }}>
             StepIQ
           </span>
         </div>
 
-        <div className="flex items-center gap-6">
+        <div className="flex items-center" style={{ gap: '28px' }}>
           <span
             onClick={onHowItWorks}
-            className="hidden sm:inline font-mono cursor-pointer hover:text-[#EEF2FF] transition-colors"
-            style={{ fontSize: '0.8rem', color: '#5A7090' }}
+            className="hidden sm:inline cursor-pointer transition-colors"
+            style={{ fontSize: '0.85rem', color: 'var(--text2)', fontFamily: 'var(--font-body)' }}
+            onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
           >
             How it works
           </span>
@@ -72,13 +74,15 @@ export default function NavBar({
           {/* Auth section */}
           {userName ? (
             <div className="flex items-center gap-4">
-              <span className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontFamily: 'var(--font-body)' }}>
                 {userName}
               </span>
               <span
                 onClick={onSignOut}
-                className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
-                style={{ fontSize: '0.65rem', color: '#5A7090' }}
+                className="cursor-pointer transition-colors font-mono uppercase"
+                style={{ fontSize: '0.65rem', color: 'var(--text2)', letterSpacing: '0.06em' }}
+                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
               >
                 Sign Out
               </span>
@@ -86,8 +90,10 @@ export default function NavBar({
           ) : onSignIn ? (
             <span
               onClick={onSignIn}
-              className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
-              style={{ fontSize: '0.72rem', color: '#5A7090' }}
+              className="cursor-pointer transition-colors"
+              style={{ fontSize: '0.85rem', color: 'var(--text2)', fontFamily: 'var(--font-body)' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
             >
               Sign In
             </span>
@@ -96,22 +102,34 @@ export default function NavBar({
           {subtleStart ? (
             <span
               onClick={onStart}
-              className="font-mono cursor-pointer transition-colors hover:text-[#EEF2FF]"
-              style={{ fontSize: '0.65rem', color: '#5A7090' }}
+              className="cursor-pointer transition-colors font-mono uppercase"
+              style={{ fontSize: '0.65rem', color: 'var(--text2)', letterSpacing: '0.06em' }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
             >
               {startLabel || 'Start New Test'}
             </span>
           ) : (
             <button
               onClick={onStart}
-              className="font-mono cursor-pointer transition-all hover:bg-[#00E5A0]/10"
+              className="cursor-pointer transition-all font-mono uppercase"
               style={{
-                fontSize: '0.75rem',
-                color: '#00E5A0',
-                border: '1px solid #00E5A0',
-                background: 'transparent',
-                padding: '8px 20px',
-                borderRadius: '8px',
+                fontSize: '0.72rem',
+                fontWeight: 500,
+                letterSpacing: '0.08em',
+                color: 'var(--text2)',
+                border: '1px solid var(--border)',
+                background: 'var(--surface2)',
+                padding: '8px 18px',
+                borderRadius: '10px',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.borderColor = 'var(--accent)';
+                e.currentTarget.style.color = 'var(--text)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.borderColor = 'var(--border)';
+                e.currentTarget.style.color = 'var(--text2)';
               }}
             >
               {startLabel || 'Start Assessment'}

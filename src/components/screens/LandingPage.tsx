@@ -8,6 +8,7 @@ import {
   ResponsiveContainer,
 } from 'recharts';
 import NavBar from '../ui/NavBar';
+import ThemeToggle from '../ui/ThemeToggle';
 
 interface LandingPageProps {
   onStart: () => void;
@@ -15,7 +16,9 @@ interface LandingPageProps {
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
-// Sample data for the preview chart
+/* ─────────────────────────────────────────────
+   Sample regression data for the preview chart
+   ───────────────────────────────────────────── */
 const sampleData = [
   { level: 1, hr: 95, vo2: 17.3 },
   { level: 2, hr: 115, vo2: 21.9 },
@@ -26,10 +29,7 @@ const sampleData = [
 const regressionLine = (() => {
   const pts = sampleData.map((d) => ({ x: d.hr, y: d.vo2 }));
   const n = pts.length;
-  let sx = 0,
-    sy = 0,
-    sxy = 0,
-    sx2 = 0;
+  let sx = 0, sy = 0, sxy = 0, sx2 = 0;
   pts.forEach((p) => {
     sx += p.x;
     sy += p.y;
@@ -57,26 +57,26 @@ const regressionLine = (() => {
 
 function PreviewChart() {
   return (
-    <ResponsiveContainer width="100%" height={180}>
+    <ResponsiveContainer width="100%" height={160}>
       <LineChart margin={{ top: 8, right: 12, bottom: 4, left: -20 }}>
-        <CartesianGrid stroke="#1C2F4A" strokeDasharray="3 3" />
+        <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
         <XAxis
           dataKey="hr"
           type="number"
           domain={[85, 190]}
-          tick={{ fill: '#5A7090', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
-          stroke="#1C2F4A"
+          tick={{ fill: 'var(--text2)', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
+          stroke="var(--border)"
           tickLine={false}
         />
         <YAxis
-          tick={{ fill: '#5A7090', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
-          stroke="#1C2F4A"
+          tick={{ fill: 'var(--text2)', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
+          stroke="var(--border)"
           tickLine={false}
         />
         <Line
           data={regressionLine.line.filter((d) => d.actual !== undefined)}
           dataKey="actual"
-          stroke="#3B82F6"
+          stroke="#4A9EFF"
           strokeWidth={2}
           dot={false}
           isAnimationActive={false}
@@ -84,7 +84,7 @@ function PreviewChart() {
         <Line
           data={regressionLine.line.filter((d) => d.predicted !== undefined)}
           dataKey="predicted"
-          stroke="#00E5A0"
+          stroke="var(--class-good)"
           strokeWidth={2}
           strokeDasharray="6 4"
           dot={false}
@@ -94,15 +94,15 @@ function PreviewChart() {
           data={sampleData.map((p) => ({ hr: p.hr, dot: p.vo2 }))}
           dataKey="dot"
           stroke="transparent"
-          dot={{ fill: '#3B82F6', r: 4, stroke: '#0D1829', strokeWidth: 2 }}
+          dot={{ fill: '#4A9EFF', r: 4, stroke: 'var(--surface)', strokeWidth: 2 }}
           isAnimationActive={false}
         />
         <ReferenceDot
           x={regressionLine.maxHR}
           y={regressionLine.vo2Max}
           r={5}
-          fill="#00E5A0"
-          stroke="#0D1829"
+          fill="var(--class-good)"
+          stroke="var(--surface)"
           strokeWidth={2}
         />
       </LineChart>
@@ -110,102 +110,105 @@ function PreviewChart() {
   );
 }
 
-function ResultPreviewCard() {
+/* ─────────────────────────────────────────────
+   Sample Result card (top right)
+   ───────────────────────────────────────────── */
+function SampleResultCard() {
   return (
     <div
-      className="w-full"
       style={{
-        background: '#0D1829',
-        border: '1px solid #1C2F4A',
-        borderRadius: '20px',
-        padding: '28px',
-        boxShadow:
-          '0 40px 80px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.05)',
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: '16px',
+        padding: '24px',
+        boxShadow: 'var(--shadow-md)',
       }}
     >
-      {/* Header row */}
-      <div className="flex items-center justify-between mb-5">
+      {/* Row 1 — label + classification badge */}
+      <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
         <span
           className="font-mono uppercase"
           style={{
-            fontSize: '0.55rem',
+            fontSize: '0.52rem',
             letterSpacing: '0.16em',
-            color: '#5A7090',
+            color: 'var(--text2)',
           }}
         >
           Sample Result
         </span>
         <span
-          className="font-mono"
-          style={{
-            fontSize: '0.55rem',
-            letterSpacing: '0.1em',
-            color: '#5A7090',
-            border: '1px solid #1C2F4A',
-            borderRadius: '6px',
-            padding: '3px 8px',
-          }}
-        >
-          StepIQ
-        </span>
-      </div>
-
-      {/* VO2 number display */}
-      <div className="mb-5">
-        <span
           className="font-mono uppercase"
           style={{
-            fontSize: '0.55rem',
-            letterSpacing: '0.16em',
-            color: '#5A7090',
-            display: 'block',
-            marginBottom: '4px',
-          }}
-        >
-          VO₂ Max Estimate
-        </span>
-        <div
-          className="font-serif"
-          style={{
-            fontSize: '4rem',
-            color: '#06D6A0',
-            lineHeight: 1,
-            fontWeight: 700,
-          }}
-        >
-          41.2
-        </div>
-        <div
-          className="font-mono mt-1"
-          style={{ fontSize: '0.65rem', color: '#5A7090' }}
-        >
-          ml · kg⁻¹ · min⁻¹
-        </div>
-        <span
-          className="inline-block mt-2 font-mono uppercase"
-          style={{
-            fontSize: '0.7rem',
-            letterSpacing: '0.12em',
-            color: '#06D6A0',
+            fontSize: '0.58rem',
+            letterSpacing: '0.1em',
+            color: 'var(--class-good)',
             background: 'rgba(6,214,160,0.1)',
             border: '1px solid rgba(6,214,160,0.3)',
             borderRadius: '20px',
-            padding: '4px 14px',
+            padding: '3px 10px',
           }}
         >
           Good
         </span>
       </div>
 
-      {/* Regression chart */}
-      <div className="mb-4">
+      {/* Score label */}
+      <div
+        className="font-mono uppercase"
+        style={{
+          fontSize: '0.52rem',
+          letterSpacing: '0.16em',
+          color: 'var(--text2)',
+          marginBottom: '6px',
+        }}
+      >
+        VO₂ Max Estimate
+      </div>
+
+      {/* Score number */}
+      <div
+        className="font-serif"
+        style={{
+          fontSize: '4.5rem',
+          color: 'var(--class-good)',
+          lineHeight: 1,
+          fontWeight: 700,
+        }}
+      >
+        41.2
+      </div>
+
+      <div
+        className="font-mono"
+        style={{
+          fontSize: '0.62rem',
+          color: 'var(--text2)',
+          marginTop: '6px',
+          marginBottom: '16px',
+        }}
+      >
+        ml · kg⁻¹ · min⁻¹
+      </div>
+
+      {/* Chart */}
+      <div
+        style={{
+          background: 'var(--surface2)',
+          borderRadius: '8px',
+          padding: '8px 4px',
+        }}
+      >
         <PreviewChart />
       </div>
 
-      {/* Descriptor line */}
       <p
         className="font-mono"
-        style={{ fontSize: '0.65rem', color: '#5A7090', textAlign: 'center' }}
+        style={{
+          fontSize: '0.6rem',
+          color: 'var(--text2)',
+          textAlign: 'center',
+          marginTop: '12px',
+        }}
       >
         4 of 5 levels · Age 35 · Male
       </p>
@@ -213,60 +216,153 @@ function ResultPreviewCard() {
   );
 }
 
+/* ─────────────────────────────────────────────
+   Test Preview card (bottom right)
+   ───────────────────────────────────────────── */
+function TestPreviewCard() {
+  return (
+    <div
+      className="landing-preview-card"
+      style={{
+        background: 'var(--surface)',
+        border: '1px solid var(--border)',
+        borderRadius: '16px',
+        padding: '20px',
+        boxShadow: 'var(--shadow-sm)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '16px',
+      }}
+    >
+      {/* Mini phone mockup */}
+      <div
+        style={{
+          width: '80px',
+          height: '120px',
+          flexShrink: 0,
+          background: 'var(--surface2)',
+          border: '1px solid var(--border)',
+          borderRadius: '12px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          gap: '4px',
+          position: 'relative',
+        }}
+      >
+        <span
+          className="font-serif"
+          style={{ fontSize: '2.25rem', color: 'var(--text)', lineHeight: 1, fontWeight: 700 }}
+        >
+          2
+        </span>
+        <span
+          className="font-mono"
+          style={{ fontSize: '0.55rem', color: 'var(--text2)' }}
+        >
+          1:43
+        </span>
+        <span
+          style={{
+            width: '6px',
+            height: '6px',
+            borderRadius: '50%',
+            background: 'var(--accent)',
+            boxShadow: '0 0 6px var(--accent)',
+            marginTop: '2px',
+          }}
+        />
+      </div>
+
+      {/* Text */}
+      <div style={{ flex: 1 }}>
+        <p
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.85rem',
+            color: 'var(--text)',
+            fontWeight: 600,
+            marginBottom: '6px',
+          }}
+        >
+          Guided, beat by beat.
+        </p>
+        <p
+          style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.72rem',
+            color: 'var(--text2)',
+            lineHeight: 1.6,
+          }}
+        >
+          The app sets the pace with a metronome and guides you through each
+          level. Check your heart rate at the end of each stage.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+/* ─────────────────────────────────────────────
+   Main Landing Page
+   ───────────────────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
-  const pills = ['Free \u00b7 No Signup', 'Clinically Validated', 'Personalized Insights'];
+  const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
 
   return (
-    <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden">
+    <div
+      style={{
+        minHeight: '100vh',
+        background: 'var(--bg)',
+        color: 'var(--text)',
+        position: 'relative',
+        overflowX: 'hidden',
+      }}
+    >
       {/* Background grid */}
       <div
         className="fixed inset-0 pointer-events-none"
         style={{
           backgroundImage: `
-            linear-gradient(rgba(28,47,74,0.2) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(28,47,74,0.2) 1px, transparent 1px)
+            linear-gradient(var(--grid-color) 1px, transparent 1px),
+            linear-gradient(90deg, var(--grid-color) 1px, transparent 1px)
           `,
           backgroundSize: '40px 40px',
-        }}
-      />
-      {/* Radial vignette */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)',
         }}
       />
 
       <NavBar onStart={onStart} onHowItWorks={onHowItWorks} {...authNavProps} />
 
-      {/* ── HERO SECTION ── */}
-      <div
-        className="relative z-10 mx-auto"
+      {/* ── HERO ── */}
+      <section
+        className="relative z-10"
         style={{
-          maxWidth: '1200px',
-          minHeight: 'calc(100vh - 72px)',
-          marginTop: '72px',
+          minHeight: 'calc(100vh - 64px)',
+          marginTop: '64px',
           display: 'flex',
           alignItems: 'center',
         }}
       >
-        {/* Responsive padding wrapper */}
         <div
-          className="w-full"
-          style={{ padding: '0 64px' }}
+          className="landing-container"
+          style={{
+            width: '100%',
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '0 64px',
+          }}
         >
-          {/* Desktop: two-column grid */}
-          <div className="landing-grid w-full">
+          <div className="landing-grid">
             {/* ── LEFT COLUMN ── */}
-            <div style={{ paddingTop: '80px', paddingBottom: '80px' }}>
+            <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
               {/* Eyebrow */}
               <p
                 className="font-mono uppercase landing-stagger-1"
                 style={{
-                  fontSize: '0.65rem',
+                  fontSize: '0.62rem',
                   letterSpacing: '0.18em',
-                  color: '#00E5A0',
+                  color: 'var(--accent)',
                   marginBottom: '20px',
                 }}
               >
@@ -278,25 +374,44 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 className="font-serif landing-stagger-2 landing-headline"
                 style={{
                   fontWeight: 700,
-                  color: '#fff',
+                  color: 'var(--text)',
                   lineHeight: 1.1,
-                  marginBottom: '24px',
+                  margin: 0,
                 }}
               >
-                Estimate Your VO₂ Max
+                Estimate your VO₂ max
                 <br />
-                Without a Lab
+                <span
+                  style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 700 }}
+                >
+                  without a lab.
+                </span>
               </h1>
+
+              {/* Secondary brand line */}
+              <p
+                className="landing-stagger-3"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '1rem',
+                  color: 'var(--text2)',
+                  marginTop: '16px',
+                  marginBottom: '20px',
+                }}
+              >
+                Know your heart, without the lab.
+              </p>
 
               {/* Subheadline */}
               <p
-                className="font-mono landing-stagger-3"
+                className="landing-stagger-3"
                 style={{
-                  fontSize: '0.85rem',
-                  color: '#5A7090',
-                  lineHeight: 1.8,
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.95rem',
+                  color: 'var(--text2)',
+                  lineHeight: 1.75,
                   maxWidth: '480px',
-                  marginBottom: '36px',
+                  marginBottom: '28px',
                 }}
               >
                 A guided 10-minute step test. An instant estimate of your
@@ -304,88 +419,136 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 — no lab needed.
               </p>
 
-              {/* Feature pills */}
+              {/* Trust badges */}
               <div
                 className="flex flex-wrap landing-stagger-4"
-                style={{ gap: '10px', marginBottom: '40px' }}
+                style={{ gap: '8px', marginBottom: '14px' }}
               >
                 {pills.map((pill) => (
                   <span
                     key={pill}
                     className="font-mono uppercase"
                     style={{
-                      fontSize: '0.62rem',
-                      letterSpacing: '0.1em',
-                      color: '#00E5A0',
-                      background: 'rgba(0,229,160,0.08)',
-                      border: '1px solid rgba(0,229,160,0.3)',
-                      padding: '6px 14px',
+                      fontSize: '0.6rem',
+                      letterSpacing: '0.08em',
+                      color: 'var(--accent)',
+                      background: 'var(--accent-dark)',
+                      border: '1px solid rgba(0,184,162,0.25)',
+                      padding: '5px 12px',
                       borderRadius: '20px',
                     }}
                   >
-                    {pill}
+                    ✓ {pill}
                   </span>
                 ))}
               </div>
 
-              {/* CTA button */}
+              {/* HR note */}
+              <p
+                className="landing-stagger-4"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.72rem',
+                  fontStyle: 'italic',
+                  color: 'var(--text2)',
+                  marginBottom: '28px',
+                  maxWidth: '480px',
+                }}
+              >
+                ♥ You'll need a way to check your heart rate — a watch,
+                chest strap, or manual count all work.
+              </p>
+
+              {/* CTA */}
               <div className="landing-stagger-5">
                 <button
                   onClick={onStart}
-                  className="font-mono uppercase cursor-pointer transition-all landing-cta-btn"
+                  className="landing-cta-btn font-mono uppercase cursor-pointer transition-all"
                   style={{
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                    letterSpacing: '0.1em',
-                    color: '#060C18',
-                    background: '#00E5A0',
-                    padding: '16px 36px',
+                    width: '100%',
+                    fontSize: '0.85rem',
+                    fontWeight: 600,
+                    letterSpacing: '0.08em',
+                    color: 'var(--bg)',
+                    background: 'var(--accent)',
+                    padding: '16px 24px',
                     borderRadius: '10px',
                     border: 'none',
-                    boxShadow: '0 0 40px rgba(0,229,160,0.3)',
+                    boxShadow: 'var(--shadow-accent)',
                   }}
                 >
                   Start Free Assessment →
                 </button>
                 <p
-                  className="font-mono"
+                  className="font-mono uppercase"
                   style={{
-                    fontSize: '0.65rem',
-                    color: '#5A7090',
+                    fontSize: '0.6rem',
+                    letterSpacing: '0.1em',
+                    color: 'var(--text2)',
                     marginTop: '12px',
+                    textAlign: 'center',
                   }}
                 >
-                  Free · No account · 10 minutes
+                  Free · No Account · 10 Minutes
                 </p>
               </div>
             </div>
 
             {/* ── RIGHT COLUMN ── */}
             <div className="landing-right-col landing-stagger-card">
-              <ResultPreviewCard />
+              <SampleResultCard />
+              <TestPreviewCard />
             </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* ── RESPONSIVE STYLES & ANIMATIONS ── */}
+      {/* ── FOOTER ── */}
+      <footer
+        className="relative z-10 landing-footer"
+        style={{
+          borderTop: '1px solid var(--border)',
+          padding: '20px 64px',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          gap: '16px',
+        }}
+      >
+        <span
+          className="font-mono uppercase"
+          style={{
+            fontSize: '0.52rem',
+            letterSpacing: '0.1em',
+            color: 'var(--text3)',
+          }}
+        >
+          Powered by Chester Step Test Protocol · K. Sykes, 1998
+        </span>
+
+        <ThemeToggle />
+      </footer>
+
+      {/* ── RESPONSIVE & ANIMATIONS ── */}
       <style>{`
-        /* Grid layout */
+        /* Desktop grid */
         .landing-grid {
           display: grid;
           grid-template-columns: 55% 45%;
           gap: 80px;
           align-items: center;
+          width: 100%;
         }
         .landing-headline {
           font-size: 4rem;
         }
         .landing-right-col {
           display: flex;
-          align-items: center;
+          flex-direction: column;
+          gap: 16px;
         }
 
-        /* Tablet: single column */
+        /* Tablet */
         @media (max-width: 1023px) {
           .landing-grid {
             grid-template-columns: 1fr;
@@ -393,57 +556,39 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
             max-width: 600px;
             margin: 0 auto;
           }
-          .landing-headline {
-            font-size: 2.5rem;
-          }
-          .landing-right-col {
-            justify-content: center;
-          }
-        }
-        @media (min-width: 768px) and (max-width: 1023px) {
-          .landing-grid { padding: 0; }
-          .w-full[style*="padding: 0 64px"] {
-            padding: 0 40px !important;
-          }
-          .landing-right-col {
-            max-width: 480px;
-            margin: 0 auto;
-            transform: scale(0.8);
-            transform-origin: top center;
-          }
+          .landing-headline { font-size: 2.6rem; }
+          .landing-container { padding: 0 40px !important; }
+          .landing-preview-card { display: none; }
+          .landing-footer { padding: 20px 40px !important; }
         }
 
         /* Mobile */
         @media (max-width: 767px) {
-          .landing-headline {
-            font-size: 2rem;
-          }
-          .w-full[style*="padding: 0 64px"] {
-            padding: 0 24px !important;
-          }
-        }
-
-        /* Hide card on small screens */
-        @media (max-width: 639px) {
-          .landing-right-col {
-            display: none;
+          .landing-headline { font-size: 2.2rem; }
+          .landing-container { padding: 0 24px !important; }
+          .landing-right-col { display: none; }
+          .landing-footer {
+            padding: 20px 24px !important;
+            flex-direction: column;
+            align-items: flex-start;
           }
         }
 
         /* Large screens */
         @media (min-width: 1400px) {
-          .landing-headline {
-            font-size: 4.2rem;
-          }
+          .landing-headline { font-size: 4.4rem; }
         }
 
         /* CTA hover */
         .landing-cta-btn:hover {
           transform: translateY(-2px);
-          box-shadow: 0 0 60px rgba(0,229,160,0.45), 0 8px 24px rgba(0,229,160,0.2);
+          box-shadow: 0 0 60px rgba(0,184,162,0.4), 0 8px 24px rgba(0,184,162,0.2);
+        }
+        .landing-cta-btn:active {
+          transform: scale(0.98);
         }
 
-        /* Staggered animations */
+        /* Staggered entrance */
         .landing-stagger-1,
         .landing-stagger-2,
         .landing-stagger-3,
@@ -461,30 +606,15 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         .landing-stagger-card {
           animation-delay: 0.4s;
           animation-name: landingSlideRight;
-          animation-duration: 0.6s;
-          animation-timing-function: ease-out;
-          animation-fill-mode: forwards;
         }
 
         @keyframes landingFadeUp {
-          from {
-            opacity: 0;
-            transform: translateY(16px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(16px); }
+          to { opacity: 1; transform: translateY(0); }
         }
         @keyframes landingSlideRight {
-          from {
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
         }
       `}</style>
     </div>

@@ -30,6 +30,9 @@
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
   --shadow-accent: 0 0 30px rgba(0, 184, 162, 0.2);
 
+  /* Grid texture (landing page background) */
+  --grid-color: rgba(46, 42, 56, 0.3);
+
   /* Classification colors (fitness categories) */
   --class-excellent: #00E5A0;
   --class-good: #06D6A0;
@@ -71,6 +74,8 @@
   --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
   --shadow-accent: 0 0 30px rgba(0, 137, 110, 0.15);
+
+  --grid-color: rgba(180, 170, 160, 0.15);
 }
 
 /* ───────────────────────────────────────────────────────────
