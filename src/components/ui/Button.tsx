@@ -12,53 +12,51 @@ export default function Button({
   ...props
 }: ButtonProps) {
   const base: React.CSSProperties = {
-    fontFamily: "'IBM Plex Mono', monospace",
+    fontFamily: 'var(--font-mono)',
     borderRadius: '10px',
     cursor: 'pointer',
     width: fullWidth ? '100%' : 'auto',
     transition: 'transform 0.15s, box-shadow 0.15s, border-color 0.2s, color 0.2s, background 0.2s',
     outline: 'none',
     textTransform: 'uppercase' as const,
-    letterSpacing: '0.1em',
+    letterSpacing: '0.08em',
   };
 
   const variants: Record<string, React.CSSProperties> = {
     primary: {
-      background: '#00E5A0',
-      color: '#060C18',
-      fontSize: '0.78rem',
-      fontWeight: 700,
-      padding: '15px 24px',
-      border: 'none',
-      boxShadow: '0 0 24px rgba(0,229,160,0.2)',
-    },
-    ghost: {
-      background: 'rgba(13,24,41,0.7)',
-      color: '#C4D4E8',
-      fontSize: '0.72rem',
-      fontWeight: 500,
-      letterSpacing: '0.08em',
-      padding: '13px 24px',
-      border: '1px solid rgba(100,140,180,0.4)',
-      backdropFilter: 'blur(8px)',
-      WebkitBackdropFilter: 'blur(8px)',
-    },
-    danger: {
-      background: 'transparent',
-      color: '#FF4444',
-      fontSize: '0.72rem',
-      fontWeight: 500,
-      padding: '13px 24px',
-      border: '1px solid rgba(255,68,68,0.3)',
-    },
-    report: {
-      background: '#0D1829',
-      color: '#00E5A0',
+      background: 'var(--accent)',
+      color: 'var(--bg)',
       fontSize: '0.78rem',
       fontWeight: 600,
       padding: '15px 24px',
-      border: '1px solid rgba(0,229,160,0.4)',
-      boxShadow: '0 0 20px rgba(0,229,160,0.1)',
+      border: 'none',
+      boxShadow: 'var(--shadow-accent)',
+    },
+    ghost: {
+      background: 'var(--surface2)',
+      color: 'var(--text2)',
+      fontSize: '0.72rem',
+      fontWeight: 500,
+      letterSpacing: '0.06em',
+      padding: '13px 24px',
+      border: '1px solid var(--border)',
+    },
+    danger: {
+      background: 'transparent',
+      color: 'var(--danger)',
+      fontSize: '0.72rem',
+      fontWeight: 500,
+      padding: '13px 24px',
+      border: '1px solid rgba(240,79,79,0.35)',
+    },
+    report: {
+      background: 'var(--surface)',
+      color: 'var(--accent)',
+      fontSize: '0.78rem',
+      fontWeight: 600,
+      padding: '15px 24px',
+      border: '1px solid rgba(0,184,162,0.4)',
+      boxShadow: '0 0 20px rgba(0,184,162,0.1)',
     },
   };
 
@@ -78,13 +76,13 @@ export default function Button({
         const el = e.currentTarget;
         if (variant === 'primary') {
           el.style.transform = 'translateY(-2px)';
-          el.style.boxShadow = '0 0 40px rgba(0,229,160,0.35), 0 8px 20px rgba(0,229,160,0.15)';
+          el.style.boxShadow = '0 0 40px rgba(0,184,162,0.35), 0 8px 20px rgba(0,184,162,0.15)';
         } else if (variant === 'ghost') {
-          el.style.borderColor = 'rgba(100,140,180,0.7)';
-          el.style.color = '#fff';
+          el.style.borderColor = 'var(--accent)';
+          el.style.color = 'var(--text)';
         } else if (variant === 'report') {
-          el.style.borderColor = '#00E5A0';
-          el.style.boxShadow = '0 0 30px rgba(0,229,160,0.2)';
+          el.style.borderColor = 'var(--accent)';
+          el.style.boxShadow = '0 0 30px rgba(0,184,162,0.2)';
         }
       }}
       onMouseLeave={(e) => {

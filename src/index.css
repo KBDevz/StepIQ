@@ -1,6 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap');
 @import "tailwindcss";
 
+/* ───────────────────────────────────────────────────────────
+   DESIGN TOKENS — DARK MODE (default)
+   ─────────────────────────────────────────────────────────── */
+:root {
+  /* Surfaces & text */
+  --bg: #0F0E13;
+  --surface: #1A1820;
+  --surface2: #221F2A;
+  --surface3: #2A2733;
+  --border: #2E2A38;
+  --border-light: rgba(46, 42, 56, 0.6);
+  --text: #F0EDF8;
+  --text2: #8A8299;
+  --text3: #5A5568;
+
+  /* Accent & semantic */
+  --accent: #00B8A2;
+  --accent-glow: rgba(0, 184, 162, 0.12);
+  --accent-hover: #00A090;
+  --accent-dark: rgba(0, 184, 162, 0.08);
+  --warn: #F5A524;
+  --warn-glow: rgba(245, 165, 36, 0.12);
+  --danger: #F04F4F;
+
+  /* Shadows */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.5);
+  --shadow-accent: 0 0 30px rgba(0, 184, 162, 0.2);
+
+  /* Classification colors (fitness categories) */
+  --class-excellent: #00E5A0;
+  --class-good: #06D6A0;
+  --class-average: #FFD166;
+  --class-below-avg: #FF8C42;
+  --class-poor: #FF4444;
+
+  /* Fonts */
+  --font-display: 'Libre Baskerville', Georgia, serif;
+  --font-body: 'DM Sans', system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+/* ───────────────────────────────────────────────────────────
+   DESIGN TOKENS — LIGHT MODE
+   Opt-in via [data-theme="light"] or .theme-light on <html>
+   ─────────────────────────────────────────────────────────── */
+:root[data-theme="light"],
+.theme-light {
+  --bg: #F8F6F2;
+  --surface: #FFFFFF;
+  --surface2: #F0EDE8;
+  --surface3: #E8E4DE;
+  --border: #E4DED6;
+  --border-light: rgba(228, 222, 214, 0.6);
+  --text: #1C1A24;
+  --text2: #7A7485;
+  --text3: #9E99A8;
+
+  --accent: #00896E;
+  --accent-glow: rgba(0, 137, 110, 0.10);
+  --accent-hover: #007A62;
+  --accent-dark: rgba(0, 137, 110, 0.08);
+  --warn: #D4780A;
+  --warn-glow: rgba(212, 120, 10, 0.10);
+  --danger: #C93232;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 20px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 8px 40px rgba(0, 0, 0, 0.12);
+  --shadow-accent: 0 0 30px rgba(0, 137, 110, 0.15);
+}
+
+/* ───────────────────────────────────────────────────────────
+   Global resets
+   ─────────────────────────────────────────────────────────── */
 * {
   margin: 0;
   padding: 0;
@@ -9,36 +84,138 @@
 }
 
 html {
-  font-family: 'IBM Plex Mono', monospace;
-  background: #060C18;
-  color: #EEF2FF;
+  font-family: var(--font-body);
+  background: var(--bg);
+  color: var(--text);
 }
 
 body {
   min-height: 100vh;
+  font-family: var(--font-body);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* ── Typography classes ── */
-.font-serif {
-  font-family: 'Libre Baskerville', serif;
+/* ───────────────────────────────────────────────────────────
+   Typography utility classes
+   ─────────────────────────────────────────────────────────── */
+.font-serif,
+.font-display {
+  font-family: var(--font-display);
 }
 
 .font-mono {
-  font-family: 'IBM Plex Mono', monospace;
+  font-family: var(--font-mono);
 }
 
-/* Force font on form elements (browsers don't inherit) */
+.font-body {
+  font-family: var(--font-body);
+}
+
+/* Form elements default to body (DM Sans), NOT mono */
 input,
-button,
 select,
-textarea,
-label {
-  font-family: 'IBM Plex Mono', monospace;
+textarea {
+  font-family: var(--font-body);
 }
 
-/* ── Custom scrollbar ── */
+button {
+  font-family: var(--font-body);
+}
+
+label {
+  font-family: var(--font-mono);
+}
+
+/* ───────────────────────────────────────────────────────────
+   Global component primitives
+   ─────────────────────────────────────────────────────────── */
+
+/* Card */
+.ui-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 24px;
+  box-shadow: var(--shadow-sm);
+}
+.ui-card--elevated {
+  box-shadow: var(--shadow-md);
+}
+
+/* Input */
+.ui-input {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 13px 16px;
+  color: var(--text);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+}
+.ui-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
+}
+.ui-input::placeholder {
+  color: var(--text3);
+}
+
+/* Label */
+.ui-label {
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text2);
+  margin-bottom: 6px;
+  display: block;
+}
+
+/* Badge / pill */
+.ui-badge {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  border-radius: 20px;
+  padding: 4px 12px;
+  display: inline-block;
+}
+.ui-badge--accent {
+  background: var(--accent-dark);
+  border: 1px solid rgba(0, 184, 162, 0.3);
+  color: var(--accent);
+}
+.ui-badge--warn {
+  background: var(--warn-glow);
+  border: 1px solid rgba(245, 165, 36, 0.3);
+  color: var(--warn);
+}
+
+/* Text-only button */
+.ui-btn-text {
+  background: transparent;
+  color: var(--text2);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: none;
+  padding: 8px 12px;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+.ui-btn-text:hover {
+  color: var(--text);
+}
+
+/* ───────────────────────────────────────────────────────────
+   Scrollbar
+   ─────────────────────────────────────────────────────────── */
 ::-webkit-scrollbar {
   width: 4px;
 }
@@ -46,11 +223,13 @@ label {
   background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1C2F4A;
+  background: var(--border);
   border-radius: 2px;
 }
 
-/* ── Animations ── */
+/* ───────────────────────────────────────────────────────────
+   Animations
+   ─────────────────────────────────────────────────────────── */
 @keyframes slideUp {
   from { transform: translateY(100%); opacity: 0; }
   to { transform: translateY(0); opacity: 1; }
@@ -69,7 +248,9 @@ label {
   animation: fadeIn 0.4s ease-out;
 }
 
-/* ── Entry Sheet (level complete panel) ── */
+/* ───────────────────────────────────────────────────────────
+   Entry Sheet (level complete panel)
+   ─────────────────────────────────────────────────────────── */
 .entry-sheet-overlay {
   position: absolute;
   inset: 0;
@@ -82,7 +263,7 @@ label {
 .entry-sheet-backdrop {
   position: absolute;
   inset: 0;
-  background: rgba(6,12,24,0.85);
+  background: rgba(15, 14, 19, 0.85);
   backdrop-filter: blur(2px);
   -webkit-backdrop-filter: blur(2px);
 }
@@ -91,27 +272,28 @@ label {
   position: relative;
   width: 100%;
   max-width: 460px;
-  background: #0D1829;
-  border-top: 1px solid #1C2F4A;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
   border-radius: 24px 24px 0 0;
   padding: 16px 24px 36px;
   max-height: 90%;
   overflow-y: auto;
 }
 
-/* On mobile, use fixed positioning so it covers the full viewport */
 @media (max-width: 767px) {
   .entry-sheet-overlay {
     position: fixed;
   }
 }
 
-/* ── Inline Countdown overlay ── */
+/* ───────────────────────────────────────────────────────────
+   Inline Countdown overlay
+   ─────────────────────────────────────────────────────────── */
 .inline-countdown-overlay {
   position: absolute;
   inset: 0;
   z-index: 50;
-  background: rgba(6,12,24,0.9);
+  background: rgba(15, 14, 19, 0.9);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
   display: flex;
@@ -126,15 +308,19 @@ label {
   }
 }
 
-/* ── Inline Entry Panel (HR + RPE during active level) ── */
+/* ───────────────────────────────────────────────────────────
+   Inline Entry Panel
+   ─────────────────────────────────────────────────────────── */
 .inline-entry-panel {
-  background: #0D1829;
-  border: 1px solid #1C2F4A;
+  background: var(--surface);
+  border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px 16px;
 }
 
-/* ── Remove number input spinners ── */
+/* ───────────────────────────────────────────────────────────
+   Number input spinners
+   ─────────────────────────────────────────────────────────── */
 input[type="number"]::-webkit-outer-spin-button,
 input[type="number"]::-webkit-inner-spin-button {
   -webkit-appearance: none;
@@ -144,12 +330,14 @@ input[type="number"] {
   -moz-appearance: textfield;
 }
 
-/* ── Page background (shared across all pages) ── */
+/* ───────────────────────────────────────────────────────────
+   Page background
+   ─────────────────────────────────────────────────────────── */
 .page-bg {
-  background-color: #060C18;
+  background-color: var(--bg);
   background-image:
-    linear-gradient(rgba(28,47,74,0.2) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(28,47,74,0.2) 1px, transparent 1px);
+    linear-gradient(rgba(46, 42, 56, 0.18) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(46, 42, 56, 0.18) 1px, transparent 1px);
   background-size: 40px 40px;
   min-height: 100vh;
   position: relative;
@@ -160,11 +348,13 @@ input[type="number"] {
   position: fixed;
   inset: 0;
   pointer-events: none;
-  background: radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%);
+  background: radial-gradient(ellipse at center, rgba(15, 14, 19, 0) 30%, rgba(15, 14, 19, 0.6) 60%, var(--bg) 100%);
   z-index: 0;
 }
 
-/* ── Phone Frame layout ── */
+/* ───────────────────────────────────────────────────────────
+   Phone Frame layout
+   ─────────────────────────────────────────────────────────── */
 .phone-frame-outer {
   display: flex;
   align-items: center;
@@ -180,10 +370,10 @@ input[type="number"] {
   height: 85vh;
   min-height: 680px;
   max-height: 920px;
-  background: #060C18;
+  background: var(--bg);
   border-radius: 44px;
-  border: 1px solid #1C2F4A;
-  box-shadow: 0 60px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(28,47,74,0.6);
+  border: 1px solid var(--border);
+  box-shadow: 0 60px 120px rgba(0, 0, 0, 0.6), 0 0 0 1px var(--border-light);
   overflow: hidden;
   position: relative;
   display: flex;
@@ -199,7 +389,7 @@ input[type="number"] {
   flex-direction: column;
 }
 
-/* Tablet: centered, no frame chrome */
+/* Tablet */
 @media (min-width: 768px) and (max-width: 1023px) {
   .phone-frame-inner {
     width: 100%;
@@ -216,7 +406,7 @@ input[type="number"] {
   }
 }
 
-/* Mobile: no frame at all */
+/* Mobile */
 @media (max-width: 767px) {
   .phone-frame-outer {
     padding: 0;
