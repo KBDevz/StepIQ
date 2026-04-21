@@ -476,25 +476,54 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
               {/* CTA */}
               <div className="landing-stagger-5">
-                <button
-                  onClick={onStart}
-                  className="landing-cta-btn uppercase cursor-pointer transition-all"
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    width: '100%',
-                    fontSize: '0.82rem',
-                    fontWeight: 600,
-                    letterSpacing: '0.12em',
-                    color: 'var(--bg)',
-                    background: 'var(--accent)',
-                    padding: '16px 24px',
-                    borderRadius: '10px',
-                    border: 'none',
-                    boxShadow: 'var(--shadow-accent)',
-                  }}
-                >
-                  Start Free Assessment →
-                </button>
+                <div className="landing-cta-row">
+                  <button
+                    onClick={onStart}
+                    className="landing-cta-btn uppercase cursor-pointer transition-all"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      flex: '0 0 60%',
+                      fontSize: '0.82rem',
+                      fontWeight: 600,
+                      letterSpacing: '0.12em',
+                      color: 'var(--bg)',
+                      background: 'var(--accent)',
+                      padding: '15px 24px',
+                      borderRadius: '10px',
+                      border: 'none',
+                      boxShadow: 'var(--shadow-accent)',
+                    }}
+                  >
+                    Start Free Assessment →
+                  </button>
+                  <button
+                    onClick={onHowItWorks}
+                    className="landing-learn-btn uppercase cursor-pointer"
+                    style={{
+                      fontFamily: 'var(--font-mono)',
+                      flex: '0 0 38%',
+                      fontSize: '0.78rem',
+                      fontWeight: 500,
+                      letterSpacing: '0.08em',
+                      color: 'var(--text2)',
+                      background: 'transparent',
+                      padding: '15px 24px',
+                      borderRadius: '10px',
+                      border: '1px solid var(--border)',
+                      transition: 'all 0.2s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--accent)';
+                      e.currentTarget.style.color = 'var(--text)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = 'var(--border)';
+                      e.currentTarget.style.color = 'var(--text2)';
+                    }}
+                  >
+                    Learn More
+                  </button>
+                </div>
                 <p
                   className="uppercase"
                   style={{
@@ -595,6 +624,23 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         /* Large screens */
         @media (min-width: 1400px) {
           .landing-headline { font-size: 4.5rem; }
+        }
+
+        /* CTA button row */
+        .landing-cta-row {
+          display: flex;
+          gap: 12px;
+          width: 100%;
+        }
+        @media (max-width: 767px) {
+          .landing-cta-row {
+            flex-direction: column;
+            gap: 10px;
+          }
+          .landing-cta-row button {
+            flex: 1 1 auto !important;
+            width: 100% !important;
+          }
         }
 
         /* CTA hover */
