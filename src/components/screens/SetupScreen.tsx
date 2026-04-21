@@ -1,6 +1,16 @@
 import { useState, useRef, useCallback } from 'react';
 import type { TestState } from '../../types';
 import NavBar from '../ui/NavBar';
+import WearableCard from '../ui/WearableCard';
+
+interface JunctionProps {
+  connected: boolean;
+  provider: string | null;
+  loading: boolean;
+  error: string | null;
+  onConnect: () => void;
+  onDisconnect: () => void;
+}
 
 interface SetupScreenProps {
   state: TestState;
@@ -10,6 +20,8 @@ interface SetupScreenProps {
   onLogoClick: () => void;
   onHowItWorks: () => void;
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
+  junctionProps?: JunctionProps;
+  isLoggedIn?: boolean;
 }
 
 /* ── Progress Steps ── */
@@ -26,8 +38,8 @@ function ProgressSteps() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.65rem', fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700,
                 ...(i === 0
-                  ? { background: '#00E5A0', color: '#060C18' }
-                  : { background: 'transparent', border: '1px solid #1C2F4A', color: '#5A7090' }),
+                  ? { background: 'var(--accent)', color: '#060C18' }
+                  : { background: 'transparent', border: '1px solid var(--border)', color: 'var(--text2)' }),
               }}
             >
               {i + 1}
@@ -36,7 +48,7 @@ function ProgressSteps() {
               className="font-mono"
               style={{
                 fontSize: '0.65rem', letterSpacing: '0.06em',
-                color: i === 0 ? '#00E5A0' : '#5A7090',
+                color: i === 0 ? 'var(--accent)' : 'var(--text2)',
                 fontWeight: i === 0 ? 600 : 400,
               }}
             >
@@ -44,7 +56,7 @@ function ProgressSteps() {
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div style={{ width: '32px', height: '1px', background: '#1C2F4A', margin: '0 12px' }} />
+            <div style={{ width: '32px', height: '1px', background: 'var(--border)', margin: '0 12px' }} />
           )}
         </div>
       ))}
@@ -63,10 +75,10 @@ function ReassurancePoints() {
     <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
       {points.map((point) => (
         <div key={point} style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, color: 'var(--accent)' }}>
             <polyline points="20 6 9 17 4 12" />
           </svg>
-          <span className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', lineHeight: 1.5 }}>
+          <span className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--text2)', lineHeight: 1.5 }}>
             {point}
           </span>
         </div>
@@ -77,7 +89,7 @@ function ReassurancePoints() {
 
 /* ── The Form ── */
 function SetupForm({
-  state, updateSetup, toggleDevMode, onBegin, ageStr, setAgeStr,
+  state, updateSetup, toggleDevMode, onBegin, ageStr, setAgeStr, junctionProps, isLoggedIn, onSignIn,
 }: {
   state: TestState;
   updateSetup: SetupScreenProps['updateSetup'];
@@ -85,6 +97,9 @@ function SetupForm({
   onBegin: () => void;
   ageStr: string;
   setAgeStr: (s: string) => void;
+  junctionProps?: JunctionProps;
+  isLoggedIn?: boolean;
+  onSignIn?: () => void;
 }) {
   const pressTimer = useRef<number | null>(null);
   const ageValid = state.age >= 13 && state.age <= 80;
@@ -99,13 +114,13 @@ function SetupForm({
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
-    background: '#060C18',
-    border: '1px solid #1C2F4A',
+    background: 'var(--surface2)',
+    border: '1px solid var(--border)',
     borderRadius: '10px',
     padding: '14px 16px',
     fontFamily: 'IBM Plex Mono, monospace',
     fontSize: '0.9rem',
-    color: '#EEF2FF',
+    color: 'var(--text)',
     outline: 'none',
     transition: 'border-color 0.2s',
   };
@@ -116,7 +131,7 @@ function SetupForm({
     fontSize: '0.62rem',
     textTransform: 'uppercase' as const,
     letterSpacing: '0.1em',
-    color: '#5A7090',
+    color: 'var(--text2)',
     marginBottom: '6px',
   };
 
@@ -125,7 +140,7 @@ function SetupForm({
       {/* Eyebrow */}
       <p
         className="font-mono uppercase"
-        style={{ fontSize: '0.6rem', letterSpacing: '0.16em', color: '#00E5A0', marginBottom: '8px' }}
+        style={{ fontSize: '0.6rem', letterSpacing: '0.16em', color: 'var(--accent)', marginBottom: '8px' }}
         onMouseDown={handleLongPressStart}
         onMouseUp={handleLongPressEnd}
         onMouseLeave={handleLongPressEnd}
@@ -136,12 +151,12 @@ function SetupForm({
       </p>
 
       {/* Title */}
-      <h1 className="font-serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', marginBottom: '10px', lineHeight: 1.2 }}>
+      <h1 className="font-serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px', lineHeight: 1.2 }}>
         Tell us about yourself
       </h1>
 
       {/* Subtitle */}
-      <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, marginBottom: '28px' }}>
+      <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text2)', lineHeight: 1.7, marginBottom: '28px' }}>
         Your age and sex allow us to calculate your predicted maximum heart rate and classify your results against clinical norms.
       </p>
 
@@ -154,7 +169,7 @@ function SetupForm({
       {/* Name field */}
       <div style={{ marginBottom: '20px' }}>
         <label style={labelStyle}>
-          Name <span style={{ color: '#5A7090', fontWeight: 400, textTransform: 'none' as const, letterSpacing: 0 }}>(optional)</span>
+          Name <span style={{ color: 'var(--text2)', fontWeight: 400, textTransform: 'none' as const, letterSpacing: 0 }}>(optional)</span>
         </label>
         <input
           type="text"
@@ -162,15 +177,15 @@ function SetupForm({
           onChange={(e) => updateSetup({ name: e.target.value })}
           placeholder="Enter your name"
           style={inputStyle}
-          onFocus={(e) => { e.target.style.borderColor = '#00E5A0'; }}
-          onBlur={(e) => { e.target.style.borderColor = '#1C2F4A'; }}
+          onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
+          onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
         />
       </div>
 
       {/* Age field */}
       <div style={{ marginBottom: '20px' }}>
         <label style={labelStyle}>
-          Age <span style={{ color: '#FF4444', fontSize: '0.55rem' }}>*</span>
+          Age <span style={{ color: 'var(--danger)', fontSize: '0.55rem' }}>*</span>
         </label>
         <input
           type="number"
@@ -186,20 +201,20 @@ function SetupForm({
           placeholder="e.g. 35"
           style={{
             ...inputStyle,
-            borderColor: ageStr && !ageValid ? '#FF4444' : '#1C2F4A',
+            borderColor: ageStr && !ageValid ? 'var(--danger)' : 'var(--border)',
           }}
-          onFocus={(e) => { e.target.style.borderColor = ageStr && !ageValid ? '#FF4444' : '#00E5A0'; }}
-          onBlur={(e) => { e.target.style.borderColor = ageStr && !ageValid ? '#FF4444' : '#1C2F4A'; }}
+          onFocus={(e) => { e.target.style.borderColor = ageStr && !ageValid ? 'var(--danger)' : 'var(--accent)'; }}
+          onBlur={(e) => { e.target.style.borderColor = ageStr && !ageValid ? 'var(--danger)' : 'var(--border)'; }}
         />
         {ageStr && !ageValid && (
-          <p className="font-mono" style={{ fontSize: '0.65rem', color: '#FF4444', marginTop: '6px' }}>Age must be between 13 and 80</p>
+          <p className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--danger)', marginTop: '6px' }}>Age must be between 13 and 80</p>
         )}
       </div>
 
       {/* Biological Sex */}
       <div style={{ marginBottom: '20px' }}>
         <label style={labelStyle}>
-          Biological Sex <span style={{ color: '#FF4444', fontSize: '0.55rem' }}>*</span>
+          Biological Sex <span style={{ color: 'var(--danger)', fontSize: '0.55rem' }}>*</span>
         </label>
         <div style={{ display: 'flex', gap: '8px' }}>
           {(['male', 'female'] as const).map((sex) => (
@@ -216,9 +231,9 @@ function SetupForm({
                 letterSpacing: '0.06em',
                 cursor: 'pointer',
                 transition: 'all 0.2s',
-                border: state.sex === sex ? '1px solid #00E5A0' : '1px solid #1C2F4A',
-                background: state.sex === sex ? 'rgba(0,229,160,0.1)' : '#060C18',
-                color: state.sex === sex ? '#00E5A0' : '#5A7090',
+                border: state.sex === sex ? '1px solid var(--accent)' : '1px solid var(--border)',
+                background: state.sex === sex ? 'var(--accent-glow)' : 'var(--surface2)',
+                color: state.sex === sex ? 'var(--accent)' : 'var(--text2)',
                 fontWeight: state.sex === sex ? 600 : 400,
               }}
             >
@@ -231,16 +246,16 @@ function SetupForm({
       {/* Beta blocker / HR medication toggle */}
       <div
         style={{
-          background: '#060C18', border: '1px solid #1C2F4A', borderRadius: '10px',
+          background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '10px',
           padding: '14px 16px', marginBottom: '20px',
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div style={{ flex: 1, marginRight: '16px' }}>
-            <p className="font-mono" style={{ fontSize: '0.8rem', color: state.betaBlocker ? '#FF8C42' : '#EEF2FF' }}>
+            <p className="font-mono" style={{ fontSize: '0.8rem', color: state.betaBlocker ? 'var(--warn)' : 'var(--text)' }}>
               Beta blocker or HR medication
             </p>
-            <p className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090', marginTop: '4px', lineHeight: 1.5 }}>
+            <p className="font-mono" style={{ fontSize: '0.62rem', color: 'var(--text2)', marginTop: '4px', lineHeight: 1.5 }}>
               Toggle if you take beta blockers or heart rate medication
             </p>
           </div>
@@ -250,7 +265,7 @@ function SetupForm({
             style={{
               position: 'relative', width: '48px', height: '28px', borderRadius: '14px',
               border: 'none', cursor: 'pointer', transition: 'background 0.2s',
-              background: state.betaBlocker ? '#FF8C42' : '#1C2F4A',
+              background: state.betaBlocker ? 'var(--warn)' : 'var(--border)',
               flexShrink: 0,
             }}
           >
@@ -263,13 +278,29 @@ function SetupForm({
           </button>
         </div>
         {state.betaBlocker && (
-          <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '8px', background: 'rgba(255,140,66,0.1)', border: '1px solid rgba(255,140,66,0.2)' }}>
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42' }}>
+          <div style={{ marginTop: '12px', padding: '10px 12px', borderRadius: '8px', background: 'var(--warn-glow)', border: '1px solid rgba(245,165,36,0.2)' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--warn)' }}>
               Max HR: 164 - (0.7 x {state.age}) = {state.maxHR} bpm
             </p>
           </div>
         )}
       </div>
+
+      {/* Wearable connection */}
+      {junctionProps && (
+        <div style={{ marginBottom: '20px' }}>
+          <WearableCard
+            connected={junctionProps.connected}
+            provider={junctionProps.provider}
+            loading={junctionProps.loading}
+            error={junctionProps.error}
+            isLoggedIn={!!isLoggedIn}
+            onConnect={junctionProps.onConnect}
+            onDisconnect={junctionProps.onDisconnect}
+            onSignIn={onSignIn ?? (() => {})}
+          />
+        </div>
+      )}
 
       {/* Submit button */}
       <button
@@ -280,7 +311,7 @@ function SetupForm({
           width: '100%',
           padding: '16px',
           marginTop: '28px',
-          background: ageValid ? '#00E5A0' : 'rgba(0,229,160,0.3)',
+          background: ageValid ? 'var(--accent)' : 'var(--accent-dark)',
           color: '#060C18',
           fontSize: '0.8rem',
           fontWeight: 700,
@@ -288,19 +319,15 @@ function SetupForm({
           borderRadius: '10px',
           border: 'none',
           cursor: ageValid ? 'pointer' : 'not-allowed',
-          boxShadow: ageValid ? '0 0 30px rgba(0,229,160,0.25)' : 'none',
+          boxShadow: ageValid ? 'var(--shadow-accent)' : 'none',
           transition: 'all 0.2s',
           opacity: ageValid ? 1 : 0.4,
         }}
-        onMouseEnter={(e) => { if (ageValid) { (e.target as HTMLElement).style.transform = 'translateY(-2px)'; (e.target as HTMLElement).style.boxShadow = '0 0 50px rgba(0,229,160,0.4), 0 8px 20px rgba(0,229,160,0.15)'; } }}
-        onMouseLeave={(e) => { (e.target as HTMLElement).style.transform = 'translateY(0)'; (e.target as HTMLElement).style.boxShadow = ageValid ? '0 0 30px rgba(0,229,160,0.25)' : 'none'; }}
-        onMouseDown={(e) => { if (ageValid) (e.target as HTMLElement).style.transform = 'scale(0.98)'; }}
-        onMouseUp={(e) => { if (ageValid) (e.target as HTMLElement).style.transform = 'translateY(-2px)'; }}
       >
         Continue →
       </button>
 
-      <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', textAlign: 'center', marginTop: '12px' }}>
+      <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--text2)', textAlign: 'center', marginTop: '12px' }}>
         Your data stays on your device and is never stored
       </p>
     </div>
@@ -308,7 +335,7 @@ function SetupForm({
 }
 
 /* ── Main SetupScreen ── */
-export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps }: SetupScreenProps) {
+export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps, junctionProps, isLoggedIn }: SetupScreenProps) {
   const [ageStr, setAgeStr] = useState(String(state.age));
   const devPressTimer = useRef<number | null>(null);
 
@@ -321,10 +348,10 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative overflow-hidden setup-page-enter">
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', position: 'relative', overflow: 'hidden' }} className="setup-page-enter">
       {/* Background grid */}
-      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(28,47,74,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(28,47,74,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-      <div className="fixed inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)' }} />
+      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(var(--grid-color) 1px, transparent 1px), linear-gradient(90deg, var(--grid-color) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+      <div className="fixed inset-0 pointer-events-none setup-vignette" />
 
       <NavBar onStart={onBegin} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} {...authNavProps} />
 
@@ -343,14 +370,14 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
               onTouchStart={handleDevPressStart}
               onTouchEnd={handleDevPressEnd}
             >
-              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'rgba(0,229,160,0.12)', border: '1px solid rgba(0,229,160,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
-                  <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+              <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--accent-glow)', border: '1px solid rgba(0,184,162,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }}>
+                  <path d="M3 12h4l3-9 4 18 3-9h4" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </div>
-              <span className="font-serif" style={{ fontSize: '1.8rem', color: '#fff' }}>StepIQ</span>
+              <span className="font-serif" style={{ fontSize: '1.8rem', color: 'var(--text)' }}>StepIQ</span>
             </div>
-            <p className="font-mono uppercase" style={{ fontSize: '0.6rem', letterSpacing: '0.16em', color: '#5A7090', marginBottom: '48px' }}>
+            <p className="font-mono uppercase" style={{ fontSize: '0.6rem', letterSpacing: '0.16em', color: 'var(--text2)', marginBottom: '48px' }}>
               Chester Step Test · VO₂ Max Assessment
             </p>
 
@@ -372,6 +399,9 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
               onBegin={onBegin}
               ageStr={ageStr}
               setAgeStr={setAgeStr}
+              junctionProps={junctionProps}
+              isLoggedIn={isLoggedIn}
+              onSignIn={authNavProps?.onSignIn}
             />
           </div>
         </div>
@@ -403,14 +433,14 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
           align-items: center;
           justify-content: center;
           padding: 40px 64px;
-          background: #0D1829;
+          background: var(--surface);
         }
         .setup-form-card {
           position: relative;
           width: 100%;
           max-width: 420px;
-          background: rgba(13,24,41,0.7);
-          border: 1px solid rgba(28,47,74,0.8);
+          background: var(--surface);
+          border: 1px solid var(--border);
           border-radius: 16px;
           padding: 40px;
           backdrop-filter: blur(12px);
@@ -423,8 +453,15 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
           left: 0;
           right: 0;
           height: 2px;
-          background: linear-gradient(90deg, #00E5A0, transparent);
+          background: linear-gradient(90deg, var(--accent), transparent);
           border-radius: 16px 16px 0 0;
+        }
+        .setup-vignette {
+          background: radial-gradient(ellipse at center, transparent 30%, rgba(15, 14, 19, 0.6) 60%, var(--bg) 100%);
+        }
+        :root[data-theme="light"] .setup-vignette,
+        .theme-light .setup-vignette {
+          background: radial-gradient(ellipse at center, transparent 30%, rgba(248, 246, 242, 0.3) 60%, var(--bg) 100%);
         }
 
         /* Tablet (768–1023px) */

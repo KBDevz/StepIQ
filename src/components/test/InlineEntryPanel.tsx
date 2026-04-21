@@ -1,15 +1,20 @@
 import { useState, useEffect, useRef } from 'react';
 import { RPE_SCALE } from '../../utils/protocol';
+import type { HRCaptureMethod } from '../../types';
 
 interface InlineEntryPanelProps {
   level: number;
-  onConfirm: (hr: number, rpe: number) => void;
+  onConfirm: (hr: number, rpe: number, hrSource?: HRCaptureMethod) => void;
+  fetchWearableHR?: () => Promise<{ hr: number; source: 'wearable' } | null>;
 }
 
-export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelProps) {
+export default function InlineEntryPanel({ level, onConfirm, fetchWearableHR }: InlineEntryPanelProps) {
   const [phase, setPhase] = useState<'hr' | 'rpe'>('hr');
   const [hrValue, setHrValue] = useState('');
+  const [hrSource, setHrSource] = useState<HRCaptureMethod>('manual');
+  const [wearableLoading, setWearableLoading] = useState(false);
   const panelRef = useRef<HTMLDivElement>(null);
+  const fetchedRef = useRef(false);
 
   const hrNum = parseInt(hrValue, 10);
   const hrValid = !isNaN(hrNum) && hrNum >= 40 && hrNum <= 230;
@@ -17,9 +22,29 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
   useEffect(() => {
     setPhase('hr');
     setHrValue('');
+    setHrSource('manual');
+    fetchedRef.current = false;
   }, [level]);
 
+  // Auto-fetch HR from wearable when panel opens
+  useEffect(() => {
+    if (!fetchWearableHR || fetchedRef.current) return;
+    fetchedRef.current = true;
+
+    setWearableLoading(true);
+    fetchWearableHR().then((result) => {
+      setWearableLoading(false);
+      if (result && result.hr >= 40 && result.hr <= 230) {
+        setHrValue(String(result.hr));
+        setHrSource('wearable');
+      }
+    }).catch(() => {
+      setWearableLoading(false);
+    });
+  }, [fetchWearableHR]);
+
   function handleKey(key: string) {
+    setHrSource('manual');
     if (key === 'back') {
       setHrValue((v) => v.slice(0, -1));
     } else {
@@ -32,7 +57,7 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
   }
 
   function handleRPESelect(rpe: number) {
-    onConfirm(hrNum, rpe);
+    onConfirm(hrNum, rpe, hrSource);
   }
 
   const NUM_KEYS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', 'back', '0'];
@@ -49,20 +74,43 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
               Level {level} Complete
             </p>
             <p className="font-mono" style={{ fontSize: '0.55rem', color: 'var(--text2)', marginTop: '2px' }}>
-              Enter the HR you recorded in the final 15 seconds
+              {hrSource === 'wearable'
+                ? 'HR auto-captured from your wearable — edit below if needed'
+                : 'Enter the HR you recorded in the final 15 seconds'}
             </p>
           </div>
 
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
             <div>
-              <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)' }}>
-                Heart Rate
-              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)' }}>
+                  Heart Rate
+                </p>
+                {hrSource === 'wearable' && (
+                  <span className="font-mono" style={{
+                    fontSize: '0.45rem', textTransform: 'uppercase', letterSpacing: '0.08em',
+                    color: 'var(--accent)', background: 'var(--accent-glow)',
+                    border: '1px solid rgba(0,184,162,0.3)', borderRadius: '10px',
+                    padding: '1px 6px', fontWeight: 600,
+                  }}>
+                    Wearable
+                  </span>
+                )}
+                {wearableLoading && (
+                  <span className="font-mono" style={{
+                    fontSize: '0.45rem', color: 'var(--text3)',
+                  }}>
+                    Fetching…
+                  </span>
+                )}
+              </div>
               <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--text2)', fontStyle: 'italic', marginTop: '1px' }}>
-                Recorded from final 15 seconds of the level
+                {hrSource === 'wearable'
+                  ? 'Tap a digit to override with manual entry'
+                  : 'Recorded from final 15 seconds of the level'}
               </p>
             </div>
-            <span className="font-mono" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text)', fontVariantNumeric: 'tabular-nums', minWidth: '70px', textAlign: 'right' }}>
+            <span className="font-mono" style={{ fontSize: '1.8rem', fontWeight: 700, color: hrSource === 'wearable' ? 'var(--accent)' : 'var(--text)', fontVariantNumeric: 'tabular-nums', minWidth: '70px', textAlign: 'right' }}>
               {hrValue || '—'}
               <span style={{ fontSize: '0.6rem', fontWeight: 400, color: 'var(--text2)', marginLeft: '4px' }}>bpm</span>
             </span>
@@ -126,7 +174,7 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
               Rate Your Effort
             </p>
             <span className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--accent)' }}>
-              HR: {hrNum} bpm ✓
+              HR: {hrNum} bpm {hrSource === 'wearable' ? '⌚' : '✓'}
             </span>
           </div>
 

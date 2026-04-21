@@ -1,5 +1,7 @@
 // ── Chester Step Test Types ──
 
+export type HRCaptureMethod = 'manual' | 'wearable';
+
 export interface TestState {
   name: string;
   age: number;
@@ -11,6 +13,8 @@ export interface TestState {
   currentLevel: number;
   data: LevelResult[];
   devMode: boolean;
+  hrCaptureMethod: HRCaptureMethod;
+  wearableConnected: boolean;
 }
 
 export interface LevelResult {
@@ -18,6 +22,7 @@ export interface LevelResult {
   hr: number;
   rpe: number;
   vo2Estimate: number;
+  hrSource?: HRCaptureMethod;
 }
 
 export interface LevelProtocol {

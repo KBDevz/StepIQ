@@ -803,6 +803,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 { label: 'Age', value: `${state.age}`, unit: '' },
                 { label: 'HR Formula', value: hrFormula, unit: '', small: true },
                 ...(state.restingHR !== null ? [{ label: 'Resting HR', value: `${state.restingHR}`, unit: 'bpm' }] : []),
+                { label: 'HR Capture', value: state.data.some(d => d.hrSource === 'wearable') ? 'Wearable' : 'Manual', unit: '', small: true },
               ].map((stat) => (
                 <div key={stat.label} style={{ ...cardStyle, padding: '16px' }}>
                   <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '6px' }}>{stat.label}</p>
