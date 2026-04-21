@@ -232,6 +232,8 @@ export default function App() {
         {screen === 'activeLevel' && (
           <ActiveLevelScreen
             state={state}
+            playBeep={metronome.playBeep}
+            playCountBeep={metronome.playCountBeep}
             logLevel={logLevel}
             advanceLevel={advanceLevel}
             checkStopConditions={checkStopConditions}

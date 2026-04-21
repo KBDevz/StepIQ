@@ -10,58 +10,18 @@ import InlineCountdown from '../test/InlineCountdown';
 
 interface ActiveLevelScreenProps {
   state: TestState;
+  playBeep: (freq: number, vol: number, duration?: number) => void;
+  playCountBeep: (isLast: boolean) => void;
   logLevel: (hr: number, rpe: number) => void;
   advanceLevel: () => void;
   checkStopConditions: () => { shouldStop: boolean; reason: string };
   onTestEnd: (reason: string) => void;
 }
 
-// Audio helper — lives outside React render cycle
-function createAudioEngine() {
-  let ctx: AudioContext | null = null;
-
-  function getCtx(): AudioContext {
-    if (!ctx || ctx.state === 'closed') {
-      ctx = new AudioContext();
-    }
-    if (ctx.state === 'suspended') {
-      ctx.resume();
-    }
-    return ctx;
-  }
-
-  function beep(freq: number, vol: number, dur = 0.08) {
-    try {
-      const c = getCtx();
-      const osc = c.createOscillator();
-      const gain = c.createGain();
-      osc.type = 'sine';
-      osc.connect(gain);
-      gain.connect(c.destination);
-      osc.frequency.value = freq;
-      gain.gain.setValueAtTime(vol, c.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, c.currentTime + dur);
-      osc.start(c.currentTime);
-      osc.stop(c.currentTime + dur);
-    } catch {
-      // swallow audio errors
-    }
-  }
-
-  function countBeep(isLast: boolean) {
-    beep(isLast ? 1100 : 600, isLast ? 0.6 : 0.3, 0.12);
-  }
-
-  function close() {
-    ctx?.close();
-    ctx = null;
-  }
-
-  return { beep, countBeep, close };
-}
-
 export default function ActiveLevelScreen({
   state,
+  playBeep,
+  playCountBeep,
   logLevel,
   advanceLevel,
   onTestEnd,
@@ -82,12 +42,10 @@ export default function ActiveLevelScreen({
   const beatCount = useRef(0);
   const levelStartBeat = useRef(0);
   const currentLevelRef = useRef(state.currentLevel);
-  const audioRef = useRef<ReturnType<typeof createAudioEngine> | null>(null);
-
-  function audio() {
-    if (!audioRef.current) audioRef.current = createAudioEngine();
-    return audioRef.current;
-  }
+  const playBeepRef = useRef(playBeep);
+  playBeepRef.current = playBeep;
+  const playCountBeepRef = useRef(playCountBeep);
+  playCountBeepRef.current = playCountBeep;
 
   function stopMetronome() {
     clearInterval(metronomeId.current);
@@ -134,7 +92,7 @@ export default function ActiveLevelScreen({
     const tick = () => {
       const beat = beatCount.current % 4;
       const [freq, vol] = BEAT_TONES[beat];
-      audio().beep(freq, vol, toneDur);
+      playBeepRef.current(freq, vol, toneDur);
       setActiveBeat(beat);
 
       // Voice coaching only on level 1
@@ -178,8 +136,6 @@ export default function ActiveLevelScreen({
     startLevel(state.currentLevel);
     return () => {
       stopAll();
-      audioRef.current?.close();
-      audioRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -371,7 +327,7 @@ export default function ActiveLevelScreen({
         <InlineCountdown
           level={nextLevel}
           onComplete={handleCountdownComplete}
-          playCountBeep={audio().countBeep}
+          playCountBeep={playCountBeepRef.current}
         />
       )}
 
