@@ -200,15 +200,130 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         {/* ────── SECTION 1: HERO ────── */}
         <section className="hiw-section-pad" style={{ paddingTop: '152px', paddingBottom: '100px' }}>
           <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <p className="font-mono uppercase" style={{ fontSize: '0.65rem', letterSpacing: '0.18em', color: '#00E5A0', marginBottom: '20px' }}>
-              How It Works
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px' }}>
+              Why the Chester Step Test
             </p>
-            <h1 className="font-serif" style={{ fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: '#fff', lineHeight: 1.15, marginBottom: '24px' }}>
-              Measure Your VO&#x2082; Max &mdash; Without a Lab
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15, marginBottom: '24px' }}>
+              The Most Credible Fitness Test You Can Do Without a Lab
             </h1>
-            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '580px', margin: '0 auto' }}>
-              Lab testing costs $500. Wearables are educated guesses. StepIQ uses the same clinically validated protocol used in cardiac rehabilitation &mdash; at home, in under 12 minutes.
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', lineHeight: 1.75, maxWidth: '620px', margin: '0 auto' }}>
+              Lab testing is the gold standard but costs $300–500 and requires specialist equipment. Wearables are convenient but algorithmically estimated and clinically unvalidated. The Chester Step Test has been used in cardiac rehabilitation and occupational health for decades — and StepIQ brings it to your living room.
             </p>
+          </div>
+        </section>
+
+        {/* ────── SECTION: CLINICAL CREDIBILITY ────── */}
+        <section
+          style={{
+            background: 'var(--surface)',
+            borderTop: '1px solid var(--border)',
+            borderBottom: '1px solid var(--border)',
+          }}
+        >
+          <div className="hiw-section-pad hiw-cred-v" style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.2, textAlign: 'center', marginBottom: '12px' }}>
+              Why the Chester Step Test Works
+            </h2>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', textAlign: 'center', maxWidth: '560px', margin: '0 auto 48px', lineHeight: 1.65 }}>
+              Developed in clinical settings. Validated in peer-reviewed research. Used in cardiac rehabilitation worldwide.
+            </p>
+
+            {/* 3 credibility cards */}
+            <div className="hiw-cred-grid">
+              {/* Card 1 — Clinical Pedigree */}
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
+                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5" />
+                </svg>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
+                  Clinical Pedigree
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
+                  Developed by K. Sykes and validated in peer-reviewed research, the Chester Step Test has been used in cardiac rehabilitation, occupational health screening, and sports medicine for decades. It is a real clinical assessment tool — not a wellness app feature.
+                </p>
+              </div>
+
+              {/* Card 2 — The Science Behind It */}
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                </svg>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
+                  The Science Behind It
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
+                  The test measures your heart rate response to progressively increasing stepping loads. Because heart rate and oxygen consumption have a well-established linear relationship, extrapolating your HR response to your predicted maximum gives a reliable estimate of your aerobic capacity — without pushing you to exhaustion.
+                </p>
+              </div>
+
+              {/* Card 3 — Submaximal by Design */}
+              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+                </svg>
+                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
+                  Submaximal by Design
+                </h3>
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
+                  Unlike a maximal treadmill test, the Chester Step Test is submaximal — it estimates your peak capacity from moderate effort data. This makes it safe for a wide range of fitness levels and ages, including those returning from illness or injury or new to exercise.
+                </p>
+              </div>
+            </div>
+
+            {/* ── Comparison Table ── */}
+            <div style={{ marginTop: '64px' }}>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', marginBottom: '20px' }}>
+                How It Compares
+              </p>
+
+              <div className="hiw-compare-table-wrap" style={{ maxWidth: '860px', margin: '0 auto', borderRadius: '14px', border: '1px solid var(--border)', overflow: 'hidden' }}>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '680px' }}>
+                    <thead>
+                      <tr style={{ background: 'var(--surface2)' }}>
+                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'left', padding: '12px 16px', fontWeight: 500 }}>&nbsp;</th>
+                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Lab VO₂ Test</th>
+                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Wearable</th>
+                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Chester Step Test</th>
+                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', textAlign: 'center', padding: '12px 16px', fontWeight: 500, borderLeft: '3px solid var(--accent)' }}>StepIQ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {[
+                        { label: 'Clinically validated', lab: true, wearable: false, chester: true, stepiq: true },
+                        { label: 'Accessible at home', lab: false, wearable: true, chester: true, stepiq: true },
+                        { label: 'Published research basis', lab: true, wearable: false, chester: true, stepiq: true },
+                        { label: 'Safe for all fitness levels', lab: false, wearable: true, chester: true, stepiq: true },
+                        { label: 'Equipment needed', lab: 'Specialist lab', wearable: '$200–400 device', chester: '30cm step', stepiq: '30cm step' },
+                        { label: 'Cost', lab: '$300–500', wearable: '$200–400', chester: 'Free', stepiq: 'Free' },
+                      ].map((row, i) => (
+                        <tr key={row.label} style={{ background: i % 2 === 0 ? 'var(--surface)' : 'var(--bg)' }}>
+                          <td style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 500, color: 'var(--text)', padding: '14px 16px', textAlign: 'left' }}>{row.label}</td>
+                          {(['lab', 'wearable', 'chester', 'stepiq'] as const).map((col) => {
+                            const val = row[col];
+                            const isStepiq = col === 'stepiq';
+                            return (
+                              <td key={col} style={{ textAlign: 'center', padding: '14px 16px', borderLeft: isStepiq ? '3px solid var(--accent)' : undefined }}>
+                                {typeof val === 'boolean' ? (
+                                  <span style={{ fontSize: '1rem', fontWeight: 700, color: val ? 'var(--accent)' : 'var(--danger)' }}>{val ? '✓' : '✗'}</span>
+                                ) : (
+                                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: 'var(--text2)' }}>{val}</span>
+                                )}
+                              </td>
+                            );
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Clinical reference */}
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text3)', fontStyle: 'italic', textAlign: 'center', maxWidth: '600px', margin: '24px auto 0', lineHeight: 1.7 }}>
+                The Chester Step Test was designed by K. Sykes (1998) for cardiac rehabilitation and occupational health settings. Reference: Sykes K. (1998) Chester Step Test Resource Pack. Cheshire: Physique Management Co.
+              </p>
+            </div>
           </div>
         </section>
 
@@ -500,6 +615,13 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         .hiw-section-pad { padding-left: 64px; padding-right: 64px; }
         .hiw-section-v { padding-top: 100px; padding-bottom: 100px; }
 
+        .hiw-cred-v { padding-top: 80px; padding-bottom: 80px; }
+        .hiw-cred-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 20px;
+        }
+
         .hiw-compare-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -538,6 +660,8 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         /* Tablet */
         @media (min-width: 768px) and (max-width: 1023px) {
           .hiw-section-pad { padding-left: 48px; padding-right: 48px; }
+          .hiw-cred-v { padding-top: 56px; padding-bottom: 56px; }
+          .hiw-cred-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
           .hiw-compare-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
           .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
           .hiw-science-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
@@ -547,9 +671,19 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
         @media (max-width: 767px) {
           .hiw-section-pad { padding-left: 24px; padding-right: 24px; }
           .hiw-section-v { padding-top: 48px; padding-bottom: 48px; }
+          .hiw-cred-v { padding-top: 48px; padding-bottom: 48px; }
+          .hiw-cred-grid { grid-template-columns: 1fr; }
           .hiw-compare-grid { grid-template-columns: 1fr; }
           .hiw-steps-grid { grid-template-columns: 1fr; gap: 40px; }
           .hiw-science-grid { grid-template-columns: 1fr; }
+          .hiw-compare-table-wrap { margin-left: -24px; margin-right: -24px; border-radius: 0 !important; border-left: none !important; border-right: none !important; }
+          .hiw-compare-table-wrap td:first-child,
+          .hiw-compare-table-wrap th:first-child {
+            position: sticky;
+            left: 0;
+            background: var(--surface);
+            z-index: 2;
+          }
         }
 
         .landing-cta-btn:hover {
