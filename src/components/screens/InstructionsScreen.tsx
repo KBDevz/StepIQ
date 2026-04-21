@@ -23,7 +23,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   const instructions = [
     {
       title: 'The Step',
-      text: 'Use a 30cm step (approx 12 inches). A standard stair step works perfectly.',
+      text: 'Use a step at your selected height. For best accuracy, 30cm (12 inches) is recommended. Standard home stairs are typically 7–9 inches and are not suitable — a fitness step platform works perfectly.',
     },
     {
       title: 'The Pattern',
