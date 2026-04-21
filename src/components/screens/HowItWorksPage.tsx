@@ -113,49 +113,6 @@ const steps = [
   },
 ];
 
-/* ── Comparison cards ── */
-const comparisons = [
-  {
-    title: 'Lab VO\u2082 Max Test',
-    highlighted: false,
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M9 3v7.2L6 16a4 4 0 0 0 3.8 5h4.4a4 4 0 0 0 3.8-5l-3-5.8V3" />
-        <path d="M9 3h6" /><path d="M7 16h10" />
-      </svg>
-    ),
-    pros: ['Gold standard accurate'],
-    cons: ['Requires specialist lab equipment', '$200\u2013500 per test', 'Not repeatable at home'],
-  },
-  {
-    title: 'Wearable Estimate',
-    highlighted: false,
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <rect x="6" y="4" width="12" height="16" rx="6" /><path d="M12 8v4l2 2" />
-      </svg>
-    ),
-    pros: ['Convenient and passive'],
-    cons: ['Algorithm-dependent, not validated', 'Cannot be clinically verified'],
-  },
-  {
-    title: 'StepIQ',
-    highlighted: true,
-    icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
-        <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-    pros: [
-      'Clinically validated CST protocol',
-      'Safe submaximal test',
-      'Repeatable at home, free',
-      'Linear regression scoring',
-    ],
-    cons: [],
-  },
-];
-
 /* ── Science cards ── */
 const scienceCards = [
   {
@@ -323,86 +280,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
               <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text3)', fontStyle: 'italic', textAlign: 'center', maxWidth: '600px', margin: '24px auto 0', lineHeight: 1.7 }}>
                 The Chester Step Test was designed by K. Sykes (1998) for cardiac rehabilitation and occupational health settings. Reference: Sykes K. (1998) Chester Step Test Resource Pack. Cheshire: Physique Management Co.
               </p>
-            </div>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ────── SECTION 2: THE PROBLEM ────── */}
-        <section style={{ background: '#0D1829' }}>
-          <div className="hiw-section-pad hiw-section-v">
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px', maxWidth: '700px', marginLeft: 'auto', marginRight: 'auto' }}>
-                VO&#x2082; Max Matters. Most People Never Measure It.
-              </h2>
-              <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, textAlign: 'center', maxWidth: '600px', margin: '0 auto 56px' }}>
-                Lab testing is expensive and hard to access. Wearables are convenient but algorithmically estimated and unverified. The Chester Step Test has long been the clinically validated middle ground &mdash; StepIQ brings it into a simple at-home experience.
-              </p>
-
-              {/* Comparison cards */}
-              <div className="hiw-compare-grid">
-                {comparisons.map((card) => (
-                  <div
-                    key={card.title}
-                    className="relative"
-                    style={{
-                      background: card.highlighted ? 'rgba(0,229,160,0.04)' : '#0a1220',
-                      border: card.highlighted ? '1px solid rgba(0,229,160,0.3)' : '1px solid #1C2F4A',
-                      borderRadius: '16px',
-                      padding: '28px',
-                    }}
-                  >
-                    {card.highlighted && (
-                      <span
-                        className="absolute font-mono uppercase"
-                        style={{
-                          top: '16px', right: '16px',
-                          fontSize: '0.55rem', letterSpacing: '0.12em',
-                          color: '#00E5A0',
-                          background: 'rgba(0,229,160,0.1)',
-                          border: '1px solid rgba(0,229,160,0.3)',
-                          borderRadius: '20px',
-                          padding: '4px 10px',
-                        }}
-                      >
-                        Recommended
-                      </span>
-                    )}
-
-                    <div style={{ marginBottom: '16px' }}>{card.icon}</div>
-                    <h3 className="font-mono" style={{ fontSize: '0.9rem', fontWeight: 600, color: card.highlighted ? '#00E5A0' : '#EEF2FF', marginBottom: '20px' }}>
-                      {card.title}
-                    </h3>
-
-                    {card.pros.length > 0 && (
-                      <div style={{ marginBottom: card.cons.length > 0 ? '16px' : '0' }}>
-                        {card.pros.map((pro) => (
-                          <div key={pro} className="flex items-start gap-2" style={{ marginBottom: '8px' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-                              <polyline points="20 6 9 17 4 12" />
-                            </svg>
-                            <span className="font-mono" style={{ fontSize: '0.75rem', color: '#EEF2FF', lineHeight: 1.6 }}>{pro}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-
-                    {card.cons.length > 0 && (
-                      <div>
-                        {card.cons.map((con) => (
-                          <div key={con} className="flex items-start gap-2" style={{ marginBottom: '8px' }}>
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#FF4444" strokeWidth="2" style={{ flexShrink: 0, marginTop: '2px' }}>
-                              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
-                            </svg>
-                            <span className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.6 }}>{con}</span>
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>
