@@ -3,7 +3,7 @@ import Badge from '../ui/Badge';
 import Button from '../ui/Button';
 import StepGuide from '../test/StepGuide';
 import { getLevelProtocol } from '../../utils/protocol';
-import { cancelSpeech } from '../../utils/voiceCoach';
+import { cancelSpeech, speakText } from '../../utils/voiceCoach';
 
 interface PreLevelScreenProps {
   level: number;
@@ -13,29 +13,13 @@ interface PreLevelScreenProps {
 }
 
 function speakExplanation() {
-  if (typeof speechSynthesis === 'undefined') return;
-  cancelSpeech();
-  try {
-    const text =
-      'Welcome to the Chester Step Test. ' +
-      'You will step up and down to a metronome beat. The pattern is: left up, right up, left down, right down. ' +
-      'Each level lasts 2 minutes, and the pace increases each level. ' +
-      'During the final 15 seconds, check your heart rate and record it. ' +
-      'Press the button when you are ready to begin.';
-    const u = new SpeechSynthesisUtterance(text);
-    u.rate = 0.95;
-    u.pitch = 1.0;
-    u.volume = 0.9;
-    const voices = speechSynthesis.getVoices();
-    const preferred = ['Samantha', 'Alex', 'Karen', 'Daniel', 'Google US English'];
-    for (const name of preferred) {
-      const match = voices.find(v => v.name.includes(name) && v.lang.startsWith('en'));
-      if (match) { u.voice = match; break; }
-    }
-    speechSynthesis.speak(u);
-  } catch {
-    // swallow
-  }
+  speakText(
+    'Welcome to the Chester Step Test. ' +
+    'You will step up and down to a metronome beat. The pattern is: left up, right up, left down, right down. ' +
+    'Each level lasts 2 minutes, and the pace increases each level. ' +
+    'During the final 15 seconds, check your heart rate and record it. ' +
+    'Press the button when you are ready to begin.',
+  );
 }
 
 export default function PreLevelScreen({ level, countdownSeconds, onComplete, playCountBeep }: PreLevelScreenProps) {
