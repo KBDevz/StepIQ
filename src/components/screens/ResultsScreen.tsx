@@ -653,7 +653,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
               {/* Colored glow */}
               <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: '280px', height: '280px', borderRadius: '50%', background: `radial-gradient(circle, ${classification.color}15 0%, transparent 70%)`, pointerEvents: 'none' }} />
 
-              <p style={sectionLabel}>Estimated VO₂ Max</p>
+              <p style={sectionLabel}>VO₂ Max Estimate · ±8-10% Accuracy</p>
               <p className="font-serif" style={{ fontSize: 'clamp(4rem, 10vw, 7rem)', fontWeight: 700, color: classification.color, lineHeight: 1, position: 'relative' }}>
                 {vo2Display}
               </p>
@@ -837,6 +837,11 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 />
               )}
             </div>
+
+            {/* Clinical disclaimer */}
+            <p className="font-mono" style={{ fontSize: '0.58rem', color: 'var(--text2)', fontStyle: 'italic', maxWidth: '600px', margin: '0 auto', textAlign: 'center', lineHeight: 1.6 }}>
+              Your VO₂ max estimate is based on the validated Chester Step Test protocol (Sykes & Roberts, 2004). Research shows this method correlates with laboratory VO₂ max at r=0.92 — typically accurate to within ±3-4 ml/kg/min of your true value when performed with correct step height (30cm) and accurate heart rate monitoring. For clinical or occupational health decision-making, results should be interpreted by a qualified professional.
+            </p>
 
             {/* Bottom spacing */}
             <div style={{ height: '48px' }} />
