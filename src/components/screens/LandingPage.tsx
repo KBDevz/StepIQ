@@ -416,9 +416,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '28px',
                 }}
               >
-                A guided 10-minute step test. An instant estimate of your
-                VO₂ max, fitness category, and personalized 8-week plan
-                — no lab needed.
+                StepIQ is a guided 10-minute step test that estimates your
+                cardiovascular fitness, gives you a personalized score, and
+                tells you exactly how to improve it.
               </p>
 
               {/* Trust badges */}
