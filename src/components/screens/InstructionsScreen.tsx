@@ -51,7 +51,14 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   ];
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 28px', flex: 1 }}>
+    <div style={{
+      display: 'flex',
+      flexDirection: 'column',
+      padding: '32px 28px 0',
+      minHeight: '100%',
+      overflowY: 'auto',
+      WebkitOverflowScrolling: 'touch',
+    }}>
       {/* Eyebrow */}
       <span
         className="font-mono"
@@ -167,7 +174,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
         ))}
       </div>
 
-      <div style={{ marginTop: 'auto', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '40px' }}>
         <Button onClick={onBegin}>Continue</Button>
         <Button variant="ghost" onClick={onBack}>Back</Button>
       </div>
