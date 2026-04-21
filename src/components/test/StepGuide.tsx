@@ -40,56 +40,108 @@ export default function StepGuide({ bpm }: StepGuideProps) {
   const current = BEATS[beat];
 
   return (
-    <div className="w-full max-w-[360px] bg-[#0D1829]/80 backdrop-blur-md border border-[#1C2F4A] rounded-2xl px-5 py-4">
-      {/* Label */}
-      <p className="font-mono text-[10px] text-[#5A7090] uppercase tracking-[0.15em] text-center mb-2.5">
+    <div
+      style={{
+        width: '100%',
+        maxWidth: '360px',
+        background: 'var(--surface)',
+        backdropFilter: 'blur(12px)',
+        WebkitBackdropFilter: 'blur(12px)',
+        border: '1px solid var(--border)',
+        borderRadius: '16px',
+        padding: '16px 20px',
+      }}
+    >
+      <p
+        className="font-mono"
+        style={{
+          fontSize: '10px',
+          color: 'var(--text3)',
+          textTransform: 'uppercase',
+          letterSpacing: '0.15em',
+          textAlign: 'center',
+          marginBottom: '10px',
+        }}
+      >
         Step Pattern
       </p>
 
-      {/* Foot diagram */}
-      <div className="relative h-[72px] mx-auto w-[140px] mb-2.5">
-        {/* Step platform */}
-        <div className="absolute left-1/2 -translate-x-1/2 top-[10px] w-[80px] h-[24px] rounded-md bg-[#152238] border border-[#1C2F4A]">
-          <span className="absolute inset-0 flex items-center justify-center font-mono text-[8px] text-[#5A7090]/50 uppercase tracking-wider">
+      <div style={{ position: 'relative', height: '72px', margin: '0 auto 10px', width: '140px' }}>
+        <div
+          style={{
+            position: 'absolute',
+            left: '50%',
+            transform: 'translateX(-50%)',
+            top: '10px',
+            width: '80px',
+            height: '24px',
+            borderRadius: '6px',
+            background: 'var(--surface2)',
+            border: '1px solid var(--border)',
+          }}
+        >
+          <span
+            className="font-mono"
+            style={{
+              position: 'absolute',
+              inset: 0,
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '8px',
+              color: 'var(--text3)',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+            }}
+          >
             Step
           </span>
         </div>
 
-        {/* Floor line */}
-        <div className="absolute bottom-[8px] left-0 right-0 h-[1px] bg-[#1C2F4A]" />
+        <div style={{ position: 'absolute', bottom: '8px', left: 0, right: 0, height: '1px', background: 'var(--border)' }} />
 
-        {/* Left foot */}
         <div
-          className="absolute transition-all duration-[120ms] ease-out rounded-lg flex items-center justify-center font-mono text-[10px] font-bold"
+          className="font-mono"
           style={{
+            position: 'absolute',
+            transition: 'all 120ms ease-out',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '10px',
+            fontWeight: 700,
             width: 20,
             height: 32,
             left: 38,
             bottom: current.leftUp ? 38 : 10,
-            backgroundColor: current.leftUp ? '#00E5A0' : '#152238',
-            borderWidth: 1,
-            borderStyle: 'solid',
-            borderColor: current.leftUp ? '#00E5A0' : '#1C2F4A',
-            color: current.leftUp ? '#060C18' : '#5A7090',
+            backgroundColor: current.leftUp ? 'var(--accent)' : 'var(--surface2)',
+            border: `1px solid ${current.leftUp ? 'var(--accent)' : 'var(--border)'}`,
+            color: current.leftUp ? '#060C18' : 'var(--text2)',
             boxShadow: current.leftUp ? '0 0 10px rgba(0,229,160,0.4)' : 'none',
           }}
         >
           L
         </div>
 
-        {/* Right foot */}
         <div
-          className="absolute transition-all duration-[120ms] ease-out rounded-lg flex items-center justify-center font-mono text-[10px] font-bold"
+          className="font-mono"
           style={{
+            position: 'absolute',
+            transition: 'all 120ms ease-out',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '10px',
+            fontWeight: 700,
             width: 20,
             height: 32,
             right: 38,
             bottom: current.rightUp ? 38 : 10,
-            backgroundColor: current.rightUp ? '#00E5A0' : '#152238',
-            borderWidth: 1,
-            borderStyle: 'solid',
-            borderColor: current.rightUp ? '#00E5A0' : '#1C2F4A',
-            color: current.rightUp ? '#060C18' : '#5A7090',
+            backgroundColor: current.rightUp ? 'var(--accent)' : 'var(--surface2)',
+            border: `1px solid ${current.rightUp ? 'var(--accent)' : 'var(--border)'}`,
+            color: current.rightUp ? '#060C18' : 'var(--text2)',
             boxShadow: current.rightUp ? '0 0 10px rgba(0,229,160,0.4)' : 'none',
           }}
         >
@@ -97,32 +149,57 @@ export default function StepGuide({ bpm }: StepGuideProps) {
         </div>
       </div>
 
-      {/* Call text */}
       <p
-        className="font-serif text-lg text-[#00E5A0] font-bold text-center mb-2.5 transition-opacity duration-100"
-        style={{ opacity: flash ? 0.5 : 1 }}
+        className="font-serif"
+        style={{
+          fontSize: '1.125rem',
+          color: 'var(--accent)',
+          fontWeight: 700,
+          textAlign: 'center',
+          marginBottom: '10px',
+          transition: 'opacity 100ms',
+          opacity: flash ? 0.5 : 1,
+        }}
       >
         {current.call}
       </p>
 
-      {/* Sequence pills */}
-      <div className="flex gap-1.5 justify-center mb-2">
+      <div style={{ display: 'flex', gap: '6px', justifyContent: 'center', marginBottom: '8px' }}>
         {PILLS.map((pill, i) => (
           <span
             key={pill}
-            className={`px-1.5 py-0.5 rounded-md font-mono text-[9px] transition-all duration-100 ${
-              i === beat
-                ? 'bg-[#00E5A0]/20 text-[#00E5A0] border border-[#00E5A0]/40'
-                : 'bg-[#152238]/50 text-[#5A7090]/60 border border-transparent'
-            }`}
+            className="font-mono"
+            style={{
+              padding: '2px 6px',
+              borderRadius: '6px',
+              fontSize: '9px',
+              transition: 'all 100ms',
+              ...(i === beat
+                ? {
+                    background: 'var(--accent-glow)',
+                    color: 'var(--accent)',
+                    border: '1px solid rgba(0,229,160,0.4)',
+                  }
+                : {
+                    background: 'var(--surface2)',
+                    color: 'var(--text3)',
+                    border: '1px solid transparent',
+                  }),
+            }}
           >
             {pill}
           </span>
         ))}
       </div>
 
-      {/* Hint */}
-      <p className="font-mono text-[9px] text-[#5A7090]/60 text-center">
+      <p
+        className="font-mono"
+        style={{
+          fontSize: '9px',
+          color: 'var(--text3)',
+          textAlign: 'center',
+        }}
+      >
         Step to each beat — one full cycle = 4 beats
       </p>
     </div>

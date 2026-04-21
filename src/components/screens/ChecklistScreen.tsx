@@ -28,7 +28,6 @@ export default function ChecklistScreen({ onBegin, onBack }: ChecklistScreenProp
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', padding: '32px 28px', flex: 1 }}>
-      {/* Eyebrow */}
       <span
         className="font-mono"
         style={{
@@ -36,7 +35,7 @@ export default function ChecklistScreen({ onBegin, onBack }: ChecklistScreenProp
           fontSize: '0.6rem',
           textTransform: 'uppercase',
           letterSpacing: '0.16em',
-          color: '#00E5A0',
+          color: 'var(--accent)',
           marginBottom: '12px',
         }}
       >
@@ -45,13 +44,13 @@ export default function ChecklistScreen({ onBegin, onBack }: ChecklistScreenProp
 
       <h2
         className="font-serif"
-        style={{ fontSize: '1.4rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}
+        style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}
       >
         Ready to begin?
       </h2>
       <p
         className="font-mono"
-        style={{ fontSize: '0.7rem', color: '#5A7090', marginBottom: '32px', lineHeight: 1.6 }}
+        style={{ fontSize: '0.7rem', color: 'var(--text2)', marginBottom: '32px', lineHeight: 1.6 }}
       >
         Confirm each item before starting the test.
       </p>
@@ -69,22 +68,21 @@ export default function ChecklistScreen({ onBegin, onBack }: ChecklistScreenProp
               minHeight: '52px',
               padding: '12px 16px',
               borderRadius: '12px',
-              background: checked[i] ? 'rgba(0,229,160,0.06)' : 'rgba(6,12,24,0.5)',
-              border: `1px solid ${checked[i] ? 'rgba(0,229,160,0.35)' : '#1C2F4A'}`,
+              background: checked[i] ? 'var(--accent-dark)' : 'var(--surface2)',
+              border: `1px solid ${checked[i] ? 'rgba(0,229,160,0.35)' : 'var(--border)'}`,
               cursor: 'pointer',
               transition: 'all 0.2s',
               textAlign: 'left',
             }}
           >
-            {/* Custom checkbox */}
             <div
               style={{
                 flexShrink: 0,
                 width: '24px',
                 height: '24px',
                 borderRadius: '6px',
-                border: `2px solid ${checked[i] ? '#00E5A0' : '#3A4F6A'}`,
-                background: checked[i] ? '#00E5A0' : 'transparent',
+                border: `2px solid ${checked[i] ? 'var(--accent)' : 'var(--border)'}`,
+                background: checked[i] ? 'var(--accent)' : 'transparent',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -101,7 +99,7 @@ export default function ChecklistScreen({ onBegin, onBack }: ChecklistScreenProp
               className="font-mono"
               style={{
                 fontSize: '0.75rem',
-                color: checked[i] ? '#EEF2FF' : '#8A9BBB',
+                color: checked[i] ? 'var(--text)' : 'var(--text2)',
                 lineHeight: 1.5,
                 transition: 'color 0.2s',
               }}

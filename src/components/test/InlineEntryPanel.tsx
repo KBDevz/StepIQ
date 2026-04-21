@@ -14,7 +14,6 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
   const hrNum = parseInt(hrValue, 10);
   const hrValid = !isNaN(hrNum) && hrNum >= 40 && hrNum <= 230;
 
-  // Reset on level change
   useEffect(() => {
     setPhase('hr');
     setHrValue('');
@@ -45,33 +44,30 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
     >
       {phase === 'hr' ? (
         <>
-          {/* Level Complete Header */}
           <div style={{ marginBottom: '6px' }}>
-            <p className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 600, color: '#EEF2FF', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', fontWeight: 600, color: 'var(--text)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
               Level {level} Complete
             </p>
-            <p className="font-mono" style={{ fontSize: '0.55rem', color: '#5A7090', marginTop: '2px' }}>
+            <p className="font-mono" style={{ fontSize: '0.55rem', color: 'var(--text2)', marginTop: '2px' }}>
               Enter the HR you recorded in the final 15 seconds
             </p>
           </div>
 
-          {/* HR Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '4px' }}>
             <div>
-              <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090' }}>
+              <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)' }}>
                 Heart Rate
               </p>
-              <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', fontStyle: 'italic', marginTop: '1px' }}>
+              <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--text2)', fontStyle: 'italic', marginTop: '1px' }}>
                 Recorded from final 15 seconds of the level
               </p>
             </div>
-            <span className="font-mono" style={{ fontSize: '1.8rem', fontWeight: 700, color: '#EEF2FF', fontVariantNumeric: 'tabular-nums', minWidth: '70px', textAlign: 'right' }}>
+            <span className="font-mono" style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text)', fontVariantNumeric: 'tabular-nums', minWidth: '70px', textAlign: 'right' }}>
               {hrValue || '—'}
-              <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090', marginLeft: '4px' }}>bpm</span>
+              <span style={{ fontSize: '0.6rem', fontWeight: 400, color: 'var(--text2)', marginLeft: '4px' }}>bpm</span>
             </span>
           </div>
 
-          {/* Compact keypad: 4 rows, last row has back + 0 + confirm */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
             {NUM_KEYS.map((key) => {
               if (key === 'back') {
@@ -80,7 +76,7 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
                     key={key}
                     type="button"
                     onClick={() => handleKey('back')}
-                    style={compactBtnStyle('#152238', '#5A7090')}
+                    style={compactBtnStyle('var(--surface2)', 'var(--text2)')}
                   >
                     <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                       <path d="M21 4H8l-7 8 7 8h13a2 2 0 002-2V6a2 2 0 00-2-2z" />
@@ -95,19 +91,18 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
                   key={key}
                   type="button"
                   onClick={() => handleKey(key)}
-                  style={compactBtnStyle('#152238', '#EEF2FF')}
+                  style={compactBtnStyle('var(--surface2)', 'var(--text)')}
                 >
                   {key}
                 </button>
               );
             })}
-            {/* Confirm button takes last slot */}
             <button
               type="button"
               onClick={handleHRConfirm}
               disabled={!hrValid}
               style={{
-                ...compactBtnStyle(hrValid ? 'rgba(0,229,160,0.15)' : '#152238', hrValid ? '#00E5A0' : '#5A7090'),
+                ...compactBtnStyle(hrValid ? 'var(--accent-glow)' : 'var(--surface2)', hrValid ? 'var(--accent)' : 'var(--text2)'),
                 opacity: hrValid ? 1 : 0.4,
                 cursor: hrValid ? 'pointer' : 'not-allowed',
                 fontSize: '0.7rem',
@@ -119,24 +114,22 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
           </div>
 
           {hrValue && !hrValid && (
-            <p className="font-mono" style={{ fontSize: '0.55rem', color: '#FF4444', textAlign: 'center', marginTop: '4px' }}>
+            <p className="font-mono" style={{ fontSize: '0.55rem', color: 'var(--danger)', textAlign: 'center', marginTop: '4px' }}>
               Valid range: 40-230 bpm
             </p>
           )}
         </>
       ) : (
         <>
-          {/* RPE Header */}
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
-            <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090' }}>
+            <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)' }}>
               Rate Your Effort
             </p>
-            <span className="font-mono" style={{ fontSize: '0.65rem', color: '#00E5A0' }}>
+            <span className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--accent)' }}>
               HR: {hrNum} bpm ✓
             </span>
           </div>
 
-          {/* 5×2 RPE grid */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
             {RPE_SCALE.map((entry) => {
               const isStop = entry.value >= 7;
@@ -149,8 +142,8 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
                     height: '52px',
                     borderRadius: '10px',
                     border: 'none',
-                    background: isStop ? 'rgba(255,140,66,0.12)' : '#152238',
-                    color: isStop ? '#FF8C42' : '#EEF2FF',
+                    background: isStop ? 'var(--warn-glow)' : 'var(--surface2)',
+                    color: isStop ? 'var(--warn)' : 'var(--text)',
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',

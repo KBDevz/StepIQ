@@ -30,7 +30,6 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
           clearInterval(interval);
           setShowGo(true);
           playCountBeepRef.current(true);
-          // Brief "GO" flash then complete
           setTimeout(() => {
             if (!done) {
               done = true;
@@ -58,7 +57,7 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
           fontSize: '0.6rem',
           textTransform: 'uppercase',
           letterSpacing: '0.14em',
-          color: '#5A7090',
+          color: 'var(--text2)',
           marginBottom: '8px',
         }}
       >
@@ -68,7 +67,7 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
         className="font-mono"
         style={{
           fontSize: '0.75rem',
-          color: '#5A7090',
+          color: 'var(--text2)',
           marginBottom: '24px',
         }}
       >
@@ -80,7 +79,7 @@ export default function InlineCountdown({ level, onComplete, playCountBeep }: In
           fontSize: '8rem',
           lineHeight: 1,
           fontWeight: 700,
-          color: showGo ? '#FFFFFF' : '#00E5A0',
+          color: showGo ? 'var(--text)' : 'var(--accent)',
           fontVariantNumeric: 'tabular-nums',
           transition: 'color 0.15s',
         }}

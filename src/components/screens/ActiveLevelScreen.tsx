@@ -203,7 +203,7 @@ export default function ActiveLevelScreen({
           className="font-mono"
           style={{
             fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.12em',
-            color: '#00E5A0', background: 'rgba(0,229,160,0.1)',
+            color: 'var(--accent)', background: 'var(--accent-glow)',
             border: '1px solid rgba(0,229,160,0.3)', borderRadius: '20px',
             padding: '4px 12px', fontWeight: 600,
           }}
@@ -216,7 +216,7 @@ export default function ActiveLevelScreen({
             className="font-mono"
             style={{
               fontSize: '0.58rem', textTransform: 'uppercase', letterSpacing: '0.1em',
-              color: '#FF4444', background: 'rgba(255,68,68,0.1)',
+              color: 'var(--danger)', background: 'rgba(255,68,68,0.1)',
               border: '1px solid rgba(255,68,68,0.3)', borderRadius: '20px',
               padding: '4px 12px', fontWeight: 600, cursor: 'pointer',
               transition: 'background 0.2s',
@@ -233,7 +233,7 @@ export default function ActiveLevelScreen({
       {!showEntry && (
         <div style={{ textAlign: 'center', padding: '0 24px', flexShrink: 0 }}>
           <p className="font-mono" style={{
-            fontSize: '0.55rem', color: '#5A7090', letterSpacing: '0.05em',
+            fontSize: '0.55rem', color: 'var(--text2)', letterSpacing: '0.05em',
           }}>
             {state.currentLevel < 3
               ? 'Complete at least 3 levels for the most accurate score'
@@ -250,7 +250,7 @@ export default function ActiveLevelScreen({
         transition: 'transform 0.3s ease',
       }}>
         <span className="font-serif" style={{
-          fontSize: '9rem', lineHeight: 1, color: '#EEF2FF', fontWeight: 700,
+          fontSize: '9rem', lineHeight: 1, color: 'var(--text)', fontWeight: 700,
         }}>
           {state.currentLevel}
         </span>
@@ -291,7 +291,7 @@ export default function ActiveLevelScreen({
             className="font-mono"
             style={{
               fontSize: '0.7rem', textTransform: 'uppercase', letterSpacing: '0.14em',
-              color: '#FF8C42', textAlign: 'center',
+              color: 'var(--warn)', textAlign: 'center',
               animation: 'hrAlertPulse 0.8s ease-in-out infinite',
             }}
           >
@@ -299,20 +299,20 @@ export default function ActiveLevelScreen({
           </p>
         ) : (
           <div style={{
-            background: '#0D1829', border: '1px solid #1C2F4A', borderRadius: '10px',
+            background: 'var(--surface)', border: '1px solid #1C2F4A', borderRadius: '10px',
             padding: '12px 16px', display: 'flex',
           }}>
             <div style={{ flex: 1, textAlign: 'center' }}>
-              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '4px' }}>Stop HR</p>
-              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#FF8C42' }}>
-                {state.stopHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090' }}>bpm</span>
+              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)', marginBottom: '4px' }}>Stop HR</p>
+              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--warn)' }}>
+                {state.stopHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: 'var(--text2)' }}>bpm</span>
               </p>
             </div>
-            <div style={{ width: '1px', background: '#1C2F4A', margin: '0 12px' }} />
+            <div style={{ width: '1px', background: 'var(--border)', margin: '0 12px' }} />
             <div style={{ flex: 1, textAlign: 'center' }}>
-              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '4px' }}>Last HR</p>
-              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: '#EEF2FF' }}>
-                {lastHR ? <>{lastHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: '#5A7090' }}>bpm</span></> : '—'}
+              <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)', marginBottom: '4px' }}>Last HR</p>
+              <p className="font-mono" style={{ fontSize: '1.2rem', fontWeight: 700, color: 'var(--text)' }}>
+                {lastHR ? <>{lastHR} <span style={{ fontSize: '0.6rem', fontWeight: 400, color: 'var(--text2)' }}>bpm</span></> : '—'}
               </p>
             </div>
           </div>

@@ -32,7 +32,6 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
   const playCountBeepRef = useRef(playCountBeep);
   playCountBeepRef.current = playCountBeep;
 
-  // Speak explanation on mount for level 1
   useEffect(() => {
     if (level === 1) {
       speakExplanation();
@@ -40,7 +39,6 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
     return () => cancelSpeech();
   }, [level]);
 
-  // Countdown timer (only runs in countdown phase)
   useEffect(() => {
     if (phase !== 'countdown') return;
 
@@ -76,7 +74,6 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
     setPhase('countdown');
   }
 
-  // For levels 2+, skip explain and go straight to countdown
   if (phase === 'countdown') {
     return (
       <div className="flex flex-col items-center px-6" style={{ flex: 1 }}>
@@ -84,20 +81,25 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
 
         <Badge>Level {level} of 5</Badge>
 
-        <p className="font-mono text-sm text-[#5A7090] mt-6 mb-3">
+        <p className="font-mono" style={{ fontSize: '0.875rem', color: 'var(--text2)', marginTop: '24px', marginBottom: '12px' }}>
           {proto.spm} steps/min — {proto.bpm} BPM
         </p>
 
         <div className="relative my-8">
           <span
-            className="font-serif text-[140px] leading-none text-[#EEF2FF] tabular-nums transition-transform duration-200"
-            style={{ transform: `scale(${count <= 3 ? 1.1 : 1})` }}
+            className="font-serif tabular-nums transition-transform duration-200"
+            style={{
+              fontSize: '140px',
+              lineHeight: 1,
+              color: 'var(--text)',
+              transform: `scale(${count <= 3 ? 1.1 : 1})`,
+            }}
           >
             {count}
           </span>
         </div>
 
-        <p className="font-mono text-sm text-[#5A7090] mb-8">
+        <p className="font-mono" style={{ fontSize: '0.875rem', color: 'var(--text2)', marginBottom: '32px' }}>
           {level === 1 ? 'Starting...' : 'Next level starting...'}
         </p>
 
@@ -110,36 +112,32 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
     );
   }
 
-  // ── Explanation phase (Level 1 only) ──
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', flex: 1, padding: '24px 24px 32px' }}>
-      {/* Top section */}
       <div style={{ textAlign: 'center', width: '100%', marginBottom: '24px', marginTop: '12px' }}>
         <Badge>Level 1 of 5</Badge>
         <h2
           className="font-serif"
-          style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginTop: '16px', marginBottom: '8px' }}
+          style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text)', marginTop: '16px', marginBottom: '8px' }}
         >
           How the Test Works
         </h2>
-        <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', lineHeight: 1.5 }}>
+        <p className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--text2)', lineHeight: 1.5 }}>
           {proto.spm} steps/min · {proto.bpm} BPM · 2 minutes per level
         </p>
       </div>
 
-      {/* Step animation — centered */}
       <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%', marginBottom: '24px' }}>
         <div style={{ width: '100%', maxWidth: '360px' }}>
           <StepGuide bpm={proto.bpm} />
         </div>
       </div>
 
-      {/* Explanation bullets */}
       <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '24px', width: '100%', maxWidth: '360px' }}>
         {[
           {
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <path d="M9 18V5l12-2v13" /><circle cx="6" cy="18" r="3" /><circle cx="18" cy="16" r="3" />
               </svg>
             ),
@@ -147,15 +145,15 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
           },
           {
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
               </svg>
             ),
-            text: 'The pace increases every 2 minutes. Most people complete 3\u20134 levels.',
+            text: 'The pace increases every 2 minutes. Most people complete 3–4 levels.',
           },
           {
             icon: (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
               </svg>
             ),
@@ -163,15 +161,14 @@ export default function PreLevelScreen({ level, countdownSeconds, onComplete, pl
           },
         ].map((item, i) => (
           <div key={i} style={{ display: 'flex', gap: '12px', alignItems: 'flex-start' }}>
-            <div style={{ flexShrink: 0, marginTop: '2px' }}>{item.icon}</div>
-            <p className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', lineHeight: 1.6 }}>
+            <div style={{ flexShrink: 0, marginTop: '2px', color: 'var(--accent)' }}>{item.icon}</div>
+            <p className="font-mono" style={{ fontSize: '0.72rem', color: 'var(--text)', lineHeight: 1.6 }}>
               {item.text}
             </p>
           </div>
         ))}
       </div>
 
-      {/* Ready button */}
       <div style={{ marginTop: 'auto', width: '100%' }}>
         <Button onClick={handleReady}>I'm Ready — Start Level 1</Button>
       </div>

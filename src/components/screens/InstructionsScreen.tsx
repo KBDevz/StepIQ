@@ -17,7 +17,7 @@ const LEVEL_PILLS = [
 
 export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
   const betaBlockerFormula = state.betaBlocker
-    ? `Your predicted max HR is calculated using the Londeree formula: 164 \u2212 (0.7 \u00d7 ${state.age}) = ${state.maxHR} bpm. Stop HR (85%): ${state.stopHR} bpm`
+    ? `Your predicted max HR is calculated using the Londeree formula: 164 − (0.7 × ${state.age}) = ${state.maxHR} bpm. Stop HR (85%): ${state.stopHR} bpm`
     : null;
 
   const instructions = [
@@ -31,7 +31,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     },
     {
       title: 'The Levels',
-      text: 'Most individuals will not complete all 5 levels \u2014 this is normal and expected.',
+      text: 'Most individuals will not complete all 5 levels — this is normal and expected.',
       hasPills: true,
     },
     {
@@ -41,12 +41,12 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     {
       title: 'Stop Conditions',
       text: betaBlockerFormula
-        ? `The test stops automatically once at least 3 levels are completed AND either:\n\u00b7 Your HR reaches 85% of your predicted max (${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n\u00b7 Your RPE reaches 7 or above\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
-        : `The test stops automatically once at least 3 levels are completed AND either:\n\u00b7 Your HR reaches 85% of your predicted max (220 \u2212 ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n\u00b7 Your RPE reaches 7 or above\nYou may also end the test early at any time.`,
+        ? `The test stops automatically once at least 3 levels are completed AND either:\n· Your HR reaches 85% of your predicted max (${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n· Your RPE reaches 7 or above\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
+        : `The test stops automatically once at least 3 levels are completed AND either:\n· Your HR reaches 85% of your predicted max (220 − ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n· Your RPE reaches 7 or above\nYou may also end the test early at any time.`,
     },
     {
       title: 'Safety',
-      text: 'Stop immediately if you experience chest pain, dizziness, severe shortness of breath, or feel unwell. This test is submaximal \u2014 you should never reach complete exhaustion.',
+      text: 'Stop immediately if you experience chest pain, dizziness, severe shortness of breath, or feel unwell. This test is submaximal — you should never reach complete exhaustion.',
     },
   ];
 
@@ -56,7 +56,6 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
       flexDirection: 'column',
       padding: '32px 28px 0',
     }}>
-      {/* Eyebrow */}
       <span
         className="font-mono"
         style={{
@@ -64,7 +63,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
           fontSize: '0.6rem',
           textTransform: 'uppercase',
           letterSpacing: '0.16em',
-          color: '#00E5A0',
+          color: 'var(--accent)',
           marginBottom: '12px',
         }}
       >
@@ -73,13 +72,13 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
 
       <h2
         className="font-serif"
-        style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', marginBottom: '6px' }}
+        style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '6px' }}
       >
         Chester Step Test
       </h2>
       <p
         className="font-mono"
-        style={{ fontSize: '0.7rem', color: '#5A7090', marginBottom: '28px' }}
+        style={{ fontSize: '0.7rem', color: 'var(--text2)', marginBottom: '28px' }}
       >
         5 Levels, 2 min each
       </p>
@@ -90,11 +89,11 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
             marginBottom: '20px',
             padding: '12px 14px',
             borderRadius: '12px',
-            background: 'rgba(255,140,66,0.08)',
+            background: 'var(--warn-glow)',
             border: '1px solid rgba(255,140,66,0.25)',
           }}
         >
-          <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42', lineHeight: 1.6 }}>
+          <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--warn)', lineHeight: 1.6 }}>
             Beta blocker adjustment active — using Londeree formula for max HR calculation
           </p>
         </div>
@@ -111,14 +110,14 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
                   width: '24px',
                   height: '24px',
                   borderRadius: '50%',
-                  background: 'rgba(0,229,160,0.08)',
+                  background: 'var(--accent-dark)',
                   border: '1px solid rgba(0,229,160,0.3)',
                   display: 'flex',
                   alignItems: 'center',
                   justifyContent: 'center',
                   fontSize: '0.62rem',
                   fontWeight: 700,
-                  color: '#00E5A0',
+                  color: 'var(--accent)',
                   marginTop: '1px',
                 }}
               >
@@ -127,13 +126,13 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
               <div style={{ flex: 1 }}>
                 <p
                   className="font-mono"
-                  style={{ fontSize: '0.68rem', fontWeight: 600, color: '#00E5A0', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}
+                  style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--accent)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}
                 >
                   {item.title}
                 </p>
                 {item.hasPills && (
                   <>
-                    <p className="font-mono" style={{ fontSize: '0.75rem', color: '#EEF2FF', lineHeight: 1.6, marginBottom: '8px' }}>
+                    <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text)', lineHeight: 1.6, marginBottom: '8px' }}>
                       5 levels, 2 minutes each, increasing in pace:
                     </p>
                     <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
@@ -143,8 +142,8 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
                           className="font-mono"
                           style={{
                             fontSize: '0.6rem',
-                            color: '#00E5A0',
-                            background: 'rgba(0,229,160,0.08)',
+                            color: 'var(--accent)',
+                            background: 'var(--accent-dark)',
                             border: '1px solid rgba(0,229,160,0.2)',
                             borderRadius: '20px',
                             padding: '3px 10px',
@@ -158,14 +157,14 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
                 )}
                 <p
                   className="font-mono"
-                  style={{ fontSize: '0.75rem', color: '#EEF2FF', lineHeight: 1.6, whiteSpace: 'pre-line' }}
+                  style={{ fontSize: '0.75rem', color: 'var(--text)', lineHeight: 1.6, whiteSpace: 'pre-line' }}
                 >
                   {item.text}
                 </p>
               </div>
             </div>
             {i < instructions.length - 1 && (
-              <div style={{ height: '1px', background: '#1C2F4A', marginLeft: '36px', opacity: 0.5 }} />
+              <div style={{ height: '1px', background: 'var(--border)', marginLeft: '36px', opacity: 0.5 }} />
             )}
           </div>
         ))}

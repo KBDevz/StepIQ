@@ -1,5 +1,5 @@
 interface StepCuesProps {
-  activeBeat: number; // 0-3, -1 for none
+  activeBeat: number;
 }
 
 const CUES = [
@@ -25,7 +25,7 @@ export default function StepCues({ activeBeat }: StepCuesProps) {
               alignItems: 'center',
               justifyContent: 'center',
               borderRadius: '12px',
-              background: active ? 'rgba(0,229,160,0.1)' : 'transparent',
+              background: active ? 'var(--accent-glow)' : 'transparent',
               border: active ? '1px solid rgba(0,229,160,0.5)' : '1px solid transparent',
               transform: active ? 'scale(1.05)' : 'scale(1)',
               transition: 'all 0.08s ease-out',
@@ -35,7 +35,7 @@ export default function StepCues({ activeBeat }: StepCuesProps) {
               style={{
                 fontSize: active ? '28px' : '20px',
                 lineHeight: 1,
-                color: active ? '#00E5A0' : '#1C2F4A',
+                color: active ? 'var(--accent)' : 'var(--border)',
                 filter: active ? 'drop-shadow(0 0 8px rgba(0,229,160,0.5))' : 'none',
                 fontWeight: 700,
                 transition: 'all 0.08s ease-out',
@@ -49,7 +49,7 @@ export default function StepCues({ activeBeat }: StepCuesProps) {
                 fontSize: active ? '0.6rem' : '0.55rem',
                 fontWeight: active ? 700 : 400,
                 textTransform: 'uppercase',
-                color: active ? '#00E5A0' : '#1C2F4A',
+                color: active ? 'var(--accent)' : 'var(--border)',
                 letterSpacing: '0.06em',
                 marginTop: '6px',
                 transition: 'all 0.08s ease-out',

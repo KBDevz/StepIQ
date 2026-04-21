@@ -21,7 +21,7 @@ export default function LevelTimer({ remaining, progress, alert = false }: Level
           letterSpacing: '-0.03em',
           textAlign: 'center',
           fontVariantNumeric: 'tabular-nums',
-          color: alert ? '#FF8C42' : '#EEF2FF',
+          color: alert ? 'var(--warn)' : 'var(--text)',
           animation: alert ? 'timerPulse 0.8s ease-in-out infinite' : 'none',
           transition: 'color 0.3s',
           lineHeight: 1,
@@ -30,13 +30,13 @@ export default function LevelTimer({ remaining, progress, alert = false }: Level
       >
         {formatTime(remaining)}
       </p>
-      <div style={{ width: '100%', height: '3px', background: '#1C2F4A', borderRadius: '2px', overflow: 'hidden' }}>
+      <div style={{ width: '100%', height: '3px', background: 'var(--border)', borderRadius: '2px', overflow: 'hidden' }}>
         <div
           style={{
             height: '100%',
             borderRadius: '2px',
             width: `${progress * 100}%`,
-            background: alert ? '#FF8C42' : '#00E5A0',
+            background: alert ? 'var(--warn)' : 'var(--accent)',
             transition: 'width 0.5s linear, background 0.3s',
           }}
         />

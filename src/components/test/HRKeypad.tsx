@@ -60,7 +60,7 @@ export default function HRKeypad({
               key={key}
               type="button"
               onClick={() => handleKey('back')}
-              style={{ ...btnBase, background: '#152238', color: '#5A7090' }}
+              style={{ ...btnBase, background: 'var(--surface2)', color: 'var(--text2)' }}
               onMouseDown={(e) => { (e.target as HTMLElement).style.transform = 'scale(0.95)'; }}
               onMouseUp={(e) => { (e.target as HTMLElement).style.transform = ''; }}
             >
@@ -81,8 +81,8 @@ export default function HRKeypad({
               onClick={() => handleKey('confirm')}
               style={{
                 ...btnBase,
-                background: 'rgba(0,229,160,0.15)',
-                color: '#00E5A0',
+                background: 'var(--accent-glow)',
+                color: 'var(--accent)',
                 fontSize: '0.85rem',
                 fontWeight: 600,
                 opacity: confirmDisabled ? 0.3 : 1,
@@ -100,9 +100,9 @@ export default function HRKeypad({
             key={key}
             type="button"
             onClick={() => handleKey(key)}
-            style={{ ...btnBase, background: '#152238', color: '#EEF2FF' }}
-            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = '#1C2F4A'; }}
-            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = '#152238'; }}
+            style={{ ...btnBase, background: 'var(--surface2)', color: 'var(--text)' }}
+            onMouseEnter={(e) => { (e.target as HTMLElement).style.background = 'var(--surface3)'; }}
+            onMouseLeave={(e) => { (e.target as HTMLElement).style.background = 'var(--surface2)'; }}
             onMouseDown={(e) => { (e.target as HTMLElement).style.transform = 'scale(0.95)'; }}
             onMouseUp={(e) => { (e.target as HTMLElement).style.transform = ''; }}
           >
