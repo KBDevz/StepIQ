@@ -393,13 +393,15 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 className="landing-stagger-3"
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '1rem',
+                  fontSize: '0.95rem',
                   color: 'var(--text2)',
+                  lineHeight: 1.6,
+                  maxWidth: '520px',
                   marginTop: '16px',
                   marginBottom: '20px',
                 }}
               >
-                Know your heart, without the lab.
+                VO₂ max is the single strongest predictor of how long — and how well — you'll live.
               </p>
 
               {/* Subheadline */}
@@ -455,8 +457,8 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   maxWidth: '480px',
                 }}
               >
-                ♥ You'll need a way to check your heart rate — a watch,
-                chest strap, or manual count all work.
+                ♥ You'll need a way to check your heart rate — a fitness
+                watch or chest strap works best.
               </p>
 
               {/* CTA */}
