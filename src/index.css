@@ -420,11 +420,13 @@ input[type="number"] {
   .phone-frame-outer {
     padding: 0;
     align-items: stretch;
+    min-height: auto;
   }
   .phone-frame-inner {
     width: 100%;
-    min-height: 100vh;
+    min-height: auto;
     max-height: none;
+    height: auto;
     border-radius: 0;
     border: none;
     box-shadow: none;
@@ -432,5 +434,6 @@ input[type="number"] {
   }
   .phone-frame-content {
     overflow: visible;
+    min-height: 100vh;
   }
 }

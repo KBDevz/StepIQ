@@ -55,9 +55,6 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
       display: 'flex',
       flexDirection: 'column',
       padding: '32px 28px 0',
-      minHeight: '100%',
-      overflowY: 'auto',
-      WebkitOverflowScrolling: 'touch',
     }}>
       {/* Eyebrow */}
       <span
