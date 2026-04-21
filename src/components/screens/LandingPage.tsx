@@ -127,18 +127,20 @@ function SampleResultCard() {
       {/* Row 1 — label + classification badge */}
       <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
         <span
-          className="font-mono uppercase"
+          className="uppercase"
           style={{
+            fontFamily: 'var(--font-mono)',
             fontSize: '0.52rem',
-            letterSpacing: '0.16em',
+            letterSpacing: '0.14em',
             color: 'var(--text2)',
           }}
         >
           Sample Result
         </span>
         <span
-          className="font-mono uppercase"
+          className="uppercase"
           style={{
+            fontFamily: 'var(--font-mono)',
             fontSize: '0.58rem',
             letterSpacing: '0.1em',
             color: 'var(--class-good)',
@@ -154,10 +156,11 @@ function SampleResultCard() {
 
       {/* Score label */}
       <div
-        className="font-mono uppercase"
+        className="uppercase"
         style={{
+          fontFamily: 'var(--font-mono)',
           fontSize: '0.52rem',
-          letterSpacing: '0.16em',
+          letterSpacing: '0.14em',
           color: 'var(--text2)',
           marginBottom: '6px',
         }}
@@ -167,8 +170,8 @@ function SampleResultCard() {
 
       {/* Score number */}
       <div
-        className="font-serif"
         style={{
+          fontFamily: 'var(--font-display)',
           fontSize: '4.5rem',
           color: 'var(--class-good)',
           lineHeight: 1,
@@ -179,8 +182,8 @@ function SampleResultCard() {
       </div>
 
       <div
-        className="font-mono"
         style={{
+          fontFamily: 'var(--font-mono)',
           fontSize: '0.62rem',
           color: 'var(--text2)',
           marginTop: '6px',
@@ -202,8 +205,8 @@ function SampleResultCard() {
       </div>
 
       <p
-        className="font-mono"
         style={{
+          fontFamily: 'var(--font-mono)',
           fontSize: '0.6rem',
           color: 'var(--text2)',
           textAlign: 'center',
@@ -252,14 +255,12 @@ function TestPreviewCard() {
         }}
       >
         <span
-          className="font-serif"
-          style={{ fontSize: '2.25rem', color: 'var(--text)', lineHeight: 1, fontWeight: 700 }}
+          style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--text)', lineHeight: 1, fontWeight: 700 }}
         >
           2
         </span>
         <span
-          className="font-mono"
-          style={{ fontSize: '0.55rem', color: 'var(--text2)' }}
+          style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text2)' }}
         >
           1:43
         </span>
@@ -280,7 +281,7 @@ function TestPreviewCard() {
         <p
           style={{
             fontFamily: 'var(--font-body)',
-            fontSize: '0.85rem',
+            fontSize: '0.9rem',
             color: 'var(--text)',
             fontWeight: 600,
             marginBottom: '6px',
@@ -291,7 +292,7 @@ function TestPreviewCard() {
         <p
           style={{
             fontFamily: 'var(--font-body)',
-            fontSize: '0.72rem',
+            fontSize: '0.75rem',
             color: 'var(--text2)',
             lineHeight: 1.6,
           }}
@@ -358,8 +359,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
             <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
               {/* Eyebrow */}
               <p
-                className="font-mono uppercase landing-stagger-1"
+                className="uppercase landing-stagger-1"
                 style={{
+                  fontFamily: 'var(--font-mono)',
                   fontSize: '0.62rem',
                   letterSpacing: '0.18em',
                   color: 'var(--accent)',
@@ -371,31 +373,40 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
               {/* Headline */}
               <h1
-                className="font-serif landing-stagger-2 landing-headline"
+                className="landing-stagger-2 landing-headline"
                 style={{
+                  fontFamily: 'var(--font-display)',
                   fontWeight: 700,
                   color: 'var(--text)',
-                  lineHeight: 1.1,
+                  lineHeight: 1.05,
+                  letterSpacing: '-0.02em',
                   margin: 0,
                 }}
               >
                 Estimate your VO₂ max
                 <br />
                 <span
-                  style={{ fontStyle: 'italic', color: 'var(--accent)', fontWeight: 700 }}
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontWeight: 400,
+                    color: 'var(--accent)',
+                    letterSpacing: '-0.01em',
+                  }}
                 >
                   without a lab.
                 </span>
               </h1>
 
-              {/* Secondary brand line */}
+              {/* VO₂ max longevity line */}
               <p
                 className="landing-stagger-3"
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '0.95rem',
+                  fontSize: '1rem',
+                  fontWeight: 400,
                   color: 'var(--text2)',
-                  lineHeight: 1.6,
+                  lineHeight: 1.65,
                   maxWidth: '520px',
                   marginTop: '16px',
                   marginBottom: '20px',
@@ -410,9 +421,10 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.95rem',
+                  fontWeight: 400,
                   color: 'var(--text2)',
                   lineHeight: 1.75,
-                  maxWidth: '480px',
+                  maxWidth: '520px',
                   marginBottom: '28px',
                 }}
               >
@@ -429,10 +441,11 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 {pills.map((pill) => (
                   <span
                     key={pill}
-                    className="font-mono uppercase"
+                    className="uppercase"
                     style={{
+                      fontFamily: 'var(--font-mono)',
                       fontSize: '0.6rem',
-                      letterSpacing: '0.08em',
+                      letterSpacing: '0.1em',
                       color: 'var(--accent)',
                       background: 'var(--accent-dark)',
                       border: '1px solid rgba(0,184,162,0.25)',
@@ -450,7 +463,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 className="landing-stagger-4"
                 style={{
                   fontFamily: 'var(--font-body)',
-                  fontSize: '0.72rem',
+                  fontSize: '0.75rem',
                   fontStyle: 'italic',
                   color: 'var(--text2)',
                   marginBottom: '28px',
@@ -465,12 +478,13 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
               <div className="landing-stagger-5">
                 <button
                   onClick={onStart}
-                  className="landing-cta-btn font-mono uppercase cursor-pointer transition-all"
+                  className="landing-cta-btn uppercase cursor-pointer transition-all"
                   style={{
+                    fontFamily: 'var(--font-mono)',
                     width: '100%',
-                    fontSize: '0.85rem',
+                    fontSize: '0.82rem',
                     fontWeight: 600,
-                    letterSpacing: '0.08em',
+                    letterSpacing: '0.12em',
                     color: 'var(--bg)',
                     background: 'var(--accent)',
                     padding: '16px 24px',
@@ -482,10 +496,11 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   Start Free Assessment →
                 </button>
                 <p
-                  className="font-mono uppercase"
+                  className="uppercase"
                   style={{
+                    fontFamily: 'var(--font-mono)',
                     fontSize: '0.6rem',
-                    letterSpacing: '0.1em',
+                    letterSpacing: '0.12em',
                     color: 'var(--text2)',
                     marginTop: '12px',
                     textAlign: 'center',
@@ -518,8 +533,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         }}
       >
         <span
-          className="font-mono uppercase"
+          className="uppercase"
           style={{
+            fontFamily: 'var(--font-mono)',
             fontSize: '0.52rem',
             letterSpacing: '0.1em',
             color: 'var(--text3)',
@@ -542,7 +558,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           width: 100%;
         }
         .landing-headline {
-          font-size: 4rem;
+          font-size: clamp(3rem, 5vw, 4.5rem);
         }
         .landing-right-col {
           display: flex;
@@ -558,7 +574,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
             max-width: 600px;
             margin: 0 auto;
           }
-          .landing-headline { font-size: 2.6rem; }
+          .landing-headline { font-size: clamp(2.2rem, 4vw, 2.8rem); }
           .landing-container { padding: 0 40px !important; }
           .landing-preview-card { display: none; }
           .landing-footer { padding: 20px 40px !important; }
@@ -566,7 +582,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
         /* Mobile */
         @media (max-width: 767px) {
-          .landing-headline { font-size: 2.2rem; }
+          .landing-headline { font-size: clamp(1.8rem, 5vw, 2.2rem); }
           .landing-container { padding: 0 24px !important; }
           .landing-right-col { display: none; }
           .landing-footer {
@@ -578,7 +594,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
         /* Large screens */
         @media (min-width: 1400px) {
-          .landing-headline { font-size: 4.4rem; }
+          .landing-headline { font-size: 4.5rem; }
         }
 
         /* CTA hover */

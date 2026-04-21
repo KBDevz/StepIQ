@@ -55,7 +55,7 @@ export default function NavBar({
               />
             </svg>
           </div>
-          <span className="font-serif" style={{ fontSize: '1.1rem', color: 'var(--text)', fontWeight: 700 }}>
+          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--text)', fontWeight: 700, letterSpacing: '-0.01em' }}>
             StepIQ
           </span>
         </div>
@@ -64,7 +64,7 @@ export default function NavBar({
           <span
             onClick={onHowItWorks}
             className="hidden sm:inline cursor-pointer transition-colors"
-            style={{ fontSize: '0.85rem', color: 'var(--text2)', fontFamily: 'var(--font-body)' }}
+            style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', fontWeight: 400, color: 'var(--text2)' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
           >

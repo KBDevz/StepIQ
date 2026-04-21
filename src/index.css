@@ -89,7 +89,6 @@
 }
 
 html {
-  font-family: var(--font-body);
   background: var(--bg);
   color: var(--text);
 }
@@ -97,24 +96,29 @@ html {
 body {
   min-height: 100vh;
   font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--text);
+  background-color: var(--bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 /* ───────────────────────────────────────────────────────────
    Typography utility classes
+   Override Tailwind's built-in font-* utilities with our fonts.
    ─────────────────────────────────────────────────────────── */
 .font-serif,
 .font-display {
-  font-family: var(--font-display);
+  font-family: var(--font-display) !important;
 }
 
 .font-mono {
-  font-family: var(--font-mono);
+  font-family: var(--font-mono) !important;
 }
 
 .font-body {
-  font-family: var(--font-body);
+  font-family: var(--font-body) !important;
 }
 
 /* Form elements default to body (DM Sans), NOT mono */
