@@ -163,6 +163,9 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15, marginBottom: '24px' }}>
               The Most Credible Fitness Test You Can Do Without a Lab
             </h1>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 400, color: 'var(--text2)', lineHeight: 1.65, maxWidth: '620px', margin: '0 auto 16px' }}>
+              VO₂ max is the single strongest predictor of how long — and how well — you'll live. Yet most people have never measured it.
+            </p>
             <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', lineHeight: 1.75, maxWidth: '620px', margin: '0 auto' }}>
               Lab testing is the gold standard but costs $300–500 and requires specialist equipment. Wearables are convenient but algorithmically estimated and clinically unvalidated. The Chester Step Test has been used in cardiac rehabilitation and occupational health for decades — and StepIQ brings it to your living room.
             </p>

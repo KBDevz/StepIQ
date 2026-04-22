@@ -309,7 +309,7 @@ function TestPreviewCard() {
    Main Landing Page
    ───────────────────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
-  const pills = ['Free · No Signup', 'Validated to ±8-10% of Lab', 'Personalized Insights'];
+  const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
 
   return (
     <div
@@ -365,7 +365,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   fontSize: '0.62rem',
                   letterSpacing: '0.18em',
                   color: 'var(--accent)',
-                  marginBottom: '20px',
+                  marginBottom: '24px',
                 }}
               >
                 Chester Step Test · At-Home VO₂ Max Assessment
@@ -381,9 +381,10 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   lineHeight: 1.05,
                   letterSpacing: '-0.02em',
                   margin: 0,
+                  marginBottom: '28px',
                 }}
               >
-                Estimate your VO₂ max
+                Estimate your{' '}VO₂{' '}max
                 <br />
                 <span
                   style={{
@@ -398,24 +399,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 </span>
               </h1>
 
-              {/* VO₂ max longevity line */}
-              <p
-                className="landing-stagger-3"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '1rem',
-                  fontWeight: 400,
-                  color: 'var(--text2)',
-                  lineHeight: 1.65,
-                  maxWidth: '520px',
-                  marginTop: '16px',
-                  marginBottom: '20px',
-                }}
-              >
-                VO₂ max is the single strongest predictor of how long — and how well — you'll live.
-              </p>
-
-              {/* Subheadline */}
+              {/* Description */}
               <p
                 className="landing-stagger-3"
                 style={{
@@ -433,38 +417,10 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 tells you exactly how to improve it.
               </p>
 
-              {/* Accuracy callout */}
-              <div
-                className="landing-stagger-4"
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  maxWidth: '480px',
-                  marginBottom: '16px',
-                }}
-              >
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" style={{ flexShrink: 0 }}>
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="var(--accent)" opacity="0.2" stroke="var(--accent)" strokeWidth="2" strokeLinejoin="round" />
-                  <polyline points="9 12 11 14 15 10" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" fill="none" />
-                </svg>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.78rem',
-                    color: 'var(--text2)',
-                    fontStyle: 'italic',
-                    lineHeight: 1.6,
-                  }}
-                >
-                  Validated against laboratory VO₂ max testing with r=0.92 correlation — typically within 8-10% of your true lab value.
-                </p>
-              </div>
-
               {/* Trust badges */}
               <div
                 className="flex flex-wrap landing-stagger-4"
-                style={{ gap: '8px', marginBottom: '14px' }}
+                style={{ gap: '8px', marginBottom: '20px' }}
               >
                 {pills.map((pill) => (
                   <span
@@ -486,40 +442,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 ))}
               </div>
 
-              {/* Accuracy comparison strip */}
-              <div
-                className="landing-stagger-4 landing-accuracy-strip"
-                style={{
-                  background: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '10px',
-                  padding: '12px 16px',
-                  margin: '16px 0',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: '8px',
-                  maxWidth: '520px',
-                }}
-              >
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <p className="uppercase" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.1em', color: 'var(--text2)', marginBottom: '4px' }}>Lab VO₂ Test</p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text)', marginBottom: '2px' }}>Gold Standard</p>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>±0% variance</p>
-                </div>
-                <div style={{ width: '1px', background: 'var(--border)' }} />
-                <div style={{ flex: 1, textAlign: 'center', borderLeft: '2px solid var(--accent)', borderRight: '2px solid var(--accent)', borderRadius: '4px', padding: '0 8px' }}>
-                  <p className="uppercase" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.1em', color: 'var(--accent)', marginBottom: '4px' }}>StepIQ</p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--accent)', marginBottom: '2px' }}>Clinically Validated</p>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--accent)' }}>±8-10% variance</p>
-                </div>
-                <div style={{ width: '1px', background: 'var(--border)' }} />
-                <div style={{ flex: 1, textAlign: 'center' }}>
-                  <p className="uppercase" style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.1em', color: 'var(--text2)', marginBottom: '4px' }}>Wearables</p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', fontWeight: 700, color: 'var(--text2)', marginBottom: '2px' }}>Algorithmic</p>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>±20%+ variance</p>
-                </div>
-              </div>
-
               {/* HR note */}
               <p
                 className="landing-stagger-4"
@@ -528,12 +450,11 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   fontSize: '0.75rem',
                   fontStyle: 'italic',
                   color: 'var(--text2)',
-                  marginBottom: '28px',
+                  marginBottom: '32px',
                   maxWidth: '480px',
                 }}
               >
-                ♥ You'll need a way to check your heart rate — a fitness
-                watch or chest strap works best.
+                ♥ Requires a heart rate monitor — watch or chest strap.
               </p>
 
               {/* CTA */}
@@ -649,7 +570,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           width: 100%;
         }
         .landing-headline {
-          font-size: clamp(3rem, 5vw, 4.5rem);
+          font-size: clamp(2.8rem, 4vw, 4rem);
         }
         .landing-right-col {
           display: flex;
@@ -676,15 +597,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .landing-headline { font-size: clamp(1.8rem, 5vw, 2.2rem); }
           .landing-container { padding: 0 24px !important; }
           .landing-right-col { display: none; }
-          .landing-accuracy-strip {
-            flex-direction: column !important;
-            gap: 0 !important;
-          }
-          .landing-accuracy-strip > div[style*="width: 1px"] {
-            width: 100% !important;
-            height: 1px !important;
-            margin: 8px 0 !important;
-          }
           .landing-footer {
             padding: 20px 24px !important;
             flex-direction: column;
