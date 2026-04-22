@@ -31,7 +31,7 @@ const femaleData = [
 const steps = [
   {
     title: 'Enter Your Details',
-    desc: 'Age, sex, and whether you take beta blockers. Takes 20 seconds.',
+    desc: 'Age, sex, and step height — takes under 30 seconds.',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
@@ -40,7 +40,7 @@ const steps = [
   },
   {
     title: 'Step to a Guided Pace',
-    desc: 'The app coaches you through up to 5 levels, each 2 minutes long, with a metronome and animated step guide. Most people complete 3 to 4 levels.',
+    desc: 'Five 2-minute levels with a metronome and animated step guide — most people complete 3 to 4 levels.',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
@@ -49,7 +49,7 @@ const steps = [
   },
   {
     title: 'Get Your Score and Insights',
-    desc: 'Your VO\u2082 max is calculated using linear regression across your heart rate data. You receive a fitness classification, AI analysis, and an 8-week training protocol.',
+    desc: 'Linear regression calculates your VO₂ max estimate — you receive a fitness classification, AI analysis, and an 8-week training plan.',
     icon: (
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
@@ -61,7 +61,7 @@ const steps = [
 
 /* ── Section divider component ── */
 function Divider() {
-  return <div style={{ height: '1px', background: 'rgba(28,47,74,0.6)' }} />;
+  return <div style={{ height: '1px', background: 'var(--border)', opacity: 0.5, width: '100%' }} />;
 }
 
 /* ══════════════════════════════════════════════
@@ -95,6 +95,8 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             </p>
           </div>
         </section>
+
+        <Divider />
 
         {/* ────── SECTION 2: HOW IT WORKS (3 steps) ────── */}
         <section className="hiw-section-pad hiw-section-v">
@@ -374,7 +376,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
               Ready to Find Out Where You Stand?
             </h2>
             <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
-              Takes 10 minutes. No account required. Just a step and a heart rate monitor.
+              Takes 10 minutes. No account required. Just a step platform and a heart rate monitor.
             </p>
 
             <button
@@ -395,9 +397,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
               Start Your Assessment &rarr;
             </button>
 
-            <p className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', marginTop: '12px' }}>
-              Join thousands tracking their cardiovascular fitness with StepIQ.
-            </p>
           </div>
         </section>
 
