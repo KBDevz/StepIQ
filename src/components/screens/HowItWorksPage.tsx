@@ -88,7 +88,7 @@ const steps = [
     title: 'Enter Your Details',
     desc: 'Age, sex, and whether you take beta blockers. Takes 20 seconds.',
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
       </svg>
     ),
@@ -97,7 +97,7 @@ const steps = [
     title: 'Step to a Guided Pace',
     desc: 'The app coaches you through up to 5 levels, each 2 minutes long, with a metronome and animated step guide. Most people complete 3 to 4 levels.',
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
       </svg>
     ),
@@ -106,7 +106,7 @@ const steps = [
     title: 'Get Your Score and Insights',
     desc: 'Your VO\u2082 max is calculated using linear regression across your heart rate data. You receive a fitness classification, AI analysis, and an 8-week training protocol.',
     icon: (
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#5A7090" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
         <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
       </svg>
     ),
@@ -399,25 +399,33 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                     <div className="hiw-step-connector" />
                   )}
 
-                  {/* Number badge */}
-                  <div
-                    style={{
-                      width: '48px', height: '48px', borderRadius: '50%',
-                      background: 'rgba(0,229,160,0.12)', border: '2px solid rgba(0,229,160,0.3)',
-                      display: 'flex', alignItems: 'center', justifyContent: 'center',
-                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '1rem', fontWeight: 700, color: '#00E5A0',
-                      marginBottom: '16px',
-                    }}
-                  >
-                    {i + 1}
+                  {/* Icon */}
+                  <div style={{ marginBottom: '12px', color: 'var(--text2)' }}>
+                    {step.icon}
                   </div>
 
-                  {/* Icon */}
-                  <div style={{ marginBottom: '16px', opacity: 0.7 }}>{step.icon}</div>
+                  {/* Number badge + title row */}
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span
+                      style={{
+                        width: '26px', height: '26px', borderRadius: '50%',
+                        background: 'var(--accent)', color: 'var(--bg)',
+                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 700,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <h3 style={{
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', fontWeight: 700,
+                      textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text)',
+                      margin: 0,
+                    }}>
+                      {step.title}
+                    </h3>
+                  </div>
 
-                  <h3 className="font-mono uppercase" style={{ fontSize: '0.8rem', fontWeight: 700, letterSpacing: '0.08em', color: '#EEF2FF', marginBottom: '10px' }}>
-                    {step.title}
-                  </h3>
                   <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '280px' }}>
                     {step.desc}
                   </p>
@@ -618,7 +626,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           .hiw-step-connector {
             display: block;
             position: absolute;
-            top: 24px;
+            top: 16px;
             left: calc(33.33% * var(--step-i, 1) + 24px);
             width: calc(33.33% - 48px);
             height: 1px;
