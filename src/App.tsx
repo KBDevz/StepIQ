@@ -37,13 +37,18 @@ export default function App() {
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
   const [authModalEmail, setAuthModalEmail] = useState('');
 
-  // Check URL for /set-password route on mount
+  // Check URL for /set-password route and ?dev=true param on mount
   useEffect(() => {
     const path = window.location.pathname;
     if (path === '/set-password') {
       setScreen('setPassword');
     }
-  }, [setScreen]);
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('dev') === 'true' && !state.devMode) {
+      toggleDevMode();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleTestEnd = useCallback(
     (reason: string) => {
@@ -199,6 +204,23 @@ export default function App() {
   return (
     <>
       <PhoneFrame>
+        {state.devMode && (
+          <div
+            className="font-mono"
+            style={{
+              fontSize: '0.6rem',
+              textTransform: 'uppercase',
+              letterSpacing: '0.1em',
+              color: 'var(--warn)',
+              background: 'rgba(245,165,36,0.15)',
+              borderBottom: '1px solid rgba(245,165,36,0.3)',
+              textAlign: 'center',
+              padding: '6px',
+            }}
+          >
+            DEV MODE — 10s levels
+          </div>
+        )}
         {screen === 'instructions' && (
           <InstructionsScreen
             state={state}

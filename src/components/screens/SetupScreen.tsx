@@ -86,16 +86,21 @@ function SetupForm({
   ageStr: string;
   setAgeStr: (s: string) => void;
 }) {
-  const pressTimer = useRef<number | null>(null);
+  const tapCount = useRef(0);
+  const tapTimer = useRef<number | null>(null);
   const ageValid = state.age >= 13 && state.age <= 80;
 
-  const handleLongPressStart = useCallback(() => {
-    pressTimer.current = window.setTimeout(() => { toggleDevMode(); }, 600);
+  const handleDevTap = useCallback(() => {
+    tapCount.current++;
+    if (tapCount.current === 1) {
+      tapTimer.current = window.setTimeout(() => { tapCount.current = 0; }, 2000);
+    }
+    if (tapCount.current >= 5) {
+      tapCount.current = 0;
+      if (tapTimer.current) { clearTimeout(tapTimer.current); tapTimer.current = null; }
+      toggleDevMode();
+    }
   }, [toggleDevMode]);
-
-  const handleLongPressEnd = useCallback(() => {
-    if (pressTimer.current) { clearTimeout(pressTimer.current); pressTimer.current = null; }
-  }, []);
 
   const inputStyle: React.CSSProperties = {
     width: '100%',
@@ -126,11 +131,7 @@ function SetupForm({
       <p
         className="font-mono uppercase"
         style={{ fontSize: '0.6rem', letterSpacing: '0.16em', color: 'var(--accent)', marginBottom: '8px' }}
-        onMouseDown={handleLongPressStart}
-        onMouseUp={handleLongPressEnd}
-        onMouseLeave={handleLongPressEnd}
-        onTouchStart={handleLongPressStart}
-        onTouchEnd={handleLongPressEnd}
+        onClick={handleDevTap}
       >
         Quick Setup
       </p>
@@ -306,15 +307,20 @@ function SetupForm({
 /* ── Main SetupScreen ── */
 export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps }: SetupScreenProps) {
   const [ageStr, setAgeStr] = useState(String(state.age));
-  const devPressTimer = useRef<number | null>(null);
+  const devTapCount = useRef(0);
+  const devTapTimer = useRef<number | null>(null);
 
-  const handleDevPressStart = useCallback(() => {
-    devPressTimer.current = window.setTimeout(() => { toggleDevMode(); }, 600);
+  const handleDevTap = useCallback(() => {
+    devTapCount.current++;
+    if (devTapCount.current === 1) {
+      devTapTimer.current = window.setTimeout(() => { devTapCount.current = 0; }, 2000);
+    }
+    if (devTapCount.current >= 5) {
+      devTapCount.current = 0;
+      if (devTapTimer.current) { clearTimeout(devTapTimer.current); devTapTimer.current = null; }
+      toggleDevMode();
+    }
   }, [toggleDevMode]);
-
-  const handleDevPressEnd = useCallback(() => {
-    if (devPressTimer.current) { clearTimeout(devPressTimer.current); devPressTimer.current = null; }
-  }, []);
 
   return (
     <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)', position: 'relative', overflow: 'hidden' }} className="setup-page-enter">
@@ -330,14 +336,10 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
         {/* Left column — branding (desktop only) */}
         <div className="setup-left-col">
           <div style={{ maxWidth: '400px' }}>
-            {/* Logo — long press to toggle dev mode */}
+            {/* Logo — tap 5 times to toggle dev mode */}
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px', cursor: 'default', userSelect: 'none' }}
-              onMouseDown={handleDevPressStart}
-              onMouseUp={handleDevPressEnd}
-              onMouseLeave={handleDevPressEnd}
-              onTouchStart={handleDevPressStart}
-              onTouchEnd={handleDevPressEnd}
+              onClick={handleDevTap}
             >
               <div style={{ width: '44px', height: '44px', borderRadius: '12px', background: 'var(--accent-glow)', border: '1px solid rgba(0,184,162,0.25)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: 'var(--accent)' }}>
