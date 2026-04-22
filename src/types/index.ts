@@ -2,6 +2,18 @@
 
 export type HRCaptureMethod = 'manual' | 'wearable';
 
+export interface LevelTiming {
+  level: number;
+  startTime: string;
+  endTime: string;
+  spm: number;
+}
+
+export interface HRReading {
+  timestamp: string;
+  value: number;
+}
+
 export interface TestState {
   name: string;
   age: number;
@@ -15,6 +27,9 @@ export interface TestState {
   devMode: boolean;
   hrCaptureMethod: HRCaptureMethod;
   wearableConnected: boolean;
+  testStartTime: string | null;
+  levelTimings: LevelTiming[];
+  overallRpe: number | null;
 }
 
 export interface LevelResult {
@@ -78,5 +93,9 @@ export type Screen =
   | 'restingHR'
   | 'preLevel'
   | 'activeLevel'
+  | 'postTestRPE'
+  | 'syncing'
+  | 'syncFallback'
+  | 'manualHREntry'
   | 'results'
   | 'setPassword';
