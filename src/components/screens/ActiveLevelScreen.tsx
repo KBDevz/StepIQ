@@ -12,7 +12,6 @@ interface ActiveLevelScreenProps {
   state: TestState;
   startMetronome: (bpm: number, onBeat?: (beat: number) => void) => void;
   stopMetronome: () => void;
-  playBeep: (freq: number, vol: number, duration?: number) => void;
   playCountBeep: (isLast: boolean) => void;
   logLevel: (hr: number, rpe: number) => void;
   advanceLevel: () => void;
@@ -24,7 +23,6 @@ export default function ActiveLevelScreen({
   state,
   startMetronome,
   stopMetronome,
-  playBeep,
   playCountBeep,
   logLevel,
   advanceLevel,

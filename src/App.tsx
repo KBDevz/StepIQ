@@ -267,7 +267,6 @@ export default function App() {
             state={state}
             startMetronome={metronome.start}
             stopMetronome={metronome.stop}
-            playBeep={metronome.playBeep}
             playCountBeep={metronome.playCountBeep}
             logLevel={logLevel}
             advanceLevel={advanceLevel}
