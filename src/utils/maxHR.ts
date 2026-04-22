@@ -6,5 +6,5 @@ export function predictedMaxHR(age: number, betaBlocker: boolean): number {
 }
 
 export function stopHR(maxHR: number): number {
-  return Math.round(maxHR * 0.85);
+  return Math.round(maxHR * 0.80);
 }

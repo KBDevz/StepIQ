@@ -34,6 +34,7 @@ export default function ActiveLevelScreen({
   const [remaining, setRemaining] = useState(0);
   const [totalTime, setTotalTime] = useState(0);
   const [hrAlert, setHrAlert] = useState(false);
+  const [hrAdvisory, setHrAdvisory] = useState(false);
   const hrAlertFired = useRef(false);
 
   const metronomeId = useRef<number>(0);
@@ -149,19 +150,17 @@ export default function ActiveLevelScreen({
     logLevel(hr, rpe);
     setShowEntry(false);
     setHrAlert(false);
+    setHrAdvisory(false);
 
-    if (rpe >= 7) {
+    // RPE >= 8: stop regardless of HR
+    if (rpe >= 8) {
       stopMetronome();
       setActiveBeat(-1);
       onTestEnd(`RPE ${rpe} reached stop zone`);
       return;
     }
-    if (hr >= state.stopHR && state.data.length + 1 >= 3) {
-      stopMetronome();
-      setActiveBeat(-1);
-      onTestEnd(`HR ${hr} bpm exceeded 85% max HR (${state.stopHR} bpm)`);
-      return;
-    }
+
+    // All 5 levels done
     if (state.currentLevel >= 5) {
       stopMetronome();
       setActiveBeat(-1);
@@ -169,13 +168,20 @@ export default function ActiveLevelScreen({
       return;
     }
 
-    // Immediate transition to next level
+    // HR >= 80% max but RPE < 8: continue with advisory
+    // (RPE >= 8 already caught above, so if we're here RPE < 8)
+
+    // Transition to next level
     const next = state.currentLevel + 1;
     stopMetronome();
     setActiveBeat(-1);
     advanceLevel();
     setNextLevel(next);
     setShowCountdown(true);
+
+    if (hr >= state.stopHR) {
+      setHrAdvisory(true);
+    }
   }
 
   function handleCountdownComplete() {
@@ -283,6 +289,8 @@ export default function ActiveLevelScreen({
         {showEntry ? (
           <InlineEntryPanel
             level={state.currentLevel}
+            hrAdvisory={hrAdvisory}
+            stopHR={state.stopHR}
             onConfirm={handleEntryConfirm}
           />
         ) : hrAlert && levelActive ? (

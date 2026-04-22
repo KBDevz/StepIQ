@@ -15,15 +15,16 @@ export const DEV_PRE_COUNTDOWN = 3;
 export const INLINE_COUNTDOWN = 3; // seconds for levels 2-5
 
 export const RPE_SCALE: RpeEntry[] = [
-  { value: 1,  label: 'Rest',              description: 'No effort at all' },
-  { value: 2,  label: 'Really Easy',       description: 'Very light, barely noticeable' },
-  { value: 3,  label: 'Easy',              description: 'Comfortable, light activity' },
-  { value: 4,  label: 'Moderate',          description: 'Steady effort, easy to talk' },
-  { value: 5,  label: 'Challenging',       description: 'Noticeable effort, still talkative' },
-  { value: 6,  label: 'Hard',              description: 'Breathing harder, focused effort' },
-  { value: 7,  label: 'Hard (stop zone)',  description: 'Difficult to hold conversation' },
-  { value: 8,  label: 'Really Hard',       description: 'Very strained, breathing heavily' },
-  { value: 9,  label: 'Really Really Hard', description: 'Near maximum, few words possible' },
+  { value: 0,  label: 'Nothing',           description: 'No effort at all' },
+  { value: 1,  label: 'Very Light',        description: 'Barely noticeable' },
+  { value: 2,  label: 'Light',             description: 'Very light, comfortable' },
+  { value: 3,  label: 'Moderate',          description: 'Comfortable, light activity' },
+  { value: 4,  label: 'Somewhat Hard',     description: 'Steady effort, easy to talk' },
+  { value: 5,  label: 'Hard',              description: 'Noticeable effort, still talkative' },
+  { value: 6,  label: 'Harder',            description: 'Breathing harder, focused effort' },
+  { value: 7,  label: 'Very Hard',         description: 'Difficult to hold conversation' },
+  { value: 8,  label: 'Very Hard (stop)',  description: 'Very strained, breathing heavily' },
+  { value: 9,  label: 'Extremely Hard',    description: 'Near maximum, few words possible' },
   { value: 10, label: 'Maximal',           description: 'Absolute max — cannot continue' },
 ];
 

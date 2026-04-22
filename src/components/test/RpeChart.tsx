@@ -9,7 +9,7 @@ export default function RpeChart({ selected, onSelect }: RpeChartProps) {
   return (
     <div className="space-y-1.5">
       {RPE_SCALE.map((entry) => {
-        const isStop = entry.value >= 7;
+        const isStop = entry.value >= 8;
         const isActive = selected === entry.value;
 
         return (

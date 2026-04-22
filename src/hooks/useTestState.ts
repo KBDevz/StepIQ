@@ -61,18 +61,19 @@ export function useTestState() {
     setState((s) => ({ ...s, currentLevel: s.currentLevel + 1 }));
   }, []);
 
-  const checkStopConditions = useCallback((): { shouldStop: boolean; reason: string } => {
+  const checkStopConditions = useCallback((): { shouldStop: boolean; reason: string; hrAdvisory?: boolean } => {
     const lastEntry = state.data[state.data.length - 1];
     if (!lastEntry) return { shouldStop: false, reason: '' };
 
-    // RPE >= 7: stop any level
-    if (lastEntry.rpe >= 7) {
+    // RPE >= 8: stop regardless of HR
+    if (lastEntry.rpe >= 8) {
       return { shouldStop: true, reason: `RPE ${lastEntry.rpe} reached stop zone` };
     }
 
-    // HR threshold: only stop if >= 3 levels done
-    if (lastEntry.hr >= state.stopHR && state.data.length >= 3) {
-      return { shouldStop: true, reason: `HR ${lastEntry.hr} bpm exceeded 85% max HR (${state.stopHR} bpm)` };
+    // HR >= 80% max AND RPE >= 8: stop (already caught above)
+    // HR >= 80% max but RPE < 8: advisory only, continue
+    if (lastEntry.hr >= state.stopHR && lastEntry.rpe < 8) {
+      return { shouldStop: false, reason: '', hrAdvisory: true };
     }
 
     // Level 5 done

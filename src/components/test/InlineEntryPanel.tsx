@@ -3,10 +3,12 @@ import { RPE_SCALE } from '../../utils/protocol';
 
 interface InlineEntryPanelProps {
   level: number;
+  hrAdvisory?: boolean;
+  stopHR?: number;
   onConfirm: (hr: number, rpe: number) => void;
 }
 
-export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelProps) {
+export default function InlineEntryPanel({ level, hrAdvisory, stopHR, onConfirm }: InlineEntryPanelProps) {
   const [phase, setPhase] = useState<'hr' | 'rpe'>('hr');
   const [hrValue, setHrValue] = useState('');
   const panelRef = useRef<HTMLDivElement>(null);
@@ -123,16 +125,27 @@ export default function InlineEntryPanel({ level, onConfirm }: InlineEntryPanelP
         <>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
             <p className="font-mono" style={{ fontSize: '0.6rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text2)' }}>
-              Rate Your Effort
+              Rate Your Effort (CR10)
             </p>
             <span className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--accent)' }}>
-              HR: {hrNum} bpm ✓
+              HR: {hrNum} bpm
             </span>
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '6px' }}>
+          {hrAdvisory && (
+            <div style={{
+              marginBottom: '8px', padding: '8px 12px', borderRadius: '8px',
+              background: 'var(--warn-glow)', border: '1px solid rgba(255,140,66,0.25)',
+            }}>
+              <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--warn)', lineHeight: 1.5 }}>
+                Your heart rate has reached 80% of your predicted maximum ({stopHR} bpm). You may continue if you feel able, but stop if RPE reaches 8 or above.
+              </p>
+            </div>
+          )}
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '6px' }}>
             {RPE_SCALE.map((entry) => {
-              const isStop = entry.value >= 7;
+              const isStop = entry.value >= 8;
               return (
                 <button
                   key={entry.value}

@@ -787,7 +787,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                     <tr key={d.level} style={{ background: i % 2 === 1 ? 'rgba(10,18,32,0.5)' : 'transparent' }}>
                       <td style={{ padding: '10px 0', color: '#EEF2FF' }}>{d.level}</td>
                       <td style={{ textAlign: 'right', padding: '10px 0', color: '#EEF2FF' }}>{d.hr}</td>
-                      <td style={{ textAlign: 'right', padding: '10px 0', color: d.rpe >= 7 ? '#FF8C42' : '#EEF2FF' }}>{d.rpe}</td>
+                      <td style={{ textAlign: 'right', padding: '10px 0', color: d.rpe >= 8 ? '#FF8C42' : '#EEF2FF' }}>{d.rpe}</td>
                       <td style={{ textAlign: 'right', padding: '10px 0', color: '#EEF2FF' }}>{d.vo2Estimate}</td>
                     </tr>
                   ))}

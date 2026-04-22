@@ -17,7 +17,7 @@ const LEVEL_PILLS = [
 
 export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
   const betaBlockerFormula = state.betaBlocker
-    ? `Your predicted max HR is calculated using the Londeree formula: 164 − (0.7 × ${state.age}) = ${state.maxHR} bpm. Stop HR (85%): ${state.stopHR} bpm`
+    ? `Your predicted max HR is calculated using the Londeree formula: 164 − (0.7 × ${state.age}) = ${state.maxHR} bpm. Stop HR (80%): ${state.stopHR} bpm`
     : null;
 
   const instructions = [
@@ -27,7 +27,11 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     },
     {
       title: 'The Pattern',
-      text: 'Step to the beat: Left up, Right up, Left down, Right down. One full cycle = 4 beats. Maintain upright posture and avoid talking during stages.',
+      text: 'Step to the beat: Left up, Right up, Left down, Right down. One full cycle = 4 beats. You may switch your lead leg during the test to reduce fatigue.',
+    },
+    {
+      title: 'Good Form',
+      text: 'Maintain upright posture throughout. Fully extend your legs on top of the step. Avoid talking during stages — this affects your heart rate and RPE accuracy.',
     },
     {
       title: 'The Levels',
@@ -41,8 +45,8 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     {
       title: 'Stop Conditions',
       text: betaBlockerFormula
-        ? `The test stops automatically once at least 3 levels are completed AND either:\n· Your HR reaches 85% of your predicted max (${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n· Your RPE reaches 7 or above\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
-        : `The test stops automatically once at least 3 levels are completed AND either:\n· Your HR reaches 85% of your predicted max (220 − ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm)\n· Your RPE reaches 7 or above\nYou may also end the test early at any time.`,
+        ? `The test stops when your RPE reaches 8 or above on the CR10 scale. If your HR reaches 80% of your predicted max (${state.stopHR} bpm) but your RPE is below 8, you'll see an advisory — you may continue if you feel able.\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
+        : `The test stops when your RPE reaches 8 or above on the CR10 scale. If your HR reaches 80% of your predicted max (220 − ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm) but your RPE is below 8, you'll see an advisory — you may continue if you feel able.\nYou may also end the test early at any time.`,
     },
     {
       title: 'Safety',
