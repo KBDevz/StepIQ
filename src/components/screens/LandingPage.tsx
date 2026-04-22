@@ -698,6 +698,109 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
+      {/* ── WHAT YOUR SCORE UNLOCKS ── */}
+      <section
+        className="relative z-10"
+        style={{ padding: '0' }}
+      >
+        <div
+          className="landing-unlocks-container"
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '80px 64px',
+          }}
+        >
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              letterSpacing: '0.18em',
+              color: 'var(--accent)',
+              textAlign: 'center',
+              marginBottom: '12px',
+            }}
+          >
+            What Your Score Unlocks
+          </p>
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '2rem',
+              fontWeight: 700,
+              color: 'var(--text)',
+              textAlign: 'center',
+              marginBottom: '48px',
+              lineHeight: 1.2,
+            }}
+          >
+            One Test. Three Outcomes.
+          </h2>
+
+          <div className="landing-unlocks-grid">
+            {[
+              {
+                number: '01',
+                title: 'Know Your Number',
+                body: 'Get a clinically validated VO₂ max estimate — the single best predictor of cardiovascular health and all-cause mortality. Know exactly where you stand compared to your age and sex.',
+                accent: 'var(--accent)',
+              },
+              {
+                number: '02',
+                title: 'A Plan to Improve It',
+                body: 'Receive a personalized 8-week training protocol built from your results — with specific heart rate zones, session durations, and progression targets. Not generic advice.',
+                accent: '#4A9EFF',
+              },
+              {
+                number: '03',
+                title: 'Track What Matters',
+                body: 'Retest every 8–12 weeks and see your progress over time. Watch your score climb, your resting heart rate drop, and your classification improve.',
+                accent: '#FFD166',
+              },
+            ].map((col) => (
+              <div key={col.number} style={{ textAlign: 'center' }}>
+                <span
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: '0.65rem',
+                    letterSpacing: '0.12em',
+                    color: col.accent,
+                    display: 'block',
+                    marginBottom: '14px',
+                  }}
+                >
+                  {col.number}
+                </span>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1.15rem',
+                    fontWeight: 700,
+                    color: 'var(--text)',
+                    marginBottom: '12px',
+                  }}
+                >
+                  {col.title}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.8rem',
+                    color: 'var(--text2)',
+                    lineHeight: 1.75,
+                    maxWidth: '340px',
+                    margin: '0 auto',
+                  }}
+                >
+                  {col.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer
         className="relative z-10 landing-footer"
@@ -798,6 +901,27 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           }
           .landing-audience-card {
             padding: 20px !important;
+          }
+        }
+
+        /* Unlocks grid */
+        .landing-unlocks-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 40px;
+        }
+        @media (max-width: 1023px) {
+          .landing-unlocks-container {
+            padding: 60px 40px !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .landing-unlocks-grid {
+            grid-template-columns: 1fr;
+            gap: 32px;
+          }
+          .landing-unlocks-container {
+            padding: 48px 24px !important;
           }
         }
 

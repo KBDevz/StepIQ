@@ -63,17 +63,17 @@ export default function NavBar({
         <div className="flex items-center" style={{ gap: '28px' }}>
           <span
             onClick={onHowItWorks}
-            className="hidden sm:inline cursor-pointer transition-colors"
+            className="nav-hide-mobile cursor-pointer transition-colors"
             style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', fontWeight: 400, color: 'var(--text2)' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
           >
-            How it works
+            How It Works
           </span>
 
           {/* Auth section */}
           {userName ? (
-            <div className="flex items-center gap-4">
+            <div className="nav-hide-mobile flex items-center gap-4">
               <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontFamily: 'var(--font-body)' }}>
                 {userName}
               </span>
@@ -90,7 +90,7 @@ export default function NavBar({
           ) : onSignIn ? (
             <span
               onClick={onSignIn}
-              className="cursor-pointer transition-colors"
+              className="nav-hide-mobile cursor-pointer transition-colors"
               style={{ fontSize: '0.85rem', color: 'var(--text2)', fontFamily: 'var(--font-body)' }}
               onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
               onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
@@ -140,7 +140,10 @@ export default function NavBar({
 
       <style>{`
         .hiw-nav-pad { padding: 0 64px; }
-        @media (max-width: 767px) { .hiw-nav-pad { padding: 0 24px !important; } }
+        @media (max-width: 767px) {
+          .hiw-nav-pad { padding: 0 16px !important; }
+          .nav-hide-mobile { display: none !important; }
+        }
         @media (min-width: 768px) and (max-width: 1023px) { .hiw-nav-pad { padding: 0 40px !important; } }
       `}</style>
     </>
