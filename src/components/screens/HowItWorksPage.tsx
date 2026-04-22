@@ -1,13 +1,4 @@
 import { useState } from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ReferenceDot,
-  ResponsiveContainer,
-} from 'recharts';
 import NavBar from '../ui/NavBar';
 
 interface HowItWorksPageProps {
@@ -15,52 +6,6 @@ interface HowItWorksPageProps {
   onHowItWorks: () => void;
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
   onLogoClick: () => void;
-}
-
-/* ── Regression chart data ── */
-const sampleData = [
-  { hr: 95, vo2: 17.3 },
-  { hr: 115, vo2: 21.9 },
-  { hr: 132, vo2: 26.5 },
-  { hr: 151, vo2: 31.1 },
-];
-
-const regression = (() => {
-  const pts = sampleData.map((d) => ({ x: d.hr, y: d.vo2 }));
-  const n = pts.length;
-  let sx = 0, sy = 0, sxy = 0, sx2 = 0;
-  pts.forEach((p) => { sx += p.x; sy += p.y; sxy += p.x * p.y; sx2 += p.x * p.x; });
-  const d = n * sx2 - sx * sx;
-  const slope = (n * sxy - sx * sy) / d;
-  const intercept = (sy - slope * sx) / n;
-  const maxHR = 185;
-  const vo2Max = Math.round((slope * maxHR + intercept) * 10) / 10;
-  const line: { hr: number; actual?: number; predicted?: number }[] = [];
-  for (let i = 0; i <= 40; i++) {
-    const hr = 85 + (maxHR - 85) * (i / 40);
-    const vo2 = slope * hr + intercept;
-    if (hr <= 151) line.push({ hr: Math.round(hr), actual: Math.round(vo2 * 10) / 10 });
-    else line.push({ hr: Math.round(hr), predicted: Math.round(vo2 * 10) / 10 });
-  }
-  return { line, vo2Max, maxHR };
-})();
-
-function ScienceChart() {
-  return (
-    <div style={{ background: '#0a1220', borderRadius: '12px', padding: '12px 4px 4px 0' }}>
-      <ResponsiveContainer width="100%" height={200}>
-        <LineChart margin={{ top: 8, right: 12, bottom: 4, left: -20 }}>
-          <CartesianGrid stroke="#1C2F4A" strokeDasharray="3 3" />
-          <XAxis dataKey="hr" type="number" domain={[85, 190]} tick={{ fill: '#5A7090', fontSize: 9, fontFamily: 'IBM Plex Mono' }} stroke="#1C2F4A" tickLine={false} />
-          <YAxis tick={{ fill: '#5A7090', fontSize: 9, fontFamily: 'IBM Plex Mono' }} stroke="#1C2F4A" tickLine={false} />
-          <Line data={regression.line.filter((d) => d.actual !== undefined)} dataKey="actual" stroke="#3B82F6" strokeWidth={2} dot={false} isAnimationActive={false} />
-          <Line data={regression.line.filter((d) => d.predicted !== undefined)} dataKey="predicted" stroke="#00E5A0" strokeWidth={2} strokeDasharray="6 4" dot={false} isAnimationActive={false} />
-          <Line data={sampleData.map((p) => ({ hr: p.hr, dot: p.vo2 }))} dataKey="dot" stroke="transparent" dot={{ fill: '#3B82F6', r: 4, stroke: '#0D1829', strokeWidth: 2 }} isAnimationActive={false} />
-          <ReferenceDot x={regression.maxHR} y={regression.vo2Max} r={5} fill="#00E5A0" stroke="#0D1829" strokeWidth={2} />
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
-  );
 }
 
 /* ── Classification data ── */
@@ -113,24 +58,6 @@ const steps = [
   },
 ];
 
-/* ── Science cards ── */
-const scienceCards = [
-  {
-    title: 'Chester Step Test Protocol',
-    content: 'The Chester Step Test was developed by K. Sykes and is used in cardiac rehabilitation and occupational health worldwide. It uses a submaximal protocol \u2014 meaning it estimates your VO\u2082 max without pushing you to exhaustion, making it safe for a wide range of fitness levels.',
-    chart: false,
-  },
-  {
-    title: 'Linear Regression Scoring',
-    content: 'StepIQ plots your heart rate response at each level and fits a regression line to the data. That line is extrapolated to your predicted maximum heart rate \u2014 where it intersects is your VO\u2082 max estimate. More levels completed means a more accurate result.',
-    chart: true,
-  },
-  {
-    title: 'Why VO\u2082 Max Matters',
-    content: 'VO\u2082 max is one of the strongest independent predictors of all-cause mortality \u2014 more predictive than blood pressure, cholesterol, or BMI in several large studies. Each 1 ml/kg/min improvement is associated with a meaningful reduction in cardiovascular risk.',
-    chart: false,
-  },
-];
 
 /* ── Section divider component ── */
 function Divider() {
@@ -160,18 +87,9 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px' }}>
               Why the Chester Step Test
             </p>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15, marginBottom: '24px' }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15 }}>
               The Most Credible Fitness Test You Can Do Without a Lab
             </h1>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 400, color: 'var(--text2)', lineHeight: 1.65, maxWidth: '620px', margin: '0 auto 16px' }}>
-              VO₂ max is the single strongest predictor of how long — and how well — you'll live. Yet most people have never measured it.
-            </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', lineHeight: 1.75, maxWidth: '620px', margin: '0 auto' }}>
-              Lab testing is the gold standard but costs $300–500 and requires specialist equipment. Wearables are convenient but algorithmically estimated and clinically unvalidated. The Chester Step Test has been used in cardiac rehabilitation and occupational health for decades — and StepIQ brings it to your living room.
-            </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.85rem', color: 'var(--text2)', fontStyle: 'italic', maxWidth: '600px', margin: '16px auto 0', textAlign: 'center', lineHeight: 1.75 }}>
-              Peer-reviewed research shows the Chester Step Test correlates with laboratory VO₂ max at r=0.92 — typically accurate to within ±3-4 ml/kg/min of your true value when performed correctly.
-            </p>
           </div>
         </section>
 
@@ -311,77 +229,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           </div>
         </section>
 
-        {/* ────── SECTION: ACCURACY VISUALIZATION ────── */}
-        <section className="hiw-section-pad hiw-section-v">
-          <div style={{ maxWidth: '1200px', margin: '0 auto', textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '16px' }}>
-              How Accurate Is It?
-            </p>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem, 4vw, 2rem)', fontWeight: 700, color: 'var(--text)', marginBottom: '12px' }}>
-              Closer to a Lab Test Than Anything Else Available
-            </h2>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text2)', maxWidth: '560px', margin: '0 auto 48px', lineHeight: 1.75 }}>
-              Independent validation studies show the Chester Step Test produces results within 8-10% of laboratory-measured VO₂ max — significantly more accurate than consumer wearable estimates.
-            </p>
-
-            {/* Accuracy bar chart */}
-            <div style={{ maxWidth: '700px', margin: '0 auto', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '16px', padding: '32px', textAlign: 'left' }}>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', marginBottom: '24px' }}>
-                Accuracy vs Laboratory VO₂ Max Test
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                {/* Row 1 — Lab */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                    <div>
-                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text)' }}>Lab VO₂ Max Test</p>
-                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>Direct measurement</p>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: '#4A9EFF' }}>Gold Standard</span>
-                  </div>
-                  <div style={{ width: '100%', height: '24px', background: 'var(--surface2)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '100%', height: '100%', background: '#4A9EFF', borderRadius: '4px' }} />
-                  </div>
-                </div>
-
-                {/* Row 2 — Chester/StepIQ */}
-                <div>
-                  <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.52rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '4px' }}>★ Recommended</p>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                    <div>
-                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--accent)', fontWeight: 700 }}>Chester Step Test (StepIQ)</p>
-                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>Validated submaximal protocol · r=0.92</p>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--accent)' }}>±8-10%</span>
-                  </div>
-                  <div style={{ width: '100%', height: '24px', background: 'var(--surface2)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '91%', height: '100%', background: 'var(--accent)', borderRadius: '4px' }} />
-                  </div>
-                </div>
-
-                {/* Row 3 — Wearables */}
-                <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', marginBottom: '4px' }}>
-                    <div>
-                      <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)' }}>Consumer Wearables</p>
-                      <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>Algorithmic estimate · no validated protocol</p>
-                    </div>
-                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', color: 'var(--text2)' }}>±20%+</span>
-                  </div>
-                  <div style={{ width: '100%', height: '24px', background: 'var(--surface2)', borderRadius: '4px', overflow: 'hidden' }}>
-                    <div style={{ width: '72%', height: '100%', background: 'var(--text3)', borderRadius: '4px' }} />
-                  </div>
-                </div>
-              </div>
-
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text3)', fontStyle: 'italic', marginTop: '16px', lineHeight: 1.6 }}>
-                * Accuracy figures based on Sykes & Roberts (2004), Occupational Medicine. Laboratory VO₂ max testing used as reference standard. Wearable accuracy based on published independent validation studies.
-              </p>
-            </div>
-          </div>
-        </section>
-
         <Divider />
 
         {/* ────── SECTION 3: HOW IT WORKS (3 steps) ────── */}
@@ -431,43 +278,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                   </p>
                 </div>
               ))}
-            </div>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ────── SECTION 4: THE SCIENCE ────── */}
-        <section style={{ background: '#0D1829' }}>
-          <div className="hiw-section-pad hiw-section-v">
-            <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-              <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '56px' }}>
-                Built on Clinical Science
-              </h2>
-
-              <div className="hiw-science-grid">
-                {scienceCards.map((card) => (
-                  <div
-                    key={card.title}
-                    style={{
-                      background: '#0a1220',
-                      border: '1px solid #1C2F4A',
-                      borderRadius: '16px',
-                      padding: '28px',
-                      display: 'flex',
-                      flexDirection: 'column',
-                    }}
-                  >
-                    <h3 className="font-mono" style={{ fontSize: '0.85rem', fontWeight: 700, color: '#EEF2FF', marginBottom: '16px' }}>
-                      {card.title}
-                    </h3>
-                    <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.8, marginBottom: card.chart ? '20px' : '0', flex: card.chart ? undefined : 1 }}>
-                      {card.content}
-                    </p>
-                    {card.chart && <ScienceChart />}
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
         </section>
@@ -605,12 +415,6 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           gap: 20px;
         }
 
-        .hiw-compare-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
-        }
-
         .hiw-steps-grid {
           display: grid;
           grid-template-columns: repeat(3, 1fr);
@@ -634,20 +438,12 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           }
         }
 
-        .hiw-science-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 24px;
-        }
-
         /* Tablet */
         @media (min-width: 768px) and (max-width: 1023px) {
           .hiw-section-pad { padding-left: 48px; padding-right: 48px; }
           .hiw-cred-v { padding-top: 56px; padding-bottom: 56px; }
           .hiw-cred-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-          .hiw-compare-grid { grid-template-columns: 1fr; max-width: 480px; margin: 0 auto; }
           .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-          .hiw-science-grid { grid-template-columns: 1fr; max-width: 560px; margin: 0 auto; }
         }
 
         /* Mobile */
@@ -656,9 +452,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
           .hiw-section-v { padding-top: 48px; padding-bottom: 48px; }
           .hiw-cred-v { padding-top: 48px; padding-bottom: 48px; }
           .hiw-cred-grid { grid-template-columns: 1fr; }
-          .hiw-compare-grid { grid-template-columns: 1fr; }
           .hiw-steps-grid { grid-template-columns: 1fr; gap: 40px; }
-          .hiw-science-grid { grid-template-columns: 1fr; }
           .hiw-compare-table-wrap { margin-left: -24px; margin-right: -24px; border-radius: 0 !important; border-left: none !important; border-right: none !important; }
           .hiw-compare-table-wrap td:first-child,
           .hiw-compare-table-wrap th:first-child {
