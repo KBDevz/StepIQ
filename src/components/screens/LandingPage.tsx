@@ -532,6 +532,172 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
+      {/* ── WHO IS STEPIQ FOR? ── */}
+      <section
+        className="relative z-10"
+        style={{
+          background: 'var(--surface)',
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <div
+          className="landing-audience-container"
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '80px 64px',
+          }}
+        >
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.62rem',
+              letterSpacing: '0.18em',
+              color: 'var(--accent)',
+              textAlign: 'center',
+              marginBottom: '12px',
+            }}
+          >
+            Who Is StepIQ For?
+          </p>
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '2rem',
+              fontWeight: 700,
+              color: 'var(--text)',
+              textAlign: 'center',
+              marginBottom: '40px',
+              lineHeight: 1.2,
+            }}
+          >
+            Built for Anyone Who Takes
+            <br />
+            Their Health Seriously
+          </h2>
+
+          <div className="landing-audience-grid">
+            {[
+              {
+                accent: '#00B8A2',
+                title: 'The Health Optimizer',
+                body: 'You track your fitness seriously and want a more rigorous VO₂ max measurement than your wearable provides. StepIQ uses a clinically validated protocol — not an algorithm.',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00B8A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+                  </svg>
+                ),
+              },
+              {
+                accent: '#4A9EFF',
+                title: 'The Fitness Baseline Seeker',
+                body: 'You want to know exactly where your cardiovascular fitness stands and have a science-backed plan to improve it. No lab required.',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="12" cy="12" r="10" />
+                    <circle cx="12" cy="12" r="6" />
+                    <circle cx="12" cy="12" r="2" />
+                  </svg>
+                ),
+              },
+              {
+                accent: '#FFD166',
+                title: 'The Comeback Story',
+                body: "You're returning to fitness after illness, injury, or a long break and want a safe, validated starting point. The test never pushes you to exhaustion.",
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFD166" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+                  </svg>
+                ),
+              },
+              {
+                accent: '#FF8C42',
+                title: 'Occupational Health',
+                body: 'Your industry requires cardiovascular fitness screening. StepIQ follows the Chester Step Test protocol used in cardiac rehabilitation and occupational health worldwide.',
+                icon: (
+                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
+                  </svg>
+                ),
+              },
+            ].map((card) => (
+              <div
+                key={card.title}
+                className="landing-audience-card"
+                style={{
+                  position: 'relative',
+                  background: 'var(--bg)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '16px',
+                  padding: '24px',
+                  overflow: 'hidden',
+                  transition: 'border-color 0.2s, transform 0.2s',
+                  cursor: 'default',
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--accent)';
+                  e.currentTarget.style.transform = 'translateY(-3px)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }}
+              >
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    height: '3px',
+                    background: card.accent,
+                    borderRadius: '3px 3px 0 0',
+                  }}
+                />
+                <div style={{ marginBottom: '14px' }}>{card.icon}</div>
+                <h3
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: '1rem',
+                    fontWeight: 700,
+                    color: 'var(--text)',
+                    marginBottom: '8px',
+                  }}
+                >
+                  {card.title}
+                </h3>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.78rem',
+                    color: 'var(--text2)',
+                    lineHeight: 1.7,
+                  }}
+                >
+                  {card.body}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p
+            style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.78rem',
+              color: 'var(--text2)',
+              fontStyle: 'italic',
+              textAlign: 'center',
+              marginTop: '28px',
+            }}
+          >
+            Not sure which category you're in? It doesn't matter — the test is the same for everyone.
+          </p>
+        </div>
+      </section>
+
       {/* ── FOOTER ── */}
       <footer
         className="relative z-10 landing-footer"
@@ -607,6 +773,32 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         /* Large screens */
         @media (min-width: 1400px) {
           .landing-headline { font-size: 4.5rem; }
+        }
+
+        /* Audience grid */
+        .landing-audience-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 20px;
+        }
+        @media (max-width: 1023px) {
+          .landing-audience-grid {
+            grid-template-columns: repeat(2, 1fr);
+          }
+          .landing-audience-container {
+            padding: 60px 40px !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .landing-audience-grid {
+            grid-template-columns: 1fr;
+          }
+          .landing-audience-container {
+            padding: 48px 24px !important;
+          }
+          .landing-audience-card {
+            padding: 20px !important;
+          }
         }
 
         /* CTA button row */
