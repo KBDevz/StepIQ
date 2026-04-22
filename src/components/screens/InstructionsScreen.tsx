@@ -23,7 +23,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   const instructions = [
     {
       title: 'The Step',
-      text: 'Use a step at your selected height. For best accuracy, 30cm (12 inches) is recommended. Standard home stairs are typically 7–9 inches and are not suitable — a fitness step platform works perfectly.',
+      text: 'You\'ll need a step platform at your selected height. A fitness aerobic step (available for $20-40) is ideal — 30cm (12 inches) gives the most accurate results. Standard home stairs are typically too short at 7-9 inches.',
     },
     {
       title: 'The Pattern',
