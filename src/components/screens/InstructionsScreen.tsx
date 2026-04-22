@@ -53,7 +53,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
   const cards = [
     { icon: ICONS.prepare, label: 'Prepare', desc: 'No caffeine, food, or hard exercise for 2 hours prior.' },
     { icon: ICONS.step, label: 'The Step', desc: '30cm (12in) fitness step platform. Home stairs are too short.' },
-    { icon: ICONS.pattern, label: 'The Pattern', desc: 'Left up · Right up · Left down · Right down · repeat.' },
+    { icon: ICONS.pattern, label: 'The Pattern', desc: 'Up, up, down, down — one cycle per 4 beats. If fatigued, you may alternate your lead foot between cycles.' },
     { icon: ICONS.form, label: 'Good Form', desc: "Stand upright, fully extend legs, don't talk during levels." },
     { icon: ICONS.levels, label: 'The Levels', desc: '5 levels × 2 minutes, increasing pace. Most complete 3–4.' },
     { icon: ICONS.stop, label: 'When to Stop', desc: `HR ≥ ${state.stopHR} bpm or RPE 8+. Stop immediately if dizzy or unwell.` },
