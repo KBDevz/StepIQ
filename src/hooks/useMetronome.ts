@@ -88,6 +88,9 @@ export function useMetronome() {
 
   const start = useCallback(
     (bpm: number, onBeat?: (beat: number) => void) => {
+      // Re-unlock audio synchronously in case context suspended since last gesture
+      unlockAudio();
+
       if (runningRef.current) {
         if (schedulerRef.current !== null) clearTimeout(schedulerRef.current);
         schedulerRef.current = null;

@@ -227,37 +227,38 @@ export default function App() {
         {screen === 'instructions' && (
           <InstructionsScreen
             state={state}
-            onBegin={() => setScreen('preTestConditions')}
+            onBegin={() => { metronome.resumeAudio(); setScreen('preTestConditions'); }}
             onBack={() => setScreen('setup')}
           />
         )}
         {screen === 'preTestConditions' && (
           <PreTestConditionsScreen
             betaBlocker={state.betaBlocker}
-            onContinue={() => setScreen('checklist')}
+            onContinue={() => { metronome.resumeAudio(); setScreen('checklist'); }}
             onBack={() => setScreen('instructions')}
           />
         )}
         {screen === 'checklist' && (
           <ChecklistScreen
-            onBegin={() => setScreen('restingHR')}
+            onBegin={() => { metronome.resumeAudio(); setScreen('restingHR'); }}
             onBack={() => setScreen('preTestConditions')}
           />
         )}
         {screen === 'restingHR' && (
           <RestingHRScreen
             onConfirm={(hr) => {
+              metronome.resumeAudio();
               setRestingHR(hr);
               setScreen('preLevel');
             }}
-            onSkip={() => setScreen('preLevel')}
+            onSkip={() => { metronome.resumeAudio(); setScreen('preLevel'); }}
           />
         )}
         {screen === 'preLevel' && (
           <PreLevelScreen
             level={state.currentLevel}
             countdownSeconds={state.devMode ? DEV_PRE_COUNTDOWN : PRE_COUNTDOWN}
-            onComplete={() => setScreen('activeLevel')}
+            onComplete={() => { metronome.resumeAudio(); setScreen('activeLevel'); }}
             playCountBeep={metronome.playCountBeep}
           />
         )}
