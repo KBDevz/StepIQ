@@ -181,6 +181,7 @@ Patient:
   Resting HR: ${state.restingHR ?? 'Not recorded'}
   Predicted Max HR: ${state.maxHR} bpm
   Beta blocker: ${state.betaBlocker ? 'Yes (Londeree formula)' : 'No (standard 220-age)'}
+  Test time: ${state.testedAtHour !== null ? `${state.testedAtHour}:00 (${state.testedAtTimeOfDay})` : 'Not recorded'}
 
 Test Data:
 ${levelLines}

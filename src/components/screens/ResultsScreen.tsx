@@ -9,6 +9,12 @@ import HRZonesCard from '../results/HRZonesCard';
 import AIReportPanel from '../results/AIReportPanel';
 import APIKeyModal from '../results/APIKeyModal';
 
+function formatTestTime(hour: number): string {
+  const h = hour % 12 || 12;
+  const ampm = hour < 12 ? 'AM' : 'PM';
+  return `${h}:00 ${ampm}`;
+}
+
 interface ResultsScreenProps {
   state: TestState;
   stopReason: string;
@@ -803,6 +809,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 { label: 'Age', value: `${state.age}`, unit: '' },
                 { label: 'HR Formula', value: hrFormula, unit: '', small: true },
                 ...(state.restingHR !== null ? [{ label: 'Resting HR', value: `${state.restingHR}`, unit: 'bpm' }] : []),
+                ...(state.testedAtHour !== null ? [{ label: 'Tested At', value: formatTestTime(state.testedAtHour), unit: '' }] : []),
               ].map((stat) => (
                 <div key={stat.label} style={{ ...cardStyle, padding: '16px' }}>
                   <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginBottom: '6px' }}>{stat.label}</p>

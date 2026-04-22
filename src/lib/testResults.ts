@@ -23,6 +23,8 @@ export async function saveTestResult(
       vo2_max: Math.round(vo2Max * 10) / 10,
       classification: classification.name,
       stop_reason: stopReason,
+      tested_at_hour: state.testedAtHour,
+      tested_at_time_of_day: state.testedAtTimeOfDay,
     })
     .select('id')
     .single();

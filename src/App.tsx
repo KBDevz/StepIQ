@@ -12,6 +12,7 @@ import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
 import ResultsScreen from './components/screens/ResultsScreen';
 import SetPasswordPage from './components/screens/SetPasswordPage';
+import PreTestConditionsScreen from './components/screens/PreTestConditionsScreen';
 import ChecklistScreen from './components/screens/ChecklistScreen';
 import PhoneFrame from './components/ui/PhoneFrame';
 import AuthModal from './components/ui/AuthModal';
@@ -27,6 +28,7 @@ export default function App() {
     logLevel,
     advanceLevel,
     checkStopConditions,
+    captureTestTime,
     resetTest,
   } = useTestState();
 
@@ -52,10 +54,11 @@ export default function App() {
 
   const handleTestEnd = useCallback(
     (reason: string) => {
+      captureTestTime();
       setStopReason(reason);
       setScreen('results');
     },
-    [setScreen],
+    [setScreen, captureTestTime],
   );
 
   const openSignIn = useCallback((prefillEmail?: string) => {
@@ -224,14 +227,21 @@ export default function App() {
         {screen === 'instructions' && (
           <InstructionsScreen
             state={state}
-            onBegin={() => setScreen('checklist')}
+            onBegin={() => setScreen('preTestConditions')}
             onBack={() => setScreen('setup')}
+          />
+        )}
+        {screen === 'preTestConditions' && (
+          <PreTestConditionsScreen
+            betaBlocker={state.betaBlocker}
+            onContinue={() => setScreen('checklist')}
+            onBack={() => setScreen('instructions')}
           />
         )}
         {screen === 'checklist' && (
           <ChecklistScreen
             onBegin={() => setScreen('restingHR')}
-            onBack={() => setScreen('instructions')}
+            onBack={() => setScreen('preTestConditions')}
           />
         )}
         {screen === 'restingHR' && (

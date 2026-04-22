@@ -11,6 +11,8 @@ export interface TestState {
   currentLevel: number;
   data: LevelResult[];
   devMode: boolean;
+  testedAtHour: number | null;
+  testedAtTimeOfDay: string | null;
 }
 
 export interface LevelResult {
@@ -69,6 +71,7 @@ export type Screen =
   | 'howItWorks'
   | 'setup'
   | 'instructions'
+  | 'preTestConditions'
   | 'checklist'
   | 'restingHR'
   | 'preLevel'

@@ -3,6 +3,13 @@ import type { TestState, LevelResult, Screen } from '../types';
 import { predictedMaxHR, stopHR } from '../utils/maxHR';
 import { LEVELS } from '../utils/protocol';
 
+function getTimeOfDay(hour: number): string {
+  if (hour >= 5 && hour < 12) return 'morning';
+  if (hour >= 12 && hour < 17) return 'afternoon';
+  if (hour >= 17 && hour < 21) return 'evening';
+  return 'night';
+}
+
 const initialState: TestState = {
   name: '',
   age: 30,
@@ -14,6 +21,8 @@ const initialState: TestState = {
   currentLevel: 1,
   data: [],
   devMode: false,
+  testedAtHour: null,
+  testedAtTimeOfDay: null,
 };
 
 export function useTestState() {
@@ -84,6 +93,11 @@ export function useTestState() {
     return { shouldStop: false, reason: '' };
   }, [state.data, state.stopHR, state.currentLevel]);
 
+  const captureTestTime = useCallback(() => {
+    const hour = new Date().getHours();
+    setState((s) => ({ ...s, testedAtHour: hour, testedAtTimeOfDay: getTimeOfDay(hour) }));
+  }, []);
+
   const resetTest = useCallback(() => {
     setState(initialState);
     setScreen('landing');
@@ -104,6 +118,7 @@ export function useTestState() {
     logLevel,
     advanceLevel,
     checkStopConditions,
+    captureTestTime,
     resetTest,
     lastHR,
   };

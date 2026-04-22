@@ -22,6 +22,10 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
 
   const instructions = [
     {
+      title: 'Preparation',
+      text: 'Avoid caffeine, large meals, and strenuous exercise for at least 2 hours before testing. Stay hydrated and test at the same time of day for consistent results.',
+    },
+    {
       title: 'The Step',
       text: 'A fitness aerobic step (available for $20-40) is ideal — 30cm (12 inches) gives the most accurate results. Standard home stairs are typically too short at 7-9 inches.',
     },
