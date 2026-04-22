@@ -15,170 +15,184 @@ const LEVEL_PILLS = [
   { label: 'L5', rate: '35/min' },
 ];
 
-export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
-  const betaBlockerFormula = state.betaBlocker
-    ? `Your predicted max HR is calculated using the Londeree formula: 164 − (0.7 × ${state.age}) = ${state.maxHR} bpm. Stop HR (80%): ${state.stopHR} bpm`
-    : null;
+const ICONS = {
+  prepare: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="12" r="10" /><polyline points="12 6 12 12 16 14" />
+    </svg>
+  ),
+  step: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M18 20V10" /><path d="M12 20V4" /><path d="M6 20v-6" />
+    </svg>
+  ),
+  pattern: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="17 1 21 5 17 9" /><path d="M3 11V9a4 4 0 0 1 4-4h14" />
+      <polyline points="7 23 3 19 7 15" /><path d="M21 13v2a4 4 0 0 1-4 4H3" />
+    </svg>
+  ),
+  form: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
+    </svg>
+  ),
+  levels: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+    </svg>
+  ),
+  stop: (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+    </svg>
+  ),
+};
 
-  const instructions = [
-    {
-      title: 'Preparation',
-      text: 'Avoid caffeine, large meals, and strenuous exercise for at least 2 hours before testing. Stay hydrated and test at the same time of day for consistent results.',
-    },
-    {
-      title: 'The Step',
-      text: 'A fitness aerobic step (available for $20-40) is ideal — 30cm (12 inches) gives the most accurate results. Standard home stairs are typically too short at 7-9 inches.',
-    },
-    {
-      title: 'The Pattern',
-      text: 'Step to the beat: Left up, Right up, Left down, Right down. One full cycle = 4 beats. You may switch your lead leg during the test to reduce fatigue.',
-    },
-    {
-      title: 'Good Form',
-      text: 'Maintain upright posture throughout. Fully extend your legs on top of the step. Avoid talking during stages — this affects your heart rate and RPE accuracy.',
-    },
-    {
-      title: 'The Levels',
-      text: 'Most individuals will not complete all 5 levels — this is normal and expected.',
-      hasPills: true,
-    },
-    {
-      title: 'Recording Your Data',
-      text: 'During the final 15 seconds of each level the app will alert you to check your heart rate. Record it from your monitor. Then select your RPE (effort level) before the next level begins.',
-    },
-    {
-      title: 'Stop Conditions',
-      text: betaBlockerFormula
-        ? `The test stops when your RPE reaches 8 or above on the CR10 scale. If your HR reaches 80% of your predicted max (${state.stopHR} bpm) but your RPE is below 8, you'll see an advisory — you may continue if you feel able.\nYou may also end the test early at any time.\n\n${betaBlockerFormula}`
-        : `The test stops when your RPE reaches 8 or above on the CR10 scale. If your HR reaches 80% of your predicted max (220 − ${state.age} = ${state.maxHR} bpm, so stop HR = ${state.stopHR} bpm) but your RPE is below 8, you'll see an advisory — you may continue if you feel able.\nYou may also end the test early at any time.`,
-    },
-    {
-      title: 'Safety',
-      text: 'Stop immediately if you experience chest pain, dizziness, severe shortness of breath, or feel unwell. This test is submaximal — you should never reach complete exhaustion.',
-    },
+export default function InstructionsScreen({ state, onBegin, onBack }: InstructionsScreenProps) {
+  const cards = [
+    { icon: ICONS.prepare, label: 'Prepare', desc: 'No caffeine, food, or hard exercise for 2 hours prior.' },
+    { icon: ICONS.step, label: 'The Step', desc: '30cm (12in) fitness step platform. Home stairs are too short.' },
+    { icon: ICONS.pattern, label: 'The Pattern', desc: 'Left up · Right up · Left down · Right down · repeat.' },
+    { icon: ICONS.form, label: 'Good Form', desc: "Stand upright, fully extend legs, don't talk during levels." },
+    { icon: ICONS.levels, label: 'The Levels', desc: '5 levels × 2 minutes, increasing pace. Most complete 3–4.' },
+    { icon: ICONS.stop, label: 'When to Stop', desc: `HR ≥ ${state.stopHR} bpm or RPE 8+. Stop immediately if dizzy or unwell.` },
   ];
 
   return (
     <div style={{
       display: 'flex',
       flexDirection: 'column',
-      padding: '32px 28px 0',
+      flex: 1,
+      height: '100%',
+      overflow: 'hidden',
     }}>
-      <span
-        className="font-mono"
-        style={{
-          display: 'inline-block',
-          fontSize: '0.6rem',
-          textTransform: 'uppercase',
-          letterSpacing: '0.16em',
-          color: 'var(--accent)',
-          marginBottom: '12px',
-        }}
-      >
-        Protocol
-      </span>
-
-      <h2
-        className="font-serif"
-        style={{ fontSize: '1.8rem', fontWeight: 700, color: 'var(--text)', marginBottom: '6px' }}
-      >
-        Chester Step Test
-      </h2>
-      <p
-        className="font-mono"
-        style={{ fontSize: '0.7rem', color: 'var(--text2)', marginBottom: '28px' }}
-      >
-        5 Levels, 2 min each
-      </p>
-
-      {state.betaBlocker && (
-        <div
+      {/* Fixed header */}
+      <div style={{ flexShrink: 0, padding: '24px 24px 0' }}>
+        <span
+          className="font-mono"
           style={{
-            marginBottom: '20px',
-            padding: '12px 14px',
-            borderRadius: '12px',
-            background: 'var(--warn-glow)',
-            border: '1px solid rgba(255,140,66,0.25)',
+            display: 'inline-block',
+            fontSize: '0.6rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.16em',
+            color: 'var(--accent)',
+            marginBottom: '8px',
           }}
         >
-          <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--warn)', lineHeight: 1.6 }}>
-            Beta blocker adjustment active — using Londeree formula for max HR calculation
-          </p>
-        </div>
-      )}
+          Protocol
+        </span>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '0', marginBottom: '28px' }}>
-        {instructions.map((item, i) => (
-          <div key={i}>
-            <div style={{ display: 'flex', gap: '12px', padding: '12px 0' }}>
-              <span
-                className="font-mono"
-                style={{
-                  flexShrink: 0,
-                  width: '24px',
-                  height: '24px',
-                  borderRadius: '50%',
-                  background: 'var(--accent-dark)',
-                  border: '1px solid rgba(0,229,160,0.3)',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  fontSize: '0.62rem',
-                  fontWeight: 700,
-                  color: 'var(--accent)',
-                  marginTop: '1px',
-                }}
-              >
-                {i + 1}
-              </span>
-              <div style={{ flex: 1 }}>
-                <p
-                  className="font-mono"
-                  style={{ fontSize: '0.68rem', fontWeight: 600, color: 'var(--accent)', marginBottom: '4px', textTransform: 'uppercase', letterSpacing: '0.06em' }}
-                >
-                  {item.title}
-                </p>
-                {item.hasPills && (
-                  <>
-                    <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text)', lineHeight: 1.6, marginBottom: '8px' }}>
-                      5 levels, 2 minutes each, increasing in pace:
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '8px' }}>
-                      {LEVEL_PILLS.map((pill) => (
-                        <span
-                          key={pill.label}
-                          className="font-mono"
-                          style={{
-                            fontSize: '0.6rem',
-                            color: 'var(--accent)',
-                            background: 'var(--accent-dark)',
-                            border: '1px solid rgba(0,229,160,0.2)',
-                            borderRadius: '20px',
-                            padding: '3px 10px',
-                          }}
-                        >
-                          {pill.label} · {pill.rate}
-                        </span>
-                      ))}
-                    </div>
-                  </>
-                )}
-                <p
-                  className="font-mono"
-                  style={{ fontSize: '0.75rem', color: 'var(--text)', lineHeight: 1.6, whiteSpace: 'pre-line' }}
-                >
-                  {item.text}
-                </p>
-              </div>
-            </div>
-            {i < instructions.length - 1 && (
-              <div style={{ height: '1px', background: 'var(--border)', marginLeft: '36px', opacity: 0.5 }} />
-            )}
+        <h2
+          className="font-serif"
+          style={{ fontSize: '1.4rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}
+        >
+          Chester Step Test
+        </h2>
+        <p
+          className="font-mono"
+          style={{ fontSize: '0.68rem', color: 'var(--text2)', marginBottom: '12px' }}
+        >
+          5 Levels · 2 min each
+        </p>
+
+        {/* Level pills */}
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
+          {LEVEL_PILLS.map((pill) => (
+            <span
+              key={pill.label}
+              className="font-mono"
+              style={{
+                fontSize: '0.58rem',
+                color: 'var(--accent)',
+                background: 'var(--accent-dark)',
+                border: '1px solid rgba(0,229,160,0.2)',
+                borderRadius: '20px',
+                padding: '3px 10px',
+              }}
+            >
+              {pill.label} · {pill.rate}
+            </span>
+          ))}
+        </div>
+
+        {state.betaBlocker && (
+          <div
+            style={{
+              marginBottom: '12px',
+              padding: '10px 12px',
+              borderRadius: '10px',
+              background: 'var(--warn-glow)',
+              border: '1px solid rgba(255,140,66,0.25)',
+            }}
+          >
+            <p className="font-mono" style={{ fontSize: '0.65rem', color: 'var(--warn)', lineHeight: 1.5 }}>
+              Beta blocker active — Londeree formula, stop HR {state.stopHR} bpm
+            </p>
           </div>
-        ))}
+        )}
       </div>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', paddingBottom: '40px' }}>
+      {/* Scrollable cards */}
+      <div style={{
+        flex: 1,
+        overflowY: 'auto',
+        WebkitOverflowScrolling: 'touch',
+        padding: '0 24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '8px',
+      }}>
+        {cards.map((card) => (
+          <div
+            key={card.label}
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              padding: '14px 16px',
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              flexShrink: 0,
+            }}
+          >
+            <div style={{ flexShrink: 0, marginTop: '1px' }}>{card.icon}</div>
+            <div style={{ flex: 1, minWidth: 0 }}>
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.78rem',
+                fontWeight: 700,
+                color: 'var(--text)',
+                marginBottom: '2px',
+              }}>
+                {card.label}
+              </p>
+              <p style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.72rem',
+                color: 'var(--text2)',
+                lineHeight: 1.5,
+              }}>
+                {card.desc}
+              </p>
+            </div>
+          </div>
+        ))}
+        {/* Spacer so last card isn't flush against buttons */}
+        <div style={{ height: '8px', flexShrink: 0 }} />
+      </div>
+
+      {/* Fixed buttons */}
+      <div style={{
+        flexShrink: 0,
+        padding: '12px 24px 24px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        borderTop: '1px solid var(--border)',
+        background: 'var(--bg)',
+      }}>
         <Button onClick={onBegin}>Continue</Button>
         <Button variant="ghost" onClick={onBack}>Back</Button>
       </div>
