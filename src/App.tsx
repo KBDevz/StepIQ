@@ -264,6 +264,8 @@ export default function App() {
         {screen === 'activeLevel' && (
           <ActiveLevelScreen
             state={state}
+            startMetronome={metronome.start}
+            stopMetronome={metronome.stop}
             playBeep={metronome.playBeep}
             playCountBeep={metronome.playCountBeep}
             logLevel={logLevel}

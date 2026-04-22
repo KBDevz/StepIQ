@@ -10,6 +10,8 @@ import InlineCountdown from '../test/InlineCountdown';
 
 interface ActiveLevelScreenProps {
   state: TestState;
+  startMetronome: (bpm: number, onBeat?: (beat: number) => void) => void;
+  stopMetronome: () => void;
   playBeep: (freq: number, vol: number, duration?: number) => void;
   playCountBeep: (isLast: boolean) => void;
   logLevel: (hr: number, rpe: number) => void;
@@ -20,6 +22,8 @@ interface ActiveLevelScreenProps {
 
 export default function ActiveLevelScreen({
   state,
+  startMetronome,
+  stopMetronome,
   playBeep,
   playCountBeep,
   logLevel,
@@ -37,21 +41,17 @@ export default function ActiveLevelScreen({
   const [hrAdvisory, setHrAdvisory] = useState(false);
   const hrAlertFired = useRef(false);
 
-  const metronomeId = useRef<number>(0);
   const timerId = useRef<number>(0);
   const endTime = useRef(0);
   const beatCount = useRef(0);
   const levelStartBeat = useRef(0);
   const currentLevelRef = useRef(state.currentLevel);
-  const playBeepRef = useRef(playBeep);
-  playBeepRef.current = playBeep;
   const playCountBeepRef = useRef(playCountBeep);
   playCountBeepRef.current = playCountBeep;
-
-  function stopMetronome() {
-    clearInterval(metronomeId.current);
-    metronomeId.current = 0;
-  }
+  const startMetronomeRef = useRef(startMetronome);
+  startMetronomeRef.current = startMetronome;
+  const stopMetronomeRef = useRef(stopMetronome);
+  stopMetronomeRef.current = stopMetronome;
 
   function stopTimer() {
     clearInterval(timerId.current);
@@ -59,7 +59,7 @@ export default function ActiveLevelScreen({
   }
 
   function stopAll() {
-    stopMetronome();
+    stopMetronomeRef.current();
     stopTimer();
     cancelSpeech();
   }
@@ -80,40 +80,23 @@ export default function ActiveLevelScreen({
     setRemaining(dur);
 
     levelStartBeat.current = beatCount.current;
-    const msPerBeat = 60000 / p.bpm;
 
-    const BEAT_TONES: [number, number][] = [
-      [880, 0.5],
-      [880, 0.4],
-      [560, 0.45],
-      [560, 0.35],
-    ];
-    const toneDur = Math.min(0.08, msPerBeat * 0.00015);
-
-    const tick = () => {
-      const beat = beatCount.current % 4;
-      const [freq, vol] = BEAT_TONES[beat];
-      playBeepRef.current(freq, vol, toneDur);
+    startMetronomeRef.current(p.bpm, (beat: number) => {
       setActiveBeat(beat);
 
-      // Voice coaching only on level 1
       if (currentLevelRef.current === 1) {
         const beatsSinceStart = beatCount.current - levelStartBeat.current;
         onBeat(beatsSinceStart, currentLevelRef.current);
       }
 
       beatCount.current++;
-    };
-
-    tick();
-    metronomeId.current = window.setInterval(tick, msPerBeat);
+    });
 
     endTime.current = Date.now() + dur * 1000;
     timerId.current = window.setInterval(() => {
       const left = Math.max(0, Math.ceil((endTime.current - Date.now()) / 1000));
       setRemaining(left);
 
-      // At 10 seconds: show HR alert + open inline entry panel
       if (left <= 10 && left > 0 && !hrAlertFired.current) {
         hrAlertFired.current = true;
         setHrAlert(true);
@@ -125,7 +108,6 @@ export default function ActiveLevelScreen({
         stopTimer();
         setLevelActive(false);
         setHrAlert(false);
-        // Entry panel stays open — metronome keeps running
       }
     }, 100);
   }
@@ -152,28 +134,22 @@ export default function ActiveLevelScreen({
     setHrAlert(false);
     setHrAdvisory(false);
 
-    // RPE >= 8: stop regardless of HR
     if (rpe >= 8) {
-      stopMetronome();
+      stopMetronomeRef.current();
       setActiveBeat(-1);
       onTestEnd(`RPE ${rpe} reached stop zone`);
       return;
     }
 
-    // All 5 levels done
     if (state.currentLevel >= 5) {
-      stopMetronome();
+      stopMetronomeRef.current();
       setActiveBeat(-1);
       onTestEnd('All 5 levels completed');
       return;
     }
 
-    // HR >= 80% max but RPE < 8: continue with advisory
-    // (RPE >= 8 already caught above, so if we're here RPE < 8)
-
-    // Transition to next level
     const next = state.currentLevel + 1;
-    stopMetronome();
+    stopMetronomeRef.current();
     setActiveBeat(-1);
     advanceLevel();
     setNextLevel(next);
