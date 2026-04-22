@@ -798,6 +798,39 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
               </div>
             ))}
           </div>
+
+          <div style={{ textAlign: 'center', marginTop: '48px' }}>
+            <button
+              onClick={onStart}
+              className="landing-cta-btn uppercase cursor-pointer transition-all"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                color: 'var(--bg)',
+                background: 'var(--accent)',
+                padding: '15px 40px',
+                borderRadius: '10px',
+                border: 'none',
+                boxShadow: 'var(--shadow-accent)',
+              }}
+            >
+              Start Free Assessment →
+            </button>
+            <p
+              className="uppercase"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.6rem',
+                letterSpacing: '0.12em',
+                color: 'var(--text2)',
+                marginTop: '12px',
+              }}
+            >
+              Free · No Account · 10 Minutes
+            </p>
+          </div>
         </div>
       </section>
 
