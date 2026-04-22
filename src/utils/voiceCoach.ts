@@ -90,6 +90,10 @@ const BEAT_WORDS = ['Up', 'Up', 'Down', 'Down'];
 const COACHING_BEATS = 16;
 
 export function onBeat(beatsSinceLevelStart: number, currentLevel: number) {
+  if (typeof speechSynthesis === 'undefined') return;
+  // Don't queue speech if already speaking — prevents pile-up that blocks audio
+  if (speechSynthesis.speaking) return;
+
   if (beatsSinceLevelStart < COACHING_BEATS) {
     const word = BEAT_WORDS[beatsSinceLevelStart % 4];
     speak(word, 1.2);

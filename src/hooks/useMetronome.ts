@@ -68,23 +68,21 @@ export function useMetronome() {
   const runningRef = useRef(false);
   const onBeatRef = useRef<((beat: number) => void) | null>(null);
 
-  const scheduleBeat = useCallback((beatIndex: number) => {
-    const pos = beatIndex % 4;
-    const [freq, vol] = BEAT_TONES[pos];
-    beep(freq, vol, 0.08);
-    onBeatRef.current?.(pos);
-  }, []);
-
   const scheduler = useCallback(() => {
     if (!runningRef.current) return;
     const ctx = getCtx();
     while (nextBeatTimeRef.current < ctx.currentTime + SCHEDULE_AHEAD) {
-      scheduleBeat(beatIndexRef.current);
+      const pos = beatIndexRef.current % 4;
+      const [freq, vol] = BEAT_TONES[pos];
+      beep(freq, vol, 0.08);
+      // Fire callback asynchronously so speech synthesis can't block the scheduler
+      const beatPos = pos;
+      setTimeout(() => onBeatRef.current?.(beatPos), 0);
       nextBeatTimeRef.current += 60.0 / bpmRef.current;
       beatIndexRef.current++;
     }
     schedulerRef.current = window.setTimeout(scheduler, LOOKAHEAD_MS);
-  }, [scheduleBeat]);
+  }, []);
 
   const start = useCallback(
     (bpm: number, onBeat?: (beat: number) => void) => {
