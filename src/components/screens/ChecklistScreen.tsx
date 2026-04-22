@@ -7,6 +7,7 @@ interface ChecklistScreenProps {
 }
 
 const CHECKLIST_ITEMS = [
+  'My phone is not on silent mode',
   'I have a step approximately 30cm (12 inches) high',
   'I have a way to check my heart rate',
   'I am wearing appropriate footwear',
