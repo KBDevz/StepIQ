@@ -1,5 +1,5 @@
 import { useState, useCallback, useMemo } from 'react';
-import type { TestState, LevelResult, Screen, HRCaptureMethod } from '../types';
+import type { TestState, LevelResult, Screen } from '../types';
 import { predictedMaxHR, stopHR } from '../utils/maxHR';
 import { LEVELS } from '../utils/protocol';
 
@@ -14,8 +14,6 @@ const initialState: TestState = {
   currentLevel: 1,
   data: [],
   devMode: false,
-  hrCaptureMethod: 'manual',
-  wearableConnected: false,
 };
 
 export function useTestState() {
@@ -43,15 +41,7 @@ export function useTestState() {
     setState((s) => ({ ...s, devMode: !s.devMode }));
   }, []);
 
-  const setWearableConnected = useCallback((connected: boolean) => {
-    setState((s) => ({
-      ...s,
-      wearableConnected: connected,
-      hrCaptureMethod: connected ? 'wearable' : 'manual',
-    }));
-  }, []);
-
-  const logLevel = useCallback((hr: number, rpe: number, hrSource?: HRCaptureMethod) => {
+  const logLevel = useCallback((hr: number, rpe: number) => {
     setState((s) => {
       const proto = LEVELS[s.currentLevel - 1];
       const result: LevelResult = {
@@ -59,7 +49,6 @@ export function useTestState() {
         hr,
         rpe,
         vo2Estimate: proto.vo2,
-        hrSource: hrSource ?? s.hrCaptureMethod,
       };
       return {
         ...s,
@@ -111,7 +100,6 @@ export function useTestState() {
     updateSetup,
     setRestingHR,
     toggleDevMode,
-    setWearableConnected,
     logLevel,
     advanceLevel,
     checkStopConditions,

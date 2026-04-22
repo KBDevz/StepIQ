@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import type { TestState, HRCaptureMethod } from '../../types';
+import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
 import { onBeat, speakHRAlert, cancelSpeech } from '../../utils/voiceCoach';
 import BeatDots from '../test/BeatDots';
@@ -12,11 +12,10 @@ interface ActiveLevelScreenProps {
   state: TestState;
   playBeep: (freq: number, vol: number, duration?: number) => void;
   playCountBeep: (isLast: boolean) => void;
-  logLevel: (hr: number, rpe: number, hrSource?: HRCaptureMethod) => void;
+  logLevel: (hr: number, rpe: number) => void;
   advanceLevel: () => void;
   checkStopConditions: () => { shouldStop: boolean; reason: string };
   onTestEnd: (reason: string) => void;
-  fetchWearableHR?: () => Promise<{ hr: number; source: 'wearable' } | null>;
 }
 
 export default function ActiveLevelScreen({
@@ -26,7 +25,6 @@ export default function ActiveLevelScreen({
   logLevel,
   advanceLevel,
   onTestEnd,
-  fetchWearableHR,
 }: ActiveLevelScreenProps) {
   const [activeBeat, setActiveBeat] = useState(-1);
   const [showEntry, setShowEntry] = useState(false);
@@ -145,10 +143,10 @@ export default function ActiveLevelScreen({
   const proto = getLevelProtocol(state.currentLevel);
   const progress = totalTime > 0 ? remaining / totalTime : 1;
 
-  function handleEntryConfirm(hr: number, rpe: number, hrSource?: HRCaptureMethod) {
+  function handleEntryConfirm(hr: number, rpe: number) {
     cancelSpeech();
 
-    logLevel(hr, rpe, hrSource);
+    logLevel(hr, rpe);
     setShowEntry(false);
     setHrAlert(false);
 
@@ -286,7 +284,6 @@ export default function ActiveLevelScreen({
           <InlineEntryPanel
             level={state.currentLevel}
             onConfirm={handleEntryConfirm}
-            fetchWearableHR={fetchWearableHR}
           />
         ) : hrAlert && levelActive ? (
           <p

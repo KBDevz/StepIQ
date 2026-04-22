@@ -2,7 +2,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useTestState } from './hooks/useTestState';
 import { useMetronome } from './hooks/useMetronome';
 import { useAuth } from './hooks/useAuth';
-import { useJunction } from './hooks/useJunction';
 import { PRE_COUNTDOWN, DEV_PRE_COUNTDOWN } from './utils/protocol';
 import LandingPage from './components/screens/LandingPage';
 import HowItWorksPage from './components/screens/HowItWorksPage';
@@ -25,7 +24,6 @@ export default function App() {
     updateSetup,
     setRestingHR,
     toggleDevMode,
-    setWearableConnected,
     logLevel,
     advanceLevel,
     checkStopConditions,
@@ -34,11 +32,6 @@ export default function App() {
 
   const metronome = useMetronome();
   const auth = useAuth();
-  const junction = useJunction(auth.user?.id ?? null);
-
-  useEffect(() => {
-    setWearableConnected(junction.connected);
-  }, [junction.connected, setWearableConnected]);
   const [stopReason, setStopReason] = useState('');
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [authModalMode, setAuthModalMode] = useState<'signin' | 'signup'>('signin');
@@ -154,15 +147,6 @@ export default function App() {
           onLogoClick={() => setScreen('landing')}
           onHowItWorks={() => setScreen('howItWorks')}
           authNavProps={authNavProps}
-          junctionProps={{
-            connected: junction.connected,
-            provider: junction.provider,
-            loading: junction.loading,
-            error: junction.error,
-            onConnect: junction.connect,
-            onDisconnect: junction.disconnect,
-          }}
-          isLoggedIn={!!auth.user}
         />
         {showAuthModal && (
           <AuthModal
@@ -254,7 +238,6 @@ export default function App() {
             advanceLevel={advanceLevel}
             checkStopConditions={checkStopConditions}
             onTestEnd={handleTestEnd}
-            fetchWearableHR={junction.connected ? junction.fetchHR : undefined}
           />
         )}
       </PhoneFrame>

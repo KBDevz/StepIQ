@@ -1,19 +1,5 @@
 // ── Chester Step Test Types ──
 
-export type HRCaptureMethod = 'manual' | 'wearable';
-
-export interface LevelTiming {
-  level: number;
-  startTime: string;
-  endTime: string;
-  spm: number;
-}
-
-export interface HRReading {
-  timestamp: string;
-  value: number;
-}
-
 export interface TestState {
   name: string;
   age: number;
@@ -25,11 +11,6 @@ export interface TestState {
   currentLevel: number;
   data: LevelResult[];
   devMode: boolean;
-  hrCaptureMethod: HRCaptureMethod;
-  wearableConnected: boolean;
-  testStartTime: string | null;
-  levelTimings: LevelTiming[];
-  overallRpe: number | null;
 }
 
 export interface LevelResult {
@@ -37,7 +18,6 @@ export interface LevelResult {
   hr: number;
   rpe: number;
   vo2Estimate: number;
-  hrSource?: HRCaptureMethod;
 }
 
 export interface LevelProtocol {
@@ -93,9 +73,5 @@ export type Screen =
   | 'restingHR'
   | 'preLevel'
   | 'activeLevel'
-  | 'postTestRPE'
-  | 'syncing'
-  | 'syncFallback'
-  | 'manualHREntry'
   | 'results'
   | 'setPassword';

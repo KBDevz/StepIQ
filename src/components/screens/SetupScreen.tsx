@@ -1,16 +1,6 @@
 import { useState, useRef, useCallback } from 'react';
 import type { TestState } from '../../types';
 import NavBar from '../ui/NavBar';
-import WearableCard from '../ui/WearableCard';
-
-interface JunctionProps {
-  connected: boolean;
-  provider: string | null;
-  loading: boolean;
-  error: string | null;
-  onConnect: () => void;
-  onDisconnect: () => void;
-}
 
 interface SetupScreenProps {
   state: TestState;
@@ -20,8 +10,6 @@ interface SetupScreenProps {
   onLogoClick: () => void;
   onHowItWorks: () => void;
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
-  junctionProps?: JunctionProps;
-  isLoggedIn?: boolean;
 }
 
 /* ── Progress Steps ── */
@@ -89,7 +77,7 @@ function ReassurancePoints() {
 
 /* ── The Form ── */
 function SetupForm({
-  state, updateSetup, toggleDevMode, onBegin, ageStr, setAgeStr, junctionProps, isLoggedIn, onSignIn,
+  state, updateSetup, toggleDevMode, onBegin, ageStr, setAgeStr,
 }: {
   state: TestState;
   updateSetup: SetupScreenProps['updateSetup'];
@@ -97,9 +85,6 @@ function SetupForm({
   onBegin: () => void;
   ageStr: string;
   setAgeStr: (s: string) => void;
-  junctionProps?: JunctionProps;
-  isLoggedIn?: boolean;
-  onSignIn?: () => void;
 }) {
   const pressTimer = useRef<number | null>(null);
   const ageValid = state.age >= 13 && state.age <= 80;
@@ -286,22 +271,6 @@ function SetupForm({
         )}
       </div>
 
-      {/* Wearable connection */}
-      {junctionProps && (
-        <div style={{ marginBottom: '20px' }}>
-          <WearableCard
-            connected={junctionProps.connected}
-            provider={junctionProps.provider}
-            loading={junctionProps.loading}
-            error={junctionProps.error}
-            isLoggedIn={!!isLoggedIn}
-            onConnect={junctionProps.onConnect}
-            onDisconnect={junctionProps.onDisconnect}
-            onSignIn={onSignIn ?? (() => {})}
-          />
-        </div>
-      )}
-
       {/* Submit button */}
       <button
         onClick={onBegin}
@@ -335,7 +304,7 @@ function SetupForm({
 }
 
 /* ── Main SetupScreen ── */
-export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps, junctionProps, isLoggedIn }: SetupScreenProps) {
+export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin, onLogoClick, onHowItWorks, authNavProps }: SetupScreenProps) {
   const [ageStr, setAgeStr] = useState(String(state.age));
   const devPressTimer = useRef<number | null>(null);
 
@@ -399,9 +368,6 @@ export default function SetupScreen({ state, updateSetup, toggleDevMode, onBegin
               onBegin={onBegin}
               ageStr={ageStr}
               setAgeStr={setAgeStr}
-              junctionProps={junctionProps}
-              isLoggedIn={isLoggedIn}
-              onSignIn={authNavProps?.onSignIn}
             />
           </div>
         </div>
