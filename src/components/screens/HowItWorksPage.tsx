@@ -326,12 +326,12 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             </div>
 
             {/* Table */}
-            <div style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid rgba(28,47,74,0.6)' }}>
+            <div className="hiw-norms-table-wrap" style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid rgba(28,47,74,0.6)' }}>
               <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
                 <thead>
                   <tr>
-                    <th className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.1em', textAlign: 'left', padding: '11px 13px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
-                      CLASSIFICATION
+                    <th className="font-mono hiw-norms-sticky-col" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.1em', textAlign: 'left', padding: '11px 13px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
+                      AGE
                     </th>
                     {ageBands.map((band) => (
                       <th key={band} className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.08em', textAlign: 'center', padding: '11px 10px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
@@ -343,7 +343,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 <tbody>
                   {tableData.map((row, ri) => (
                     <tr key={row.label} style={{ background: ri % 2 === 0 ? '#0D1829' : '#0a1220' }}>
-                      <td style={{ padding: '10px 13px', borderLeft: `3px solid ${row.color}`, borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none' }}>
+                      <td className="hiw-norms-sticky-col" style={{ padding: '10px 13px', borderLeft: `3px solid ${row.color}`, borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none', background: ri % 2 === 0 ? '#0D1829' : '#0a1220' }}>
                         <span className="font-mono" style={{ fontSize: '0.72rem', fontWeight: 600, color: row.color }}>
                           {row.label}
                         </span>
@@ -458,6 +458,11 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             position: sticky;
             left: 0;
             background: var(--surface);
+            z-index: 2;
+          }
+          .hiw-norms-sticky-col {
+            position: sticky;
+            left: 0;
             z-index: 2;
           }
         }
