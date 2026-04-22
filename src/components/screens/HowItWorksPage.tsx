@@ -87,13 +87,66 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
             <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px' }}>
               Why the Chester Step Test
             </p>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15 }}>
+            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15, marginBottom: '20px' }}>
               The Most Credible Fitness Test You Can Do Without a Lab
             </h1>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text2)', lineHeight: 1.65, maxWidth: '540px', margin: '0 auto' }}>
+              Peer-reviewed. Validated at r=0.92 against laboratory VO₂ max testing. Used in cardiac rehabilitation and occupational health for decades.
+            </p>
           </div>
         </section>
 
-        {/* ────── SECTION: CLINICAL CREDIBILITY ────── */}
+        {/* ────── SECTION 2: HOW IT WORKS (3 steps) ────── */}
+        <section className="hiw-section-pad hiw-section-v">
+          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+            <h2 className="font-serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '40px' }}>
+              Three Steps to Your VO₂ Score
+            </h2>
+
+            <div className="hiw-steps-grid">
+              {steps.map((step, i) => (
+                <div key={step.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
+                  {i < steps.length - 1 && (
+                    <div className="hiw-step-connector" />
+                  )}
+
+                  <div style={{ marginBottom: '12px', color: 'var(--accent)' }}>
+                    {step.icon}
+                  </div>
+
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
+                    <span
+                      style={{
+                        width: '26px', height: '26px', borderRadius: '50%',
+                        background: 'var(--accent)', color: 'var(--bg)',
+                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 700,
+                        display: 'flex', alignItems: 'center', justifyContent: 'center',
+                        flexShrink: 0,
+                      }}
+                    >
+                      {i + 1}
+                    </span>
+                    <h3 style={{
+                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', fontWeight: 700,
+                      textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text)',
+                      margin: 0,
+                    }}>
+                      {step.title}
+                    </h3>
+                  </div>
+
+                  <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '280px' }}>
+                    {step.desc}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
+        <Divider />
+
+        {/* ────── SECTION 3: CLINICAL CREDIBILITY ────── */}
         <section
           style={{
             background: 'var(--surface)',
@@ -119,8 +172,8 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
                   Clinical Pedigree
                 </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
-                  Developed by K. Sykes and validated in peer-reviewed research, the Chester Step Test has been used in cardiac rehabilitation, occupational health screening, and sports medicine for decades. It is a real clinical assessment tool — not a wellness app feature.
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+                  Developed by K. Sykes, the Chester Step Test is used in cardiac rehabilitation and occupational health worldwide. It's a real clinical assessment tool — not a wellness app feature.
                 </p>
               </div>
 
@@ -132,8 +185,8 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
                   The Science Behind It
                 </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
-                  The test measures your heart rate response to progressively increasing stepping loads. Because heart rate and oxygen consumption have a well-established linear relationship, extrapolating your HR response to your predicted maximum gives a reliable estimate of your aerobic capacity — without pushing you to exhaustion.
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+                  Your heart rate response is plotted across up to five known workloads and a regression line is fitted to the data. Extrapolating to your predicted max HR gives a clinically validated VO₂ estimate.
                 </p>
               </div>
 
@@ -145,8 +198,8 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
                 <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
                   Submaximal by Design
                 </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.7 }}>
-                  Unlike a maximal treadmill test, the Chester Step Test is submaximal — it estimates your peak capacity from moderate effort data. This makes it safe for a wide range of fitness levels and ages, including those returning from illness or injury or new to exercise.
+                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
+                  The test estimates your peak capacity from moderate effort data — no exhaustion required. Safe for a wide range of ages and fitness levels including those returning from illness or injury.
                 </p>
               </div>
             </div>
@@ -231,60 +284,7 @@ export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, aut
 
         <Divider />
 
-        {/* ────── SECTION 3: HOW IT WORKS (3 steps) ────── */}
-        <section className="hiw-section-pad hiw-section-v">
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '64px' }}>
-              How It Works
-            </h2>
-
-            <div className="hiw-steps-grid">
-              {steps.map((step, i) => (
-                <div key={step.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
-                  {/* Connecting line on desktop */}
-                  {i < steps.length - 1 && (
-                    <div className="hiw-step-connector" />
-                  )}
-
-                  {/* Icon */}
-                  <div style={{ marginBottom: '12px', color: 'var(--text2)' }}>
-                    {step.icon}
-                  </div>
-
-                  {/* Number badge + title row */}
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
-                    <span
-                      style={{
-                        width: '26px', height: '26px', borderRadius: '50%',
-                        background: 'var(--accent)', color: 'var(--bg)',
-                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 700,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <h3 style={{
-                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', fontWeight: 700,
-                      textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text)',
-                      margin: 0,
-                    }}>
-                      {step.title}
-                    </h3>
-                  </div>
-
-                  <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '280px' }}>
-                    {step.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        <Divider />
-
-        {/* ────── SECTION 5: CLASSIFICATIONS TABLE ────── */}
+        {/* ────── SECTION 4: CLASSIFICATIONS TABLE ────── */}
         <section className="hiw-section-pad hiw-section-v">
           <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
             <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px' }}>
