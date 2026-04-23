@@ -6,11 +6,11 @@ interface HRZonesCardProps {
 }
 
 const ZONE_CONFIG = [
-  { key: 'zone1' as const, num: 1, name: 'Recovery', color: '#4A9EFF', desc: 'Active recovery \u00b7 Fat oxidation dominant' },
-  { key: 'zone2' as const, num: 2, name: 'Fat Burning', color: '#00E5A0', desc: 'Optimal fat burning \u00b7 Aerobic base building', star: true },
-  { key: 'zone3' as const, num: 3, name: 'Aerobic', color: '#FFD166', desc: 'Mixed fuel \u00b7 Cardiovascular development' },
-  { key: 'zone4' as const, num: 4, name: 'Threshold', color: '#FF8C42', desc: 'Performance gains \u00b7 High carb burn' },
-  { key: 'zone5' as const, num: 5, name: 'Maximum', color: '#FF4444', desc: 'Peak efforts \u00b7 Short intervals only' },
+  { key: 'zone1' as const, num: 1, name: 'Recovery', color: '#4A9EFF', desc: 'Active recovery · Fat oxidation dominant' },
+  { key: 'zone2' as const, num: 2, name: 'Fat Burning', color: '#00E5A0', desc: 'Optimal fat burning · Aerobic base building', star: true },
+  { key: 'zone3' as const, num: 3, name: 'Aerobic', color: '#FFD166', desc: 'Mixed fuel · Cardiovascular development' },
+  { key: 'zone4' as const, num: 4, name: 'Threshold', color: '#FF8C42', desc: 'Performance gains · High carb burn' },
+  { key: 'zone5' as const, num: 5, name: 'Maximum', color: '#FF4444', desc: 'Peak efforts · Short intervals only' },
 ];
 
 export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
@@ -83,11 +83,11 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
                 </span>
                 <span className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', fontWeight: 600 }}>
                   {zone.name}
-                  {zone.star && <span style={{ color: '#00E5A0', marginLeft: '4px' }}>{'\u2605'}</span>}
+                  {zone.star && <span style={{ color: '#00E5A0', marginLeft: '4px' }}>{'★'}</span>}
                 </span>
               </div>
               <span className="font-mono" style={{ fontSize: '0.9rem', fontWeight: 700, color: '#EEF2FF' }}>
-                {z.min}\u2013{z.max}
+                {z.min} – {z.max}
                 <span style={{ fontSize: '0.55rem', fontWeight: 400, color: '#5A7090', marginLeft: '4px' }}>bpm</span>
               </span>
             </div>
@@ -133,13 +133,23 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
           </span>
         </div>
 
-        <p className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#00E5A0', marginBottom: '8px' }}>
-          {zones.fatBurnMin}\u2013{zones.fatBurnMax}
+        <p className="font-mono" style={{ fontSize: '1.4rem', fontWeight: 700, color: '#00E5A0', marginBottom: '4px' }}>
+          {zones.fatBurnMin} – {zones.fatBurnMax}
           <span style={{ fontSize: '0.7rem', fontWeight: 400, color: '#5A7090', marginLeft: '6px' }}>bpm</span>
         </p>
 
-        <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', lineHeight: 1.7 }}>
-          In this zone your body preferentially burns fat as fuel. For weight loss, aim to spend at least 60% of your training time here. You should be able to hold a conversation but feel a noticeable effort.
+        <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginTop: '14px', marginBottom: '4px' }}>
+          What It Feels Like
+        </p>
+        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.6 }}>
+          You can hold a conversation but you're clearly working. Breathing is heavier but controlled — like a brisk walk or easy jog.
+        </p>
+
+        <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#5A7090', marginTop: '12px', marginBottom: '4px' }}>
+          How to Use It
+        </p>
+        <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.6 }}>
+          Aim for 30–45 minutes in this zone, 3–4 times per week. This is your primary fat burning window.
         </p>
 
         {betaBlocker && (
@@ -160,7 +170,7 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
           marginTop: '14px',
         }}
       >
-        These zones are estimated from your Chester Step Test data using the Karvonen heart rate reserve method. For the most precise zones, a maximal exercise test with lactate measurement is recommended. These estimates are accurate to approximately \u00b15\u20138 bpm for most individuals.
+        These zones are estimated from your Chester Step Test data using the Karvonen heart rate reserve method. For the most precise zones, a maximal exercise test with lactate measurement is recommended. These estimates are accurate to approximately ±5–8 bpm for most individuals.
       </p>
     </div>
   );
