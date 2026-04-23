@@ -10,7 +10,7 @@ import InstructionsScreen from './components/screens/InstructionsScreen';
 import RestingHRScreen from './components/screens/RestingHRScreen';
 import PreLevelScreen from './components/screens/PreLevelScreen';
 import ActiveLevelScreen from './components/screens/ActiveLevelScreen';
-import ResultsScreen from './components/screens/ResultsScreen';
+import ResultsCarousel from './components/carousel/ResultsCarousel';
 import SetPasswordPage from './components/screens/SetPasswordPage';
 import PreTestConditionsScreen from './components/screens/PreTestConditionsScreen';
 import ChecklistScreen from './components/screens/ChecklistScreen';
@@ -67,10 +67,7 @@ export default function App() {
     setShowAuthModal(true);
   }, []);
 
-  const openSignUp = useCallback(() => {
-    setAuthModalMode('signup');
-    setShowAuthModal(true);
-  }, []);
+
 
   // Shared auth props for all NavBars
   const authNavProps = {
@@ -170,22 +167,19 @@ export default function App() {
     );
   }
 
-  // ── RESULTS: full-width two-column layout ──
+  // ── RESULTS: full-screen carousel experience ──
 
   if (screen === 'results') {
     return (
       <>
-        <ResultsScreen
+        <ResultsCarousel
           state={state}
           stopReason={stopReason}
           onNewTest={resetTest}
-          onHowItWorks={() => setScreen('howItWorks')}
-          authNavProps={authNavProps}
           isLoggedIn={!!auth.user}
           userId={auth.user?.id || null}
           userProfile={auth.profile}
           onOpenSignIn={openSignIn}
-          onOpenSignUp={openSignUp}
           signUpFromLead={auth.signUpFromLead}
         />
         {showAuthModal && (
