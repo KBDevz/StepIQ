@@ -368,7 +368,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '24px',
                 }}
               >
-                Chester Step Test · At-Home VO₂ Max Assessment
+                At-Home VO₂ Max Assessment
               </p>
 
               {/* Headline */}
@@ -381,23 +381,28 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   lineHeight: 1.05,
                   letterSpacing: '-0.02em',
                   margin: 0,
+                  marginBottom: '12px',
+                }}
+              >
+                VO₂ max is the #1 predictor of how long you'll live.
+              </h1>
+
+              {/* Sub-headline */}
+              <p
+                className="landing-stagger-2"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.8rem',
+                  fontStyle: 'italic',
+                  fontWeight: 400,
+                  color: 'var(--accent)',
+                  lineHeight: 1.15,
+                  letterSpacing: '-0.01em',
                   marginBottom: '28px',
                 }}
               >
-                Estimate your{' '}VO₂{' '}max
-                <br />
-                <span
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontStyle: 'italic',
-                    fontWeight: 400,
-                    color: 'var(--accent)',
-                    letterSpacing: '-0.01em',
-                  }}
-                >
-                  without a lab.
-                </span>
-              </h1>
+                This is the easiest way to measure yours.
+              </p>
 
               {/* Description */}
               <p
@@ -412,9 +417,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   marginBottom: '28px',
                 }}
               >
-                StepIQ is a guided 10-minute step test that estimates your
-                cardiovascular fitness, gives you a personalized score, and
-                tells you exactly how to improve it.
+                StepIQ is a free, clinically validated 10-minute step test.
+                Get your VO₂ max score, see how you compare, and receive
+                a personalized plan to improve it. No lab visit. No signup.
               </p>
 
               {/* Trust badges */}
@@ -532,56 +537,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
-      {/* ── BOLD STATEMENT ── */}
-      <section
-        className="relative z-10"
-        style={{
-          borderTop: '1px solid var(--border)',
-          borderBottom: '1px solid var(--border)',
-        }}
-      >
-        <div
-          className="landing-statement-container"
-          style={{
-            maxWidth: '680px',
-            margin: '0 auto',
-            padding: '72px 64px',
-            textAlign: 'center',
-          }}
-        >
-          <p style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '2.2rem',
-            fontWeight: 700,
-            color: 'var(--text)',
-            lineHeight: 1.15,
-          }}>
-            VO₂ max is the best single predictor of how long you'll live.
-          </p>
-          <p style={{
-            fontFamily: 'var(--font-display)',
-            fontSize: '2.2rem',
-            fontStyle: 'italic',
-            fontWeight: 400,
-            color: 'var(--accent)',
-            lineHeight: 1.15,
-            marginTop: '6px',
-          }}>
-            This is the easiest way to measure it.
-          </p>
-          <p
-            className="font-mono"
-            style={{
-              fontSize: '0.6rem',
-              color: 'var(--text2)',
-              letterSpacing: '0.08em',
-              marginTop: '24px',
-            }}
-          >
-            Based on research published in JAMA and cited by longevity physician Dr. Peter Attia
-          </p>
-        </div>
-      </section>
+
 
       {/* ── WHO IS STEPIQ FOR? ── */}
       <section
@@ -985,17 +941,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           }
           .landing-audience-card {
             padding: 20px !important;
-          }
-        }
-
-        /* Bold statement */
-        @media (max-width: 767px) {
-          .landing-statement-container {
-            padding: 48px 24px !important;
-          }
-          .landing-statement-container p:first-child,
-          .landing-statement-container p:nth-child(2) {
-            font-size: 1.6rem !important;
           }
         }
 
