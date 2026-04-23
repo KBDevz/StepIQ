@@ -56,7 +56,7 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
     { icon: ICONS.pattern, label: 'The Pattern', desc: 'Up, up, down, down — one cycle per 4 beats. If fatigued, you may alternate your lead foot between cycles.' },
     { icon: ICONS.form, label: 'Good Form', desc: "Stand upright, fully extend legs, don't talk during levels." },
     { icon: ICONS.levels, label: 'The Levels', desc: '5 levels × 2 minutes, increasing pace. Most complete 3–4.' },
-    { icon: ICONS.stop, label: 'When to Stop', desc: `HR ≥ ${state.stopHR} bpm or RPE 8+. Stop immediately if dizzy or unwell.` },
+    { icon: ICONS.stop, label: 'When to Stop', desc: `Stop immediately if dizzy, breathless, or unwell. The test ends when you reach both 80% of your max HR (${state.stopHR} bpm for you) and RPE 8 or above. Completing at least 3 levels gives the most accurate result — if you feel fine past 80% HR, keep going.` },
   ];
 
   return (
