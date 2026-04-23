@@ -189,8 +189,7 @@ export default function ActiveLevelScreen({
         >
           Level {state.currentLevel} of 5
         </span>
-        {!showEntry && (
-          <button
+        <button
             onClick={handleEndEarly}
             className="font-mono"
             style={{
@@ -205,7 +204,6 @@ export default function ActiveLevelScreen({
           >
             End Test
           </button>
-        )}
       </div>
 
       {/* Info line below top bar */}
