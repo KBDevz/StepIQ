@@ -8,6 +8,7 @@ import RegressionChart from '../results/RegressionChart';
 import HRZonesCard from '../results/HRZonesCard';
 import AIReportPanel from '../results/AIReportPanel';
 import APIKeyModal from '../results/APIKeyModal';
+import ShareSection from '../results/ShareSection';
 
 function formatTestTime(hour: number): string {
   const h = hour % 12 || 12;
@@ -844,6 +845,19 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                 />
               )}
             </div>
+
+            {/* Share section */}
+            {(hasSubmittedContact || (showReport && report)) && (
+              <ShareSection
+                vo2Max={vo2Max}
+                classification={classification}
+                age={state.age}
+                sex={state.sex}
+                levelsCompleted={state.data.length}
+                data={state.data}
+                maxHR={state.maxHR}
+              />
+            )}
 
             {/* Clinical disclaimer */}
             <p className="font-mono" style={{ fontSize: '0.58rem', color: 'var(--text2)', fontStyle: 'italic', maxWidth: '600px', margin: '0 auto', textAlign: 'center', lineHeight: 1.6 }}>
