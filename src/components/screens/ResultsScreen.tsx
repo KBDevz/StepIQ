@@ -463,7 +463,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
   const classification = classify(vo2Max, state.age, state.sex);
   const vo2Display = Math.round(vo2Max * 10) / 10;
   const hrFormula = state.betaBlocker ? 'Adjusted (Londeree)' : 'Standard (220-age)';
-  const hrZones = calculateHRZones(state.maxHR, vo2Max, state.restingHR, state.betaBlocker);
+  const hrZones = calculateHRZones(state.maxHR, vo2Max, state.restingHR, state.betaBlocker, state.data);
 
   // Scroll to report when user clicks "View My Report"
   useEffect(() => {

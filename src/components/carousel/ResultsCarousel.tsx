@@ -70,7 +70,7 @@ export default function ResultsCarousel({
   // Computed values
   const vo2Max = calcVO2Max(state.data, state.maxHR);
   const classification = classify(vo2Max, state.age, state.sex);
-  const hrZones = calculateHRZones(state.maxHR, vo2Max, state.restingHR, state.betaBlocker);
+  const hrZones = calculateHRZones(state.maxHR, vo2Max, state.restingHR, state.betaBlocker, state.data);
 
   // Swipe handling
   const touchStart = useRef<{ x: number; y: number } | null>(null);

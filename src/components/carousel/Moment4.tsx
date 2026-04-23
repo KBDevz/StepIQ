@@ -23,18 +23,32 @@ export default function Moment4({ zones, betaBlocker, onContinue }: Moment4Props
       padding: '80px 24px 120px',
       position: 'relative',
     }}>
-      {/* Top label */}
-      <p style={{
-        fontFamily: 'var(--font-mono)',
-        fontSize: '0.55rem',
-        letterSpacing: '0.16em',
-        textTransform: 'uppercase',
-        color: 'var(--text2)',
-        marginBottom: '12px',
-        textAlign: 'center',
-      }}>
-        Your Training Zones
-      </p>
+      {/* Top label with method badge */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '12px' }}>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.55rem',
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          color: 'var(--text2)',
+        }}>
+          Your Training Zones
+        </p>
+        <span style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.48rem',
+          textTransform: 'uppercase',
+          letterSpacing: '0.06em',
+          fontWeight: 600,
+          color: zones.method === 'data-derived' ? 'var(--accent)' : 'var(--text2)',
+          background: zones.method === 'data-derived' ? 'var(--accent-dark)' : 'rgba(90,112,144,0.1)',
+          border: `1px solid ${zones.method === 'data-derived' ? 'rgba(0,184,162,0.2)' : 'rgba(90,112,144,0.15)'}`,
+          borderRadius: '20px',
+          padding: '2px 8px',
+        }}>
+          {zones.method === 'data-derived' ? 'Data-Derived' : 'Karvonen'}
+        </span>
+      </div>
 
       {/* Headline */}
       <h2 style={{
@@ -155,6 +169,28 @@ export default function Moment4({ zones, betaBlocker, onContinue }: Moment4Props
           </p>
         )}
       </div>
+
+      {/* Efficiency metric */}
+      {zones.hrEfficiency !== null && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          padding: '10px 14px',
+          background: 'rgba(74,158,255,0.06)',
+          border: '1px solid rgba(74,158,255,0.15)',
+          borderRadius: '10px',
+          marginTop: '12px',
+        }}>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.08em', color: '#4A9EFF' }}>
+            Cardiac Efficiency
+          </span>
+          <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.85rem', fontWeight: 700, color: 'var(--text)' }}>
+            {zones.hrEfficiency.toFixed(2)}
+            <span style={{ fontSize: '0.5rem', fontWeight: 400, color: 'var(--text2)', marginLeft: '4px' }}>ml/kg/min/bpm</span>
+          </span>
+        </div>
+      )}
 
       {/* Continue button */}
       <button

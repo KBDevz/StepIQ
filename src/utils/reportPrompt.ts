@@ -1,4 +1,5 @@
 import type { TestState, ClassificationResult } from '../types';
+import { linReg, calcR2, detectAerobicThreshold, calcHREfficiency, calculateHRZones } from './scoring';
 
 function toAscii(str: string): string {
   const subs: Record<string, string> = {
@@ -117,27 +118,20 @@ function getTrainingParams(classification: string): TrainingParams {
   }
 }
 
-// ── Compute HR Training Zones (Karvonen method) ──
-function computeHRZones(maxHR: number, restingHR: number | null, vo2Max: number, betaBlocker: boolean): string {
-  const rhr = restingHR || 60;
-  const hrr = maxHR - rhr;
-  const karvonen = (pct: number) => Math.round(hrr * pct + rhr);
-  const bbOffset = betaBlocker ? -12 : 0;
-
-  let z2High = 0.70;
-  if (vo2Max >= 40) z2High = 0.75;
-
-  const zones = [
-    { name: 'Zone 1', label: 'Recovery', low: karvonen(0.50) + bbOffset, high: karvonen(0.60) + bbOffset },
-    { name: 'Zone 2', label: 'Fat Burning', low: karvonen(0.60) + bbOffset, high: karvonen(z2High) + bbOffset },
-    { name: 'Zone 3', label: 'Aerobic', low: karvonen(z2High) + bbOffset, high: karvonen(0.80) + bbOffset },
-    { name: 'Zone 4', label: 'Threshold', low: karvonen(0.80) + bbOffset, high: karvonen(0.90) + bbOffset },
-    { name: 'Zone 5', label: 'Maximum', low: karvonen(0.90) + bbOffset, high: maxHR + bbOffset },
+// ── Format HR Training Zones for prompt ──
+function formatHRZones(maxHR: number, restingHR: number | null, vo2Max: number, betaBlocker: boolean, data: { level: number; hr: number; rpe: number; vo2Estimate: number }[]): string {
+  const zones = calculateHRZones(maxHR, vo2Max, restingHR, betaBlocker, data);
+  const zoneList = [
+    { name: 'Zone 1', label: 'Recovery', z: zones.zone1 },
+    { name: 'Zone 2', label: 'Fat Burning', z: zones.zone2 },
+    { name: 'Zone 3', label: 'Aerobic', z: zones.zone3 },
+    { name: 'Zone 4', label: 'Threshold', z: zones.zone4 },
+    { name: 'Zone 5', label: 'Maximum', z: zones.zone5 },
   ];
 
-  const lines = zones.map(z => `  ${z.name}: ${z.low}-${z.high} bpm (${z.label})`).join('\n');
-  return lines + `\n  Fat Burning Zone: ${zones[1].low}-${zones[1].high} bpm (Zone 2)` +
-    `\n  Method: Karvonen heart rate reserve (resting HR: ${rhr} bpm)` +
+  const lines = zoneList.map(z => `  ${z.name}: ${z.z.min}-${z.z.max} bpm (${z.label})`).join('\n');
+  return lines + `\n  Fat Burning Zone: ${zones.fatBurnMin}-${zones.fatBurnMax} bpm (Zone 2)` +
+    `\n  Method: ${zones.method === 'data-derived' ? 'Data-derived from regression (individual HR-VO2 response)' : 'Karvonen heart rate reserve (resting HR: ' + (restingHR || 60) + ' bpm)'}` +
     (betaBlocker ? '\n  Note: Zones adjusted -12 bpm for beta blocker medication' : '');
 }
 
@@ -169,7 +163,20 @@ export function buildReportPrompt(
   const finalLevel = state.data[state.data.length - 1];
   const rpeCalibration = computeRPECalibration(finalLevel.hr, finalLevel.rpe, state.maxHR);
   const training = getTrainingParams(classification.name);
-  const hrZones = computeHRZones(state.maxHR, state.restingHR, vo2Max, state.betaBlocker);
+  const hrZones = formatHRZones(state.maxHR, state.restingHR, vo2Max, state.betaBlocker, state.data);
+
+  // New data-derived metrics
+  const pts = state.data.map(d => ({ x: d.hr, y: d.vo2Estimate }));
+  const reg = state.data.length >= 2 ? linReg(pts) : null;
+  const r2 = state.data.length >= 2 ? calcR2(pts) : 0;
+  const aerobicThresh = detectAerobicThreshold(state.data);
+  const hrEff = calcHREfficiency(state.data);
+  const zoneMethod = state.data.length >= 3 && reg && reg.slope > 0 && r2 >= 0.85 ? 'data-derived' : 'karvonen';
+
+  const hrJumps: number[] = [];
+  for (let i = 1; i < state.data.length; i++) {
+    hrJumps.push(state.data[i].hr - state.data[i - 1].hr);
+  }
 
   const prompt = `You are a clinical exercise physiologist analyzing a Chester Step Test result.
 Return ONLY raw JSON (no markdown, no code fences, no extra text).
@@ -196,6 +203,12 @@ Results:
   K. Sykes classification: ${classification.name} (for ${state.sex}, age ${state.age})
 
 --- PRE-COMPUTED ANALYTICS ---
+
+HR Efficiency Score: ${hrEff !== null ? hrEff.toFixed(4) + ' ml/kg/min per bpm' : 'N/A'}
+Zone Calculation Method: ${zoneMethod}${zoneMethod === 'data-derived' ? ` (R2=${r2.toFixed(3)}, slope=${reg?.slope.toFixed(4)})` : ''}
+Aerobic Threshold Estimate: ${aerobicThresh ? '~' + aerobicThresh + ' bpm' : 'not detected'}
+Regression slope: ${reg ? reg.slope.toFixed(4) + ' (steeper = less cardiovascular efficiency)' : 'N/A'}
+HR response pattern: ${hrJumps.length > 0 ? 'jumps of ' + hrJumps.join(', ') + ' bpm between levels' : 'N/A'}
 
 HR Efficiency Assessment: ${hrTrend}
 RPE Calibration Assessment: ${rpeCalibration}

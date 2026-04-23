@@ -90,7 +90,7 @@ export function classify(vo2: number, age: number, sex: 'male' | 'female'): Clas
   return { name, ...CLASSIFICATION_COLORS[name] };
 }
 
-// ── HR Zone Calculation (Karvonen Method) ──
+// ── HR Zone Calculation ──
 
 export interface HRZones {
   maxHR: number;
@@ -101,6 +101,49 @@ export interface HRZones {
   zone5: { min: number; max: number };
   fatBurnMin: number;
   fatBurnMax: number;
+  method: 'data-derived' | 'karvonen';
+  aerobicThreshold: number | null;
+  hrEfficiency: number | null;
+  levelsUsed: number;
+}
+
+// R² goodness-of-fit for linear regression
+export function calcR2(pts: { x: number; y: number }[]): number {
+  const n = pts.length;
+  if (n < 2) return 0;
+  const yMean = pts.reduce((s, p) => s + p.y, 0) / n;
+  const reg = linReg(pts);
+  if (!reg) return 0;
+  let ssRes = 0, ssTot = 0;
+  pts.forEach(p => {
+    ssRes += (p.y - (reg.slope * p.x + reg.intercept)) ** 2;
+    ssTot += (p.y - yMean) ** 2;
+  });
+  return ssTot === 0 ? 0 : 1 - ssRes / ssTot;
+}
+
+// Detect aerobic threshold from HR acceleration between levels
+export function detectAerobicThreshold(data: LevelResult[]): number | null {
+  if (data.length < 3) return null;
+
+  const hrJumps: number[] = [];
+  for (let i = 1; i < data.length; i++) {
+    hrJumps.push(data[i].hr - data[i - 1].hr);
+  }
+
+  for (let i = 1; i < hrJumps.length; i++) {
+    if (hrJumps[i - 1] > 0 && hrJumps[i] > hrJumps[i - 1] * 1.2) {
+      return data[i].hr;
+    }
+  }
+  return null;
+}
+
+// Average oxygen delivery per heartbeat
+export function calcHREfficiency(data: LevelResult[]): number | null {
+  if (data.length === 0) return null;
+  const total = data.reduce((sum, l) => sum + l.vo2Estimate / l.hr, 0);
+  return Math.round((total / data.length) * 10000) / 10000;
 }
 
 export function calculateHRZones(
@@ -108,33 +151,69 @@ export function calculateHRZones(
   vo2Max: number,
   restingHR: number | null,
   betaBlocker: boolean,
+  data?: LevelResult[],
 ): HRZones {
   const rhr = restingHR || 60;
-  const hrr = predictedMaxHR - rhr;
+  const bbOffset = betaBlocker ? -12 : 0;
+  const aerobicThreshold = data ? detectAerobicThreshold(data) : null;
+  const hrEfficiency = data ? calcHREfficiency(data) : null;
 
+  // Try data-derived zones first
+  if (data && data.length >= 3) {
+    const pts = data.map(d => ({ x: d.hr, y: d.vo2Estimate }));
+    const reg = linReg(pts);
+    const r2 = calcR2(pts);
+
+    if (reg && reg.slope > 0 && r2 >= 0.85) {
+      const maxObservedHR = Math.max(...data.map(d => d.hr));
+      const effectiveMaxHR = Math.max(predictedMaxHR, maxObservedHR) + bbOffset;
+
+      const getHR = (vo2Pct: number) => {
+        const hr = Math.round((vo2Max * vo2Pct - reg.intercept) / reg.slope) + bbOffset;
+        return Math.max(rhr + bbOffset, Math.min(hr, effectiveMaxHR));
+      };
+
+      const z1Max = getHR(0.45);
+      const z2Max = getHR(0.60);
+      const z3Max = getHR(0.75);
+      const z4Max = getHR(0.90);
+
+      return {
+        maxHR: effectiveMaxHR,
+        zone1: { min: z1Max - 20, max: z1Max },
+        zone2: { min: z1Max, max: z2Max },
+        zone3: { min: z2Max, max: z3Max },
+        zone4: { min: z3Max, max: z4Max },
+        zone5: { min: z4Max, max: effectiveMaxHR },
+        fatBurnMin: z1Max,
+        fatBurnMax: z2Max,
+        method: 'data-derived',
+        aerobicThreshold,
+        hrEfficiency,
+        levelsUsed: data.length,
+      };
+    }
+  }
+
+  // Karvonen fallback
+  const hrr = predictedMaxHR - rhr;
   const karvonen = (pct: number) => Math.round(hrr * pct + rhr);
 
-  const bbOffset = betaBlocker ? -12 : 0;
+  let z2High = 0.70;
+  if (vo2Max >= 40) z2High = 0.75;
 
-  const zones: HRZones = {
-    maxHR: predictedMaxHR,
+  return {
+    maxHR: predictedMaxHR + bbOffset,
     zone1: { min: karvonen(0.50) + bbOffset, max: karvonen(0.60) + bbOffset },
-    zone2: { min: karvonen(0.60) + bbOffset, max: karvonen(0.70) + bbOffset },
-    zone3: { min: karvonen(0.70) + bbOffset, max: karvonen(0.80) + bbOffset },
+    zone2: { min: karvonen(0.60) + bbOffset, max: karvonen(z2High) + bbOffset },
+    zone3: { min: karvonen(z2High) + bbOffset, max: karvonen(0.80) + bbOffset },
     zone4: { min: karvonen(0.80) + bbOffset, max: karvonen(0.90) + bbOffset },
     zone5: { min: karvonen(0.90) + bbOffset, max: predictedMaxHR + bbOffset },
     fatBurnMin: karvonen(0.60) + bbOffset,
-    fatBurnMax: karvonen(0.70) + bbOffset,
+    fatBurnMax: karvonen(z2High) + bbOffset,
+    method: 'karvonen',
+    aerobicThreshold,
+    hrEfficiency,
+    levelsUsed: data?.length ?? 0,
   };
-
-  // Adjust Zone 2 upper boundary based on fitness level
-  if (vo2Max >= 40) {
-    zones.zone2.max = karvonen(0.75) + bbOffset;
-    zones.zone3.min = karvonen(0.75) + bbOffset;
-    zones.fatBurnMax = karvonen(0.75) + bbOffset;
-  } else if (vo2Max >= 30) {
-    zones.zone2.max = karvonen(0.70) + bbOffset;
-  }
-
-  return zones;
 }

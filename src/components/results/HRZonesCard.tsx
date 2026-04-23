@@ -15,6 +15,7 @@ const ZONE_CONFIG = [
 
 export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
   const totalRange = zones.maxHR - (zones.zone1.min || 80);
+  const isDataDerived = zones.method === 'data-derived';
 
   return (
     <div
@@ -26,36 +27,86 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
         marginBottom: '12px',
       }}
     >
-      {/* Header */}
+      {/* Header with method badge */}
+      <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', marginBottom: '4px' }}>
+        <p
+          className="font-mono"
+          style={{
+            fontSize: '0.58rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: '#5A7090',
+          }}
+        >
+          Your Heart Rate Zones
+        </p>
+        <span
+          className="font-mono"
+          style={{
+            fontSize: '0.52rem',
+            textTransform: 'uppercase',
+            letterSpacing: '0.08em',
+            fontWeight: 600,
+            color: isDataDerived ? '#00E5A0' : '#5A7090',
+            background: isDataDerived ? 'rgba(0,229,160,0.1)' : 'rgba(90,112,144,0.1)',
+            border: `1px solid ${isDataDerived ? 'rgba(0,229,160,0.25)' : 'rgba(90,112,144,0.2)'}`,
+            borderRadius: '20px',
+            padding: '3px 10px',
+            flexShrink: 0,
+          }}
+        >
+          {isDataDerived ? 'Data-Derived Zones' : 'Karvonen Method'}
+        </span>
+      </div>
+
       <p
-        className="font-mono"
         style={{
-          fontSize: '0.58rem',
-          textTransform: 'uppercase',
-          letterSpacing: '0.14em',
-          color: '#5A7090',
-          marginBottom: '4px',
-        }}
-      >
-        Your Heart Rate Zones
-      </p>
-      <p
-        className="font-mono"
-        style={{
-          fontSize: '0.62rem',
+          fontFamily: 'DM Sans, sans-serif',
+          fontSize: '0.75rem',
           color: '#5A7090',
           marginBottom: '16px',
           lineHeight: 1.5,
+          fontStyle: 'italic',
         }}
       >
-        Calculated from your test data using the Karvonen heart rate reserve method
+        {isDataDerived
+          ? `Calculated from your actual heart rate response at ${zones.levelsUsed} measured workloads — not a generic age-based formula.`
+          : 'Calculated using the Karvonen heart rate reserve method. Complete 3+ levels next time for data-derived zones.'}
       </p>
+
+      {/* Aerobic threshold indicator */}
+      {zones.aerobicThreshold && (
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          marginBottom: '14px',
+          padding: '8px 12px',
+          background: 'rgba(0,229,160,0.06)',
+          border: '1px solid rgba(0,229,160,0.15)',
+          borderRadius: '8px',
+        }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#00E5A0" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+          </svg>
+          <span className="font-mono" style={{ fontSize: '0.62rem', color: '#00E5A0', fontWeight: 600 }}>
+            Estimated Aerobic Threshold: ~{zones.aerobicThreshold} bpm
+          </span>
+        </div>
+      )}
 
       {/* Zone rows */}
       {ZONE_CONFIG.map((zone, i) => {
         const z = zones[zone.key];
         const barWidth = Math.max(10, ((z.max - z.min) / totalRange) * 100);
-        const barLeft = ((z.min - zones.zone1.min) / totalRange) * 100;
+        const barLeft = Math.max(0, ((z.min - zones.zone1.min) / totalRange) * 100);
+
+        // Aerobic threshold line position within this zone's bar
+        const at = zones.aerobicThreshold;
+        const showThresholdLine = at && at > z.min && at <= z.max;
+        const thresholdPos = showThresholdLine
+          ? ((at - z.min) / (z.max - z.min)) * 100
+          : 0;
 
         return (
           <div
@@ -92,7 +143,7 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
               </span>
             </div>
 
-            {/* Color bar */}
+            {/* Color bar with optional threshold line */}
             <div style={{ position: 'relative', height: '6px', background: 'rgba(28,47,74,0.3)', borderRadius: '3px', marginBottom: '4px' }}>
               <div
                 style={{
@@ -105,6 +156,18 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
                   opacity: 0.7,
                 }}
               />
+              {showThresholdLine && (
+                <div style={{
+                  position: 'absolute',
+                  left: `${barLeft + (barWidth * thresholdPos / 100)}%`,
+                  top: '-3px',
+                  width: '2px',
+                  height: '12px',
+                  background: '#00E5A0',
+                  borderRadius: '1px',
+                  boxShadow: '0 0 4px rgba(0,229,160,0.5)',
+                }} />
+              )}
             </div>
 
             <p className="font-mono" style={{ fontSize: '0.55rem', color: '#5A7090', lineHeight: 1.4 }}>
@@ -113,6 +176,28 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
           </div>
         );
       })}
+
+      {/* HR Efficiency metric */}
+      {zones.hrEfficiency !== null && (
+        <div style={{
+          background: 'rgba(74,158,255,0.06)',
+          border: '1px solid rgba(74,158,255,0.15)',
+          borderRadius: '10px',
+          padding: '14px 16px',
+          marginTop: '14px',
+        }}>
+          <p className="font-mono" style={{ fontSize: '0.55rem', textTransform: 'uppercase', letterSpacing: '0.1em', color: '#4A9EFF', marginBottom: '4px' }}>
+            Cardiac Efficiency
+          </p>
+          <p className="font-mono" style={{ fontSize: '1.1rem', fontWeight: 700, color: '#EEF2FF', marginBottom: '4px' }}>
+            {zones.hrEfficiency.toFixed(2)}
+            <span style={{ fontSize: '0.55rem', fontWeight: 400, color: '#5A7090', marginLeft: '6px' }}>ml/kg/min per bpm</span>
+          </p>
+          <p style={{ fontFamily: 'DM Sans, sans-serif', fontSize: '0.7rem', color: '#5A7090', lineHeight: 1.5 }}>
+            How efficiently your heart delivers oxygen per beat. Higher = stronger cardiovascular system.
+          </p>
+        </div>
+      )}
 
       {/* Fat Burning Highlight */}
       <div
@@ -170,7 +255,9 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
           marginTop: '14px',
         }}
       >
-        These zones are estimated from your Chester Step Test data using the Karvonen heart rate reserve method. For the most precise zones, a maximal exercise test with lactate measurement is recommended. These estimates are accurate to approximately ±5–8 bpm for most individuals.
+        {isDataDerived
+          ? `These zones are derived from linear regression of your ${zones.levelsUsed} measured HR-VO₂ data points. They reflect your individual cardiovascular response rather than population averages. Accuracy improves with more completed levels.`
+          : 'These zones are estimated using the Karvonen heart rate reserve method. For the most precise zones, a maximal exercise test with lactate measurement is recommended. These estimates are accurate to approximately ±5–8 bpm for most individuals.'}
       </p>
     </div>
   );
