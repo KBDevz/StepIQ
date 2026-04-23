@@ -7,14 +7,6 @@ interface InstructionsScreenProps {
   onBack: () => void;
 }
 
-const LEVEL_PILLS = [
-  { label: 'L1', rate: '15/min' },
-  { label: 'L2', rate: '20/min' },
-  { label: 'L3', rate: '25/min' },
-  { label: 'L4', rate: '30/min' },
-  { label: 'L5', rate: '35/min' },
-];
-
 const ICONS = {
   prepare: (
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -95,26 +87,6 @@ export default function InstructionsScreen({ state, onBegin, onBack }: Instructi
         >
           5 Levels · 2 min each
         </p>
-
-        {/* Level pills */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px', marginBottom: '16px' }}>
-          {LEVEL_PILLS.map((pill) => (
-            <span
-              key={pill.label}
-              className="font-mono"
-              style={{
-                fontSize: '0.58rem',
-                color: 'var(--accent)',
-                background: 'var(--accent-dark)',
-                border: '1px solid rgba(0,229,160,0.2)',
-                borderRadius: '20px',
-                padding: '3px 10px',
-              }}
-            >
-              {pill.label} · {pill.rate}
-            </span>
-          ))}
-        </div>
 
         {state.betaBlocker && (
           <div
