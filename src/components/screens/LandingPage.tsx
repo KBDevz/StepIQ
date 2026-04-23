@@ -532,6 +532,57 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
+      {/* ── BOLD STATEMENT ── */}
+      <section
+        className="relative z-10"
+        style={{
+          borderTop: '1px solid var(--border)',
+          borderBottom: '1px solid var(--border)',
+        }}
+      >
+        <div
+          className="landing-statement-container"
+          style={{
+            maxWidth: '680px',
+            margin: '0 auto',
+            padding: '72px 64px',
+            textAlign: 'center',
+          }}
+        >
+          <p style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '2.2rem',
+            fontWeight: 700,
+            color: 'var(--text)',
+            lineHeight: 1.15,
+          }}>
+            VO₂ max is the best single predictor of how long you'll live.
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '2.2rem',
+            fontStyle: 'italic',
+            fontWeight: 400,
+            color: 'var(--accent)',
+            lineHeight: 1.15,
+            marginTop: '6px',
+          }}>
+            This is the easiest way to measure it.
+          </p>
+          <p
+            className="font-mono"
+            style={{
+              fontSize: '0.6rem',
+              color: 'var(--text2)',
+              letterSpacing: '0.08em',
+              marginTop: '24px',
+            }}
+          >
+            Based on research published in JAMA and cited by longevity physician Dr. Peter Attia
+          </p>
+        </div>
+      </section>
+
       {/* ── WHO IS STEPIQ FOR? ── */}
       <section
         className="relative z-10"
@@ -934,6 +985,17 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           }
           .landing-audience-card {
             padding: 20px !important;
+          }
+        }
+
+        /* Bold statement */
+        @media (max-width: 767px) {
+          .landing-statement-container {
+            padding: 48px 24px !important;
+          }
+          .landing-statement-container p:first-child,
+          .landing-statement-container p:nth-child(2) {
+            font-size: 1.6rem !important;
           }
         }
 
