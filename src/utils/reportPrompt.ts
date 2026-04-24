@@ -305,3 +305,27 @@ Use actual HR values from the data in your observations. Use actual bpm zone val
 
   return toAscii(prompt);
 }
+
+export function repairTruncatedJSON(json: string): string {
+  let s = json.trim();
+  // Remove trailing partial key-value or comma
+  s = s.replace(/,\s*"[^"]*$/, '');
+  s = s.replace(/,\s*$/, '');
+  // Close unclosed strings
+  const quotes = (s.match(/(?<!\\)"/g) || []).length;
+  if (quotes % 2 !== 0) s += '"';
+  // Balance brackets and braces
+  const opens = { '{': 0, '[': 0 };
+  const close: Record<string, '{' | '['> = { '}': '{', ']': '[' };
+  let inString = false;
+  for (let i = 0; i < s.length; i++) {
+    const c = s[i];
+    if (c === '"' && (i === 0 || s[i - 1] !== '\\')) { inString = !inString; continue; }
+    if (inString) continue;
+    if (c === '{' || c === '[') opens[c]++;
+    if (c === '}' || c === ']') opens[close[c]]--;
+  }
+  for (let i = 0; i < opens['[']; i++) s += ']';
+  for (let i = 0; i < opens['{']; i++) s += '}';
+  return s;
+}

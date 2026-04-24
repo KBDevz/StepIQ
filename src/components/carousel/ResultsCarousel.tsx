@@ -1,7 +1,7 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
 import type { TestState, AIReport } from '../../types';
 import { calcVO2Max, classify, calculateHRZones, CLASSIFICATION_NAMES } from '../../utils/scoring';
-import { buildReportPrompt } from '../../utils/reportPrompt';
+import { buildReportPrompt, repairTruncatedJSON } from '../../utils/reportPrompt';
 import { saveTestResult } from '../../lib/testResults';
 import ProgressDots from './ProgressDots';
 import BackButton from './BackButton';
@@ -98,7 +98,7 @@ export default function ResultsCarousel({
               'anthropic-version': '2023-06-01',
               'anthropic-dangerous-direct-browser-access': 'true',
             },
-            body: JSON.stringify({ model, max_tokens: 1800, messages: [{ role: 'user', content: prompt }] }),
+            body: JSON.stringify({ model, max_tokens: 4096, messages: [{ role: 'user', content: prompt }] }),
           });
 
           if (res.status === 401 || res.status === 403) {
@@ -119,7 +119,16 @@ export default function ResultsCarousel({
         const text = body.content?.[0]?.text || '';
         const jsonMatch = text.match(/\{[\s\S]*\}/);
         if (!jsonMatch) throw new Error('No JSON found in response');
-        const parsed: AIReport = JSON.parse(jsonMatch[0]);
+        let jsonStr = jsonMatch[0];
+        if (body.stop_reason === 'max_tokens') {
+          jsonStr = repairTruncatedJSON(jsonStr);
+        }
+        let parsed: AIReport;
+        try {
+          parsed = JSON.parse(jsonStr);
+        } catch {
+          parsed = JSON.parse(repairTruncatedJSON(jsonStr));
+        }
         setReport(parsed);
         setApiKey(key);
       } catch (err: any) {
