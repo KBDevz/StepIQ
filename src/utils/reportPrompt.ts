@@ -264,37 +264,64 @@ Use actual bpm zone values in every protocol intensity field. Keep all values co
   return toAscii(prompt);
 }
 
-export function repairTruncatedJSON(json: string): string {
-  let s = json.trim();
-  // Strip trailing partial value after last complete value
-  // Remove trailing partial string (no closing quote)
-  s = s.replace(/,\s*"(?:[^"\\]|\\.)*$/, '');
-  // Remove trailing partial key-value pair
-  s = s.replace(/,\s*"[^"]*"\s*:\s*(?:"(?:[^"\\]|\\.)*)?$/, '');
-  // Remove trailing comma
-  s = s.replace(/,\s*$/, '');
+export function extractJSON(text: string): string {
+  // Find the start of the JSON object
+  const start = text.indexOf('{');
+  if (start === -1) throw new Error('No JSON found in response');
 
-  // Close unclosed strings
-  let inStr = false;
-  for (let i = 0; i < s.length; i++) {
-    if (s[i] === '"' && (i === 0 || s[i - 1] !== '\\')) inStr = !inStr;
-  }
-  if (inStr) s += '"';
-
-  // Balance brackets and braces
+  // Walk the full text tracking structure, not just to the last }
   const stack: string[] = [];
-  inStr = false;
-  for (let i = 0; i < s.length; i++) {
-    const c = s[i];
-    if (c === '"' && (i === 0 || s[i - 1] !== '\\')) { inStr = !inStr; continue; }
-    if (inStr) continue;
+  let inStr = false;
+  let i = start;
+  for (; i < text.length; i++) {
+    const c = text[i];
+    const prev = i > 0 ? text[i - 1] : '';
+    if (inStr) {
+      if (c === '"' && prev !== '\\') inStr = false;
+      continue;
+    }
+    if (c === '"') { inStr = true; continue; }
     if (c === '{' || c === '[') stack.push(c);
     if (c === '}') { if (stack.length && stack[stack.length - 1] === '{') stack.pop(); }
     if (c === ']') { if (stack.length && stack[stack.length - 1] === '[') stack.pop(); }
+    if (stack.length === 0) break;
   }
-  // Close in reverse order
-  while (stack.length) {
-    const open = stack.pop();
+
+  if (stack.length === 0) {
+    // Found complete JSON
+    return text.slice(start, i + 1);
+  }
+
+  // Truncated — take everything from start and repair
+  let s = text.slice(start);
+  // Remove any trailing partial string value
+  if (inStr) {
+    s = s.replace(/"[^"]*$/, '"');
+    inStr = false;
+  }
+  // Remove trailing incomplete key:value or dangling comma
+  s = s.replace(/,\s*"[^"]*"\s*:\s*"[^"]*$/, '');
+  s = s.replace(/,\s*"[^"]*"\s*:\s*$/, '');
+  s = s.replace(/,\s*"[^"]*$/, '');
+  s = s.replace(/,\s*$/, '');
+  // Re-scan to find what's still open
+  const fixStack: string[] = [];
+  let inStr2 = false;
+  for (let j = 0; j < s.length; j++) {
+    const c = s[j];
+    const prev = j > 0 ? s[j - 1] : '';
+    if (inStr2) {
+      if (c === '"' && prev !== '\\') inStr2 = false;
+      continue;
+    }
+    if (c === '"') { inStr2 = true; continue; }
+    if (c === '{' || c === '[') fixStack.push(c);
+    if (c === '}') { if (fixStack.length && fixStack[fixStack.length - 1] === '{') fixStack.pop(); }
+    if (c === ']') { if (fixStack.length && fixStack[fixStack.length - 1] === '[') fixStack.pop(); }
+  }
+  if (inStr2) s += '"';
+  while (fixStack.length) {
+    const open = fixStack.pop();
     s += open === '{' ? '}' : ']';
   }
   return s;
