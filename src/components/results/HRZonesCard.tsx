@@ -7,7 +7,7 @@ interface HRZonesCardProps {
 
 const ZONE_CONFIG = [
   { key: 'zone1' as const, num: 1, name: 'Recovery', color: '#4A9EFF', desc: 'Active recovery · Fat oxidation dominant' },
-  { key: 'zone2' as const, num: 2, name: 'Fat Burning', color: '#00E5A0', desc: 'Optimal fat burning · Aerobic base building', star: true },
+  { key: 'zone2' as const, num: 2, name: 'Fat Burning', color: '#00E5A0', desc: 'Optimal fat burning · Aerobic base building' },
   { key: 'zone3' as const, num: 3, name: 'Aerobic', color: '#FFD166', desc: 'Mixed fuel · Cardiovascular development' },
   { key: 'zone4' as const, num: 4, name: 'Threshold', color: '#FF8C42', desc: 'Performance gains · High carb burn' },
   { key: 'zone5' as const, num: 5, name: 'Maximum', color: '#FF4444', desc: 'Peak efforts · Short intervals only' },
@@ -134,7 +134,6 @@ export default function HRZonesCard({ zones, betaBlocker }: HRZonesCardProps) {
                 </span>
                 <span className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', fontWeight: 600 }}>
                   {zone.name}
-                  {zone.star && <span style={{ color: '#00E5A0', marginLeft: '4px' }}>{'★'}</span>}
                 </span>
               </div>
               <span className="font-mono" style={{ fontSize: '0.9rem', fontWeight: 700, color: '#EEF2FF' }}>
