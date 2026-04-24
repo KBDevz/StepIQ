@@ -180,6 +180,7 @@ export function buildReportPrompt(
 
   const prompt = `You are a clinical exercise physiologist analyzing a Chester Step Test result.
 Return ONLY raw JSON (no markdown, no code fences, no extra text).
+CRITICAL: Keep all string values concise. score_meaning: 2-3 sentences max. Each observation: 1 sentence. Each protocol field: brief phrase, not paragraph. Total response must fit in 3000 tokens.
 
 Patient:
   Name: ${state.name || 'Not provided'}
@@ -245,87 +246,56 @@ Write 4 specific 2-week training blocks (Weeks 1-2, 3-4, 5-6, 7-8) that progress
 
 Use the actual bpm training zone values provided above in every intensity specification. The protocol should feel like it was written by a personal trainer who knows this specific person's test results, not a template with numbers filled in.
 
-Respond with this exact JSON structure:
+Respond with this exact JSON structure (keep values SHORT):
 {
-  "score_meaning": "3-4 sentences about their specific VO2 max score, what it means physiologically, and how it compares to norms for their age/sex. Reference the HR efficiency and RPE calibration findings.",
-  "observations": [
-    "observation referencing actual HR numbers and the HR efficiency trend",
-    "observation about RPE calibration and what it means for training",
-    "observation about aerobic capacity relative to classification",
-    "observation about anything clinically notable from the test data"
-  ],
+  "score_meaning": "2-3 concise sentences about their VO2 max and what it means.",
+  "observations": ["1 sentence each", "4 observations total", "use actual HR/RPE numbers", "note anything clinically relevant"],
   "protocol": [
-    {
-      "weeks": "Weeks 1-2",
-      "phase": "Foundation",
-      "exercise": "specific activity -- e.g. brisk walking, cycling, swimming, tempo runs",
-      "duration": "e.g. 25 minutes",
-      "intensity": "use format: XX-YY% max HR (AAA-BBB bpm) / RPE N-N",
-      "frequency": "Nx per week",
-      "focus": "one sentence on the specific physiological adaptation goal"
-    },
-    {
-      "weeks": "Weeks 3-4",
-      "phase": "Build",
-      "exercise": "...",
-      "duration": "...",
-      "intensity": "...",
-      "frequency": "...",
-      "focus": "..."
-    },
-    {
-      "weeks": "Weeks 5-6",
-      "phase": "Development",
-      "exercise": "...",
-      "duration": "...",
-      "intensity": "...",
-      "frequency": "...",
-      "focus": "..."
-    },
-    {
-      "weeks": "Weeks 7-8",
-      "phase": "Peak",
-      "exercise": "...",
-      "duration": "...",
-      "intensity": "...",
-      "frequency": "...",
-      "focus": "..."
-    }
+    {"weeks":"Weeks 1-2","phase":"Foundation","exercise":"specific activity","duration":"X min","intensity":"XX-YY% max HR (AAA-BBB bpm) / RPE N-N","frequency":"Nx/week","focus":"short adaptation goal"},
+    {"weeks":"Weeks 3-4","phase":"Build","exercise":"...","duration":"...","intensity":"...","frequency":"...","focus":"..."},
+    {"weeks":"Weeks 5-6","phase":"Development","exercise":"...","duration":"...","intensity":"...","frequency":"...","focus":"..."},
+    {"weeks":"Weeks 7-8","phase":"Peak","exercise":"...","duration":"...","intensity":"...","frequency":"...","focus":"..."}
   ],
-  "next_target": {
-    "vo2_target": ${vo2Target},
-    "timeframe": "8-10 weeks with consistent training",
-    "classification": "the classification they would reach",
-    "improvement_needed": ${Math.round((vo2Target - vo2Max) * 10) / 10},
-    "closing": "motivating sentence specific to this patient that references their current classification and what they can achieve"
-  }
+  "next_target": {"vo2_target":${vo2Target},"timeframe":"8-10 weeks","classification":"target classification","improvement_needed":${Math.round((vo2Target - vo2Max) * 10) / 10},"closing":"1 motivating sentence"}
 }
 
-Use actual HR values from the data in your observations. Use actual bpm zone values in every protocol intensity field.`;
+Use actual bpm zone values in every protocol intensity field. Keep all values concise - no paragraphs.`;
 
   return toAscii(prompt);
 }
 
 export function repairTruncatedJSON(json: string): string {
   let s = json.trim();
-  // Remove trailing partial key-value or comma
-  s = s.replace(/,\s*"[^"]*$/, '');
+  // Strip trailing partial value after last complete value
+  // Remove trailing partial string (no closing quote)
+  s = s.replace(/,\s*"(?:[^"\\]|\\.)*$/, '');
+  // Remove trailing partial key-value pair
+  s = s.replace(/,\s*"[^"]*"\s*:\s*(?:"(?:[^"\\]|\\.)*)?$/, '');
+  // Remove trailing comma
   s = s.replace(/,\s*$/, '');
+
   // Close unclosed strings
-  const quotes = (s.match(/(?<!\\)"/g) || []).length;
-  if (quotes % 2 !== 0) s += '"';
+  let inStr = false;
+  for (let i = 0; i < s.length; i++) {
+    if (s[i] === '"' && (i === 0 || s[i - 1] !== '\\')) inStr = !inStr;
+  }
+  if (inStr) s += '"';
+
   // Balance brackets and braces
-  const opens = { '{': 0, '[': 0 };
-  const close: Record<string, '{' | '['> = { '}': '{', ']': '[' };
-  let inString = false;
+  const stack: string[] = [];
+  inStr = false;
   for (let i = 0; i < s.length; i++) {
     const c = s[i];
-    if (c === '"' && (i === 0 || s[i - 1] !== '\\')) { inString = !inString; continue; }
-    if (inString) continue;
-    if (c === '{' || c === '[') opens[c]++;
-    if (c === '}' || c === ']') opens[close[c]]--;
+    if (c === '"' && (i === 0 || s[i - 1] !== '\\')) { inStr = !inStr; continue; }
+    if (inStr) continue;
+    if (c === '{' || c === '[') stack.push(c);
+    if (c === '}') { if (stack.length && stack[stack.length - 1] === '{') stack.pop(); }
+    if (c === ']') { if (stack.length && stack[stack.length - 1] === '[') stack.pop(); }
   }
-  for (let i = 0; i < opens['[']; i++) s += ']';
-  for (let i = 0; i < opens['{']; i++) s += '}';
+  // Close in reverse order
+  while (stack.length) {
+    const open = stack.pop();
+    s += open === '{' ? '}' : ']';
+  }
   return s;
 }
