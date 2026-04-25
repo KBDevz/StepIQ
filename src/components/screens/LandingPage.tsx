@@ -1,13 +1,4 @@
 import { useState, useEffect } from 'react';
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  ReferenceDot,
-  ResponsiveContainer,
-} from 'recharts';
 import NavBar from '../ui/NavBar';
 import ThemeToggle from '../ui/ThemeToggle';
 
@@ -17,300 +8,12 @@ interface LandingPageProps {
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
-/* ─────────────────────────────────────────────
-   Sample regression data for the preview chart
-   ───────────────────────────────────────────── */
-const sampleData = [
-  { level: 1, hr: 95, vo2: 17.3 },
-  { level: 2, hr: 115, vo2: 21.9 },
-  { level: 3, hr: 132, vo2: 26.5 },
-  { level: 4, hr: 151, vo2: 31.1 },
-];
-
-const regressionLine = (() => {
-  const pts = sampleData.map((d) => ({ x: d.hr, y: d.vo2 }));
-  const n = pts.length;
-  let sx = 0, sy = 0, sxy = 0, sx2 = 0;
-  pts.forEach((p) => {
-    sx += p.x;
-    sy += p.y;
-    sxy += p.x * p.y;
-    sx2 += p.x * p.x;
-  });
-  const d = n * sx2 - sx * sx;
-  const slope = (n * sxy - sx * sy) / d;
-  const intercept = (sy - slope * sx) / n;
-  const maxHR = 185;
-  const vo2Max = Math.round((slope * maxHR + intercept) * 10) / 10;
-
-  const line: { hr: number; actual?: number; predicted?: number }[] = [];
-  for (let i = 0; i <= 40; i++) {
-    const hr = 85 + (maxHR - 85) * (i / 40);
-    const vo2 = slope * hr + intercept;
-    if (hr <= 151) {
-      line.push({ hr: Math.round(hr), actual: Math.round(vo2 * 10) / 10 });
-    } else {
-      line.push({ hr: Math.round(hr), predicted: Math.round(vo2 * 10) / 10 });
-    }
-  }
-  return { line, vo2Max, maxHR };
-})();
-
-function PreviewChart() {
-  return (
-    <ResponsiveContainer width="100%" height={160}>
-      <LineChart margin={{ top: 8, right: 12, bottom: 4, left: -20 }}>
-        <CartesianGrid stroke="var(--border)" strokeDasharray="3 3" />
-        <XAxis
-          dataKey="hr"
-          type="number"
-          domain={[85, 190]}
-          tick={{ fill: 'var(--text2)', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
-          stroke="var(--border)"
-          tickLine={false}
-        />
-        <YAxis
-          tick={{ fill: 'var(--text2)', fontSize: 9, fontFamily: 'IBM Plex Mono' }}
-          stroke="var(--border)"
-          tickLine={false}
-        />
-        <Line
-          data={regressionLine.line.filter((d) => d.actual !== undefined)}
-          dataKey="actual"
-          stroke="#4A9EFF"
-          strokeWidth={2}
-          dot={false}
-          isAnimationActive={false}
-        />
-        <Line
-          data={regressionLine.line.filter((d) => d.predicted !== undefined)}
-          dataKey="predicted"
-          stroke="var(--class-good)"
-          strokeWidth={2}
-          strokeDasharray="6 4"
-          dot={false}
-          isAnimationActive={false}
-        />
-        <Line
-          data={sampleData.map((p) => ({ hr: p.hr, dot: p.vo2 }))}
-          dataKey="dot"
-          stroke="transparent"
-          dot={{ fill: '#4A9EFF', r: 4, stroke: 'var(--surface)', strokeWidth: 2 }}
-          isAnimationActive={false}
-        />
-        <ReferenceDot
-          x={regressionLine.maxHR}
-          y={regressionLine.vo2Max}
-          r={5}
-          fill="var(--class-good)"
-          stroke="var(--surface)"
-          strokeWidth={2}
-        />
-      </LineChart>
-    </ResponsiveContainer>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   Sample Result card (top right)
-   ───────────────────────────────────────────── */
-function SampleResultCard() {
-  return (
-    <div
-      style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: '16px',
-        padding: '24px',
-        boxShadow: 'var(--shadow-md)',
-      }}
-    >
-      {/* Row 1 — label + classification badge */}
-      <div className="flex items-center justify-between" style={{ marginBottom: '12px' }}>
-        <span
-          className="uppercase"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.52rem',
-            letterSpacing: '0.14em',
-            color: 'var(--text2)',
-          }}
-        >
-          Sample Result
-        </span>
-        <span
-          className="uppercase"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.58rem',
-            letterSpacing: '0.1em',
-            color: 'var(--class-good)',
-            background: 'rgba(6,214,160,0.1)',
-            border: '1px solid rgba(6,214,160,0.3)',
-            borderRadius: '20px',
-            padding: '3px 10px',
-          }}
-        >
-          Good
-        </span>
-      </div>
-
-      {/* Score label */}
-      <div
-        className="uppercase"
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.52rem',
-          letterSpacing: '0.14em',
-          color: 'var(--text2)',
-          marginBottom: '6px',
-        }}
-      >
-        VO₂ Max Estimate
-      </div>
-
-      {/* Score number */}
-      <div
-        style={{
-          fontFamily: 'var(--font-display)',
-          fontSize: '4.5rem',
-          color: 'var(--class-good)',
-          lineHeight: 1,
-          fontWeight: 700,
-        }}
-      >
-        41.2
-      </div>
-
-      <div
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.62rem',
-          color: 'var(--text2)',
-          marginTop: '6px',
-          marginBottom: '16px',
-        }}
-      >
-        ml · kg⁻¹ · min⁻¹
-      </div>
-
-      {/* Chart */}
-      <div
-        style={{
-          background: 'var(--surface2)',
-          borderRadius: '8px',
-          padding: '8px 4px',
-        }}
-      >
-        <PreviewChart />
-      </div>
-
-      <p
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.6rem',
-          color: 'var(--text2)',
-          textAlign: 'center',
-          marginTop: '12px',
-        }}
-      >
-        4 of 5 levels · Age 35 · Male
-      </p>
-    </div>
-  );
-}
-
-/* ─────────────────────────────────────────────
-   Test Preview card (bottom right)
-   ───────────────────────────────────────────── */
-function TestPreviewCard() {
-  return (
-    <div
-      className="landing-preview-card"
-      style={{
-        background: 'var(--surface)',
-        border: '1px solid var(--border)',
-        borderRadius: '16px',
-        padding: '20px',
-        boxShadow: 'var(--shadow-sm)',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '16px',
-      }}
-    >
-      {/* Mini phone mockup */}
-      <div
-        style={{
-          width: '80px',
-          height: '120px',
-          flexShrink: 0,
-          background: 'var(--surface2)',
-          border: '1px solid var(--border)',
-          borderRadius: '12px',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '4px',
-          position: 'relative',
-        }}
-      >
-        <span
-          style={{ fontFamily: 'var(--font-display)', fontSize: '1.8rem', color: 'var(--text)', lineHeight: 1, fontWeight: 700 }}
-        >
-          2
-        </span>
-        <span
-          style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text2)' }}
-        >
-          1:43
-        </span>
-        <span
-          style={{
-            width: '6px',
-            height: '6px',
-            borderRadius: '50%',
-            background: 'var(--accent)',
-            boxShadow: '0 0 6px var(--accent)',
-            marginTop: '2px',
-          }}
-        />
-      </div>
-
-      {/* Text */}
-      <div style={{ flex: 1 }}>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.9rem',
-            color: 'var(--text)',
-            fontWeight: 600,
-            marginBottom: '6px',
-          }}
-        >
-          Guided, beat by beat.
-        </p>
-        <p
-          style={{
-            fontFamily: 'var(--font-body)',
-            fontSize: '0.75rem',
-            color: 'var(--text2)',
-            lineHeight: 1.6,
-          }}
-        >
-          The app sets the pace with a metronome and guides you through each
-          level. Check your heart rate at the end of each stage.
-        </p>
-      </div>
-    </div>
-  );
-}
+const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
 
 /* ─────────────────────────────────────────────
    Main Landing Page
    ───────────────────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
-  const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
   const [showSticky, setShowSticky] = useState(true);
 
   useEffect(() => {
@@ -580,8 +283,17 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
             {/* ── RIGHT COLUMN ── */}
             <div className="landing-right-col landing-stagger-card">
-              <SampleResultCard />
-              <TestPreviewCard />
+              <img
+                src="/hero-phones.png"
+                alt="StepIQ app showing VO₂ max results on two phones"
+                style={{
+                  width: '100%',
+                  maxWidth: '520px',
+                  height: 'auto',
+                  display: 'block',
+                  margin: '0 auto',
+                }}
+              />
             </div>
           </div>
         </div>
@@ -1000,7 +712,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .landing-headline { font-size: 3rem; line-height: 1.1; }
           .landing-subheadline { font-size: 1.4rem; }
           .landing-container { padding: 0 40px !important; }
-          .landing-preview-card { display: none; }
+
           .landing-footer { padding: 20px 40px !important; }
         }
 
