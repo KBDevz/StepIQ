@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import NavBar from '../ui/NavBar';
 import ThemeToggle from '../ui/ThemeToggle';
 
@@ -8,22 +8,31 @@ interface LandingPageProps {
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
-const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
-
 /* ─────────────────────────────────────────────
    Main Landing Page
    ───────────────────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
-  const [showSticky, setShowSticky] = useState(true);
+  const [showSticky, setShowSticky] = useState(false);
+  const heroCTARef = useRef<HTMLDivElement>(null);
+
+  const handleScroll = useCallback(() => {
+    if (!heroCTARef.current) return;
+    const heroBottom = heroCTARef.current.getBoundingClientRect().bottom;
+    const pastHero = heroBottom < 0;
+    const finalCTA = document.querySelector('[data-final-cta]');
+    let nearFinal = false;
+    if (finalCTA) {
+      const rect = finalCTA.getBoundingClientRect();
+      nearFinal = Math.abs(rect.top - window.innerHeight) < 200;
+    }
+    const distFromBottom = document.body.scrollHeight - window.scrollY - window.innerHeight;
+    setShowSticky(pastHero && !nearFinal && distFromBottom > 200);
+  }, []);
 
   useEffect(() => {
-    const onScroll = () => {
-      const distFromBottom = document.body.scrollHeight - window.scrollY - window.innerHeight;
-      setShowSticky(distFromBottom >= 200);
-    };
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [handleScroll]);
 
   return (
     <div
@@ -51,251 +60,262 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
       {/* ── HERO ── */}
       <section
-        className="relative z-10"
-        style={{
-          minHeight: 'calc(100vh - 64px)',
-          marginTop: '64px',
-          display: 'flex',
-          alignItems: 'center',
-        }}
+        className="hero relative z-10"
+        style={{ marginTop: '64px' }}
       >
         <div
-          className="landing-container"
+          className="landing-hero-container"
           style={{
             width: '100%',
-            maxWidth: '1200px',
+            maxWidth: '720px',
             margin: '0 auto',
-            padding: '0 64px',
+            padding: '56px 24px 40px',
           }}
         >
-          <div className="landing-grid">
-            {/* ── LEFT COLUMN ── */}
-            <div style={{ paddingTop: '40px', paddingBottom: '40px' }}>
-              {/* Eyebrow */}
-              <p
-                className="uppercase landing-stagger-1"
-                style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.75rem',
-                  letterSpacing: '0.18em',
-                  color: 'var(--accent)',
-                  marginBottom: '24px',
-                }}
-              >
-                At-Home VO₂ Max Assessment
-              </p>
+          {/* 1 — Eyebrow */}
+          <div className="landing-stagger-1" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 10px var(--accent)', flexShrink: 0 }} />
+            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent)' }}>
+              Free · 10 Minutes · No Lab
+            </span>
+          </div>
 
-              {/* Headline */}
-              <h1
-                className="landing-stagger-2 landing-headline"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontWeight: 700,
-                  color: 'var(--text)',
-                  letterSpacing: '-0.02em',
-                  margin: 0,
-                  marginBottom: '12px',
-                }}
-              >
-                VO₂ max is the #1 predictor of how long you'll live.
-              </h1>
+          {/* 2 — Headline */}
+          <h1
+            className="landing-stagger-2 landing-headline"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontWeight: 700,
+              color: 'var(--text)',
+              letterSpacing: '-0.01em',
+              lineHeight: 1.1,
+              margin: 0,
+              marginBottom: '14px',
+            }}
+          >
+            VO₂ max is the #1 predictor of how long you'll live.
+          </h1>
 
-              {/* Sub-headline */}
-              <p
-                className="landing-stagger-2 landing-subheadline"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontStyle: 'italic',
-                  fontWeight: 400,
-                  color: 'var(--accent)',
-                  letterSpacing: '-0.01em',
-                  marginBottom: '28px',
-                }}
-              >
-                This is the easiest way to measure yours.
-              </p>
+          {/* 3 — Subhead */}
+          <p
+            className="landing-stagger-2 landing-subheadline"
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontStyle: 'italic',
+              fontWeight: 400,
+              color: 'var(--accent)',
+              lineHeight: 1.4,
+              letterSpacing: '-0.01em',
+              marginBottom: '18px',
+            }}
+          >
+            This is the easiest way to measure yours.
+          </p>
 
-              {/* Description */}
-              <p
-                className="landing-stagger-3 landing-desktop-only"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.95rem',
-                  fontWeight: 400,
-                  color: 'var(--text2)',
-                  lineHeight: 1.75,
-                  maxWidth: '520px',
-                  marginBottom: '28px',
-                }}
-              >
-                StepIQ is a free, clinically validated 10-minute step test.
-                Get your VO₂ max score, see how you compare, and receive
-                a personalized plan to improve it. No lab visit. No signup.
-              </p>
+          {/* 4 — Blurb */}
+          <p
+            className="landing-stagger-3 landing-blurb"
+            style={{
+              fontFamily: 'var(--font-body)',
+              color: 'var(--text2)',
+              lineHeight: 1.55,
+              marginBottom: '22px',
+            }}
+          >
+            StepIQ is a 10-minute guided step test you can take at home or at the gym. All you need is a step, a heart rate monitor, and your phone.
+          </p>
 
-              {/* Trust badges */}
-              <div
-                className="flex flex-wrap landing-stagger-4"
-                style={{ gap: '8px', marginBottom: '20px' }}
-              >
-                {pills.map((pill) => (
-                  <span
-                    key={pill}
-                    className="uppercase"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.6rem',
-                      letterSpacing: '0.1em',
-                      color: 'var(--accent)',
-                      background: 'var(--accent-dark)',
-                      border: '1px solid rgba(0,184,162,0.25)',
-                      padding: '5px 12px',
-                      borderRadius: '20px',
-                    }}
-                  >
-                    ✓ {pill}
-                  </span>
-                ))}
-              </div>
+          {/* 5 — Accuracy strip */}
+          <div
+            className="landing-stagger-3"
+            style={{
+              background: 'linear-gradient(90deg, rgba(20,230,180,0.08), rgba(20,230,180,0.02))',
+              border: '1px solid rgba(20,230,180,0.15)',
+              borderLeft: '3px solid var(--accent)',
+              borderRadius: '10px',
+              padding: '14px 16px',
+              display: 'flex',
+              gap: '12px',
+              alignItems: 'center',
+              marginBottom: '26px',
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text)', fontWeight: 500 }}>
+              Accurate within <span style={{ color: 'var(--accent)', fontWeight: 700 }}>±8-10%</span> of a lab VO₂ test
+            </span>
+          </div>
 
-              {/* What You Need strip */}
-              <div
-                className="landing-stagger-4 landing-need-strip"
-                style={{
-                  background: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '12px',
-                  padding: '14px 24px',
-                  marginBottom: '32px',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  maxWidth: '100%',
-                  gap: '8px',
-                }}
-              >
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>10 Minutes</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>to complete</span>
-                </div>
-                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>HR Monitor</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>watch or strap</span>
-                </div>
-                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>12&quot; Step</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)', fontStyle: 'italic' }}>or measure your stairs</span>
-                </div>
-                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
-                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>Your Phone</span>
-                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>any browser</span>
-                </div>
-              </div>
+          {/* 6 — Primary CTA */}
+          <div ref={heroCTARef}>
+            <button
+              onClick={onStart}
+              className="landing-cta-btn uppercase cursor-pointer transition-all landing-stagger-4"
+              style={{
+                fontFamily: 'var(--font-mono)',
+                width: '100%',
+                fontSize: '0.82rem',
+                fontWeight: 600,
+                letterSpacing: '0.12em',
+                color: 'var(--bg)',
+                background: 'var(--accent)',
+                padding: '15px 24px',
+                borderRadius: '10px',
+                border: 'none',
+                boxShadow: '0 8px 28px rgba(20,230,180,0.3)',
+                marginBottom: '12px',
+              }}
+            >
+              Start Free VO₂ Max Test →
+            </button>
+          </div>
 
-              {/* CTA */}
-              <div className="landing-stagger-5">
-                <div className="landing-cta-row">
-                  <button
-                    onClick={onStart}
-                    className="landing-cta-btn uppercase cursor-pointer transition-all"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      flex: '0 0 60%',
-                      fontSize: '0.82rem',
-                      fontWeight: 600,
-                      letterSpacing: '0.12em',
-                      color: 'var(--bg)',
-                      background: 'var(--accent)',
-                      padding: '15px 24px',
-                      borderRadius: '10px',
-                      border: 'none',
-                      boxShadow: 'var(--shadow-accent)',
-                    }}
-                  >
-                    Start Free Assessment →
-                  </button>
-                  <button
-                    onClick={onHowItWorks}
-                    className="landing-learn-btn uppercase cursor-pointer"
-                    style={{
-                      fontFamily: 'var(--font-mono)',
-                      flex: '0 0 38%',
-                      fontSize: '0.78rem',
-                      fontWeight: 500,
-                      letterSpacing: '0.08em',
-                      color: 'var(--text2)',
-                      background: 'transparent',
-                      padding: '15px 24px',
-                      borderRadius: '10px',
-                      border: '1px solid var(--border)',
-                      transition: 'all 0.2s ease',
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--accent)';
-                      e.currentTarget.style.color = 'var(--text)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = 'var(--border)';
-                      e.currentTarget.style.color = 'var(--text2)';
-                    }}
-                  >
-                    Learn More
-                  </button>
-                </div>
-                <p
-                  className="uppercase"
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.6rem',
-                    letterSpacing: '0.12em',
-                    color: 'var(--text2)',
-                    marginTop: '12px',
-                    textAlign: 'center',
-                  }}
-                >
-                  Free · No Account · 10 Minutes
-                </p>
-                <span
-                  onClick={() => {
-                    document.getElementById('how-it-works-section')?.scrollIntoView({ behavior: 'smooth' });
-                  }}
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.85rem',
-                    color: 'var(--accent)',
-                    textAlign: 'center',
-                    display: 'block',
-                    marginTop: '14px',
-                    cursor: 'pointer',
-                  }}
-                >
-                  See how it works ↓
-                </span>
-              </div>
+          {/* 7 — Risk reversal */}
+          <p
+            className="uppercase landing-stagger-4"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.68rem',
+              letterSpacing: '0.08em',
+              color: 'var(--text3)',
+              textAlign: 'center',
+              marginBottom: '28px',
+            }}
+          >
+            No Credit Card · No Email · No Account
+          </p>
+
+          {/* 8 — Sample result preview */}
+          <div className="landing-stagger-5" style={{ marginBottom: '28px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginBottom: '12px' }}>
+              <span style={{ flex: '0 0 28px', height: '1px', background: 'var(--border)' }} />
+              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)' }}>A Look at Your Result</span>
+              <span style={{ flex: '0 0 28px', height: '1px', background: 'var(--border)' }} />
             </div>
-
-            {/* ── RIGHT COLUMN ── */}
-            <div className="landing-right-col landing-stagger-card">
-              <img
-                src="/hero-phones.png"
-                alt="StepIQ app showing VO₂ max results on two phones"
-                style={{
-                  width: '100%',
-                  maxWidth: '520px',
-                  height: 'auto',
-                  display: 'block',
-                  margin: '0 auto',
-                }}
-              />
+            <div style={{
+              background: 'linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px 22px',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
+              maxWidth: '560px',
+              margin: '0 auto',
+            }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)' }}>Your VO₂ Max</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: '999px', padding: '4px 12px' }}>Good</span>
+              </div>
+              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ fontFamily: 'var(--font-display)', fontSize: '4rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 0.95 }}>41.2</span>
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text3)' }}>ml · kg⁻¹ · min⁻¹</span>
+              </div>
+              <svg width="100%" height="90" viewBox="0 0 320 90" preserveAspectRatio="none" style={{ display: 'block', marginBottom: '12px' }}>
+                <line x1="0" y1="30" x2="320" y2="30" stroke="var(--border)" strokeWidth="0.5" />
+                <line x1="0" y1="60" x2="320" y2="60" stroke="var(--border)" strokeWidth="0.5" />
+                <defs><linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15" /><stop offset="100%" stopColor="#3B82F6" stopOpacity="0" /></linearGradient></defs>
+                <path d="M20 72 L90 58 L160 46 L230 34 L230 90 L20 90 Z" fill="url(#areaFill)" />
+                <polyline points="20,72 90,58 160,46 230,34" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+                <line x1="230" y1="34" x2="300" y2="18" stroke="var(--accent)" strokeWidth="2" strokeDasharray="6 4" strokeLinecap="round" />
+                <circle cx="20" cy="72" r="4" fill="#3B82F6" /><circle cx="90" cy="58" r="4" fill="#3B82F6" /><circle cx="160" cy="46" r="4" fill="#3B82F6" /><circle cx="230" cy="34" r="4" fill="#3B82F6" />
+                <circle cx="300" cy="18" r="6" fill="var(--accent)" opacity="0.3" /><circle cx="300" cy="18" r="4" fill="var(--accent)" />
+              </svg>
+              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--text3)', textAlign: 'center' }}>
+                Sample Result · 4 of 5 Levels · Age 35 · Male
+              </p>
             </div>
           </div>
+
+          {/* 9 — Wedge card */}
+          <div style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: '14px',
+            padding: '18px',
+            marginBottom: '28px',
+          }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '8px' }}>
+              vs Your Apple Watch
+            </p>
+            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--text2)' }}>
+              Your watch <strong style={{ color: 'var(--text)', fontWeight: 600 }}>estimates</strong> VO₂ max from passive movement. StepIQ <strong style={{ color: 'var(--text)', fontWeight: 600 }}>measures</strong> it from a clinically validated active protocol — the same method physiologists use.
+            </p>
+          </div>
+
+          {/* 10 — Trust strip */}
+          <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '18px 0', marginBottom: '26px' }}>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
+                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Clinically validated</strong> — Chester Step Test, used in cardiac rehab worldwide
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
+                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Linear regression scoring</strong> — fits a line through 5 data points, the way physiologists do
+              </span>
+            </div>
+            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
+                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>AI-powered 8-week plan</strong> — personalized HR zones, protocol, and next-test target
+              </span>
+            </div>
+          </div>
+
+          {/* 11 — Citations */}
+          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: '10px' }}>
+              Research Cited In
+            </p>
+            <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.84rem', fontStyle: 'italic', lineHeight: 1.6, color: 'var(--text2)' }}>
+              JAMA · Mayo Clinic Proceedings · Occupational Medicine
+            </p>
+          </div>
+
+          {/* 12 — Equipment grid */}
+          <div style={{ marginBottom: '22px' }}>
+            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)', textAlign: 'center', marginBottom: '14px' }}>
+              What You'll Need
+            </p>
+            <div className="landing-equip-grid">
+              {[
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, title: '10 Minutes', sub: 'to complete' },
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>, title: 'HR Monitor', sub: 'watch or strap' },
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg>, title: 'A Step', sub: '15-30cm, stairs work' },
+                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>, title: 'Your Phone', sub: 'any browser' },
+              ].map((item) => (
+                <div key={item.title} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px 12px', textAlign: 'center' }}>
+                  <div style={{ marginBottom: '8px' }}>{item.icon}</div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)', marginBottom: '4px' }}>{item.title}</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text3)', lineHeight: 1.3 }}>{item.sub}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* 13 — Secondary CTA */}
+          <button
+            data-final-cta
+            onClick={() => document.getElementById('how-it-works-section')?.scrollIntoView({ behavior: 'smooth' })}
+            className="cursor-pointer uppercase"
+            style={{
+              width: '100%',
+              padding: '14px',
+              background: 'transparent',
+              color: 'var(--accent)',
+              border: '1px solid var(--border)',
+              borderRadius: '12px',
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.78rem',
+              letterSpacing: '0.14em',
+              transition: 'border-color 0.2s',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
+            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; }}
+          >
+            See How It Works ↓
+          </button>
         </div>
       </section>
 
@@ -637,13 +657,16 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           bottom: 0,
           left: 0,
           right: 0,
-          zIndex: 50,
+          zIndex: 100,
           background: 'var(--bg)',
+          backdropFilter: 'blur(12px)',
+          WebkitBackdropFilter: 'blur(12px)',
           borderTop: '1px solid var(--border)',
-          padding: '12px 24px',
+          padding: '12px 16px',
           paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
-          flexDirection: 'column',
+          flexDirection: 'row',
           alignItems: 'center',
+          gap: '8px',
         }}
       >
         <button
@@ -651,7 +674,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           className="uppercase cursor-pointer"
           style={{
             width: '100%',
-            height: '52px',
+            padding: '14px',
             fontFamily: 'var(--font-mono)',
             fontSize: '0.78rem',
             fontWeight: 600,
@@ -661,77 +684,55 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
             background: 'var(--accent)',
             border: 'none',
             borderRadius: '10px',
-            boxShadow: 'var(--shadow-accent)',
+            boxShadow: '0 8px 28px rgba(20,230,180,0.3)',
           }}
         >
           Start Free VO₂ Max Test →
         </button>
-        <p style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.58rem',
-          color: 'var(--text2)',
-          textAlign: 'center',
-          marginTop: '6px',
-        }}>
-          100% free · No signup · 10 minutes
-        </p>
       </div>
 
       {/* ── RESPONSIVE & ANIMATIONS ── */}
       <style>{`
-        /* Desktop grid */
-        .landing-grid {
-          display: grid;
-          grid-template-columns: 55% 45%;
-          gap: 80px;
-          align-items: center;
-          width: 100%;
-        }
+        /* Hero layout */
         .landing-headline {
           font-size: 4rem;
-          line-height: 1.05;
+          line-height: 1.1;
         }
         .landing-subheadline {
           font-size: 1.6rem;
-          line-height: 1.3;
+          line-height: 1.4;
         }
-        .landing-right-col {
-          display: flex;
-          flex-direction: column;
-          gap: 16px;
+        .landing-blurb {
+          font-size: 1.05rem;
+        }
+        .landing-equip-grid {
+          display: grid;
+          grid-template-columns: repeat(4, 1fr);
+          gap: 12px;
         }
 
         /* Tablet */
         @media (max-width: 1023px) {
-          .landing-grid {
-            grid-template-columns: 1fr;
-            gap: 40px;
-            max-width: 600px;
-            margin: 0 auto;
-          }
-          .landing-headline { font-size: 3rem; line-height: 1.1; }
+          .landing-headline { font-size: 3rem; }
           .landing-subheadline { font-size: 1.4rem; }
-          .landing-container { padding: 0 40px !important; }
-
+          .landing-blurb { font-size: 1rem; }
+          .landing-hero-container { padding: 48px 24px 36px !important; }
           .landing-footer { padding: 20px 40px !important; }
         }
 
         /* Mobile */
         @media (max-width: 767px) {
-          .landing-headline { font-size: 2rem; line-height: 1.15; }
+          .landing-headline { font-size: 2.2rem; line-height: 1.1; }
           .landing-subheadline { font-size: 1.15rem; }
-          .landing-container { padding: 0 24px !important; }
-          .landing-right-col { display: none; }
+          .landing-blurb { font-size: 0.95rem; }
+          .landing-equip-grid {
+            grid-template-columns: 1fr 1fr;
+          }
           .landing-footer {
             padding: 20px 24px !important;
             flex-direction: column;
             align-items: flex-start;
           }
-        }
-
-        /* Large screens */
-        @media (min-width: 1400px) {
-          .landing-headline { font-size: 4rem; }
         }
 
         /* Audience grid */
@@ -781,23 +782,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           }
         }
 
-        /* CTA button row */
-        .landing-cta-row {
-          display: flex;
-          gap: 12px;
-          width: 100%;
-        }
-        @media (max-width: 767px) {
-          .landing-cta-row {
-            flex-direction: column;
-            gap: 10px;
-          }
-          .landing-cta-row button {
-            flex: 1 1 auto !important;
-            width: 100% !important;
-          }
-        }
-
         /* CTA hover */
         .landing-cta-btn:hover {
           transform: translateY(-2px);
@@ -836,29 +820,10 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           to { opacity: 1; transform: translateX(0); }
         }
 
-        /* Mobile/Desktop visibility */
-        .landing-mobile-only { display: none; }
-        .landing-desktop-only { display: block; }
+        /* Sticky CTA */
         .landing-sticky-cta { display: none; }
-
         @media (max-width: 767px) {
-          .landing-mobile-only { display: block !important; }
-          .landing-desktop-only { display: none !important; }
-          .landing-mobile-only.flex { display: flex !important; }
           .landing-sticky-cta.landing-sticky-visible { display: flex; }
-        }
-
-        /* Need strip mobile */
-        @media (max-width: 480px) {
-          .landing-need-strip {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px !important;
-            padding: 16px !important;
-          }
-          .landing-need-divider {
-            display: none !important;
-          }
         }
 
         /* Mobile bottom padding for sticky CTA */
