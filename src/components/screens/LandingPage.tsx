@@ -648,82 +648,281 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         <div
           className="landing-steps-container"
           style={{
-            maxWidth: '960px',
+            maxWidth: '680px',
             margin: '0 auto',
-            padding: '64px 64px',
+            padding: '72px 64px',
           }}
         >
-          <p
-            className="uppercase"
-            style={{
+          {/* Badge */}
+          <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+            <span style={{
               fontFamily: 'var(--font-mono)',
               fontSize: '0.6rem',
-              letterSpacing: '0.16em',
-              color: 'var(--text2)',
-              textAlign: 'center',
-              marginBottom: '28px',
-            }}
-          >
-            Get Your Score in 10 Minutes
+              letterSpacing: '0.14em',
+              textTransform: 'uppercase',
+              color: 'var(--accent)',
+              background: 'var(--accent-dark)',
+              border: '1px solid rgba(0,184,162,0.25)',
+              borderRadius: '20px',
+              padding: '5px 14px',
+            }}>
+              How It Works
+            </span>
+          </div>
+
+          {/* Headline */}
+          <h2 style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: '2rem',
+            fontWeight: 700,
+            color: 'var(--text)',
+            textAlign: 'center',
+            lineHeight: 1.2,
+            marginBottom: '8px',
+          }}>
+            Get your score in 10 minutes
+          </h2>
+          <p style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.88rem',
+            color: 'var(--text2)',
+            textAlign: 'center',
+            marginBottom: '36px',
+          }}>
+            A simple 4-step test you can do at home.
           </p>
 
-          <div className="landing-steps-grid">
-            {[
-              {
-                num: 1,
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>,
-                title: 'Step to the beat',
-                desc: 'Follow the guided pace.',
-              },
-              {
-                num: 2,
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
-                title: 'Track your heart rate',
-                desc: 'Use a watch, strap, or phone.',
-              },
-              {
-                num: 3,
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
-                title: 'We calculate your VO₂ max',
-                desc: 'Using validated protocols.',
-              },
-              {
-                num: 4,
-                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
-                title: 'Get your plan',
-                desc: 'Personalized insights to improve.',
-              },
-            ].map((step, i, arr) => (
-              <div key={step.num} style={{ display: 'flex', alignItems: 'flex-start' }}>
-                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: 1 }}>
+          {/* Step Cards */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+
+            {/* Step 1 */}
+            <div className="landing-step-card" style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, zIndex: 1 }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
                   <div style={{
                     width: '36px', height: '36px', borderRadius: '50%',
                     background: 'var(--accent)', color: 'var(--bg)',
-                    fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700,
+                    fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
-                    marginBottom: '8px',
-                  }}>
-                    {step.num}
-                  </div>
+                    position: 'absolute', top: '-8px', left: '-8px', zIndex: 2,
+                  }}>1</div>
                   <div style={{
-                    width: '40px', height: '40px', borderRadius: '50%',
-                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    width: '52px', height: '52px', borderRadius: '50%',
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
                     display: 'flex', alignItems: 'center', justifyContent: 'center',
                   }}>
-                    {step.icon}
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M13.73 21a2 2 0 0 1-3.46 0"/><path d="M5 11l1.5-3.5L8 4l1-1h6l1 1 1.5 3.5L19 11"/><path d="M4 17l2-3h12l2 3"/><path d="M3 21h18"/></svg>
                   </div>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)', marginTop: '8px' }}>{step.title}</p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text2)', lineHeight: 1.5, maxWidth: '120px' }}>{step.desc}</p>
                 </div>
-                {i < arr.length - 1 && (
-                  <div className="landing-step-connector" style={{
-                    flex: '0 0 40px', height: '1px',
-                    borderTop: '1px dashed var(--border)',
-                    marginTop: '18px',
-                  }} />
-                )}
+                <div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Step to the beat</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text2)', lineHeight: 1.5 }}>Follow the guided pace and keep going.</p>
+                </div>
               </div>
-            ))}
+              {/* Illustration: metronome waveform */}
+              <div className="landing-step-illust" style={{ flexShrink: 0, width: '140px', height: '70px', position: 'relative', zIndex: 1 }}>
+                <svg width="140" height="70" viewBox="0 0 140 70" fill="none">
+                  <path d="M0 55 Q10 55 15 45 T30 35 T45 25 T60 20 T75 18 T90 15 T105 12 T120 10 T135 8" stroke="var(--accent)" strokeWidth="2" strokeDasharray="4 3" opacity="0.5" />
+                  <circle cx="120" cy="10" r="4" fill="var(--accent)" opacity="0.8" />
+                  <path d="M95 60 L100 45 L105 55 L110 35 L115 50 L120 30 L125 48 L130 25 L135 45 L140 20" stroke="var(--accent)" strokeWidth="1.5" opacity="0.3" />
+                </svg>
+              </div>
+            </div>
+
+            {/* Step 2 */}
+            <div className="landing-step-card" style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, zIndex: 1 }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: 'var(--accent)', color: 'var(--bg)',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'absolute', top: '-8px', left: '-8px', zIndex: 2,
+                  }}>2</div>
+                  <div style={{
+                    width: '52px', height: '52px', borderRadius: '50%',
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  </div>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Track your heart rate</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text2)', lineHeight: 1.5 }}>Use a watch, strap, or your phone.</p>
+                </div>
+              </div>
+              {/* Illustration: HR monitor display */}
+              <div className="landing-step-illust" style={{ flexShrink: 0, zIndex: 1 }}>
+                <div style={{
+                  background: 'var(--surface2)', border: '1px solid var(--border)',
+                  borderRadius: '12px', padding: '10px 14px',
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--accent)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.3rem', fontWeight: 700, color: 'var(--text)', lineHeight: 1 }}>128</p>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.08em' }}>BPM</p>
+                  </div>
+                  <svg width="60" height="30" viewBox="0 0 60 30" fill="none">
+                    <polyline points="0,15 8,15 12,5 16,25 20,10 24,20 28,15 36,15 40,5 44,25 48,10 52,20 56,15 60,15" stroke="var(--accent)" strokeWidth="1.5" fill="none" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 3 */}
+            <div className="landing-step-card" style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, zIndex: 1 }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: 'var(--accent)', color: 'var(--bg)',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'absolute', top: '-8px', left: '-8px', zIndex: 2,
+                  }}>3</div>
+                  <div style={{
+                    width: '52px', height: '52px', borderRadius: '50%',
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>We calculate your VO₂ max</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text2)', lineHeight: 1.5 }}>Using validated science-backed protocols.</p>
+                </div>
+              </div>
+              {/* Illustration: calculating + scatter plot */}
+              <div className="landing-step-illust" style={{ flexShrink: 0, zIndex: 1 }}>
+                <div style={{
+                  background: 'var(--surface2)', border: '1px solid var(--border)',
+                  borderRadius: '12px', padding: '10px 14px',
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                }}>
+                  <div style={{ textAlign: 'center' }}>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)', marginBottom: '2px' }}>Calculating...</p>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>45%</p>
+                  </div>
+                  <svg width="60" height="40" viewBox="0 0 60 40" fill="none">
+                    <circle cx="8" cy="32" r="2.5" fill="var(--accent)" opacity="0.6" />
+                    <circle cx="18" cy="26" r="2.5" fill="var(--accent)" opacity="0.6" />
+                    <circle cx="28" cy="20" r="2.5" fill="var(--accent)" opacity="0.6" />
+                    <circle cx="38" cy="14" r="2.5" fill="var(--accent)" opacity="0.6" />
+                    <circle cx="48" cy="8" r="2.5" fill="var(--accent)" opacity="0.8" />
+                    <path d="M5 34 L50 6" stroke="var(--accent)" strokeWidth="1" strokeDasharray="3 2" opacity="0.4" />
+                  </svg>
+                </div>
+              </div>
+            </div>
+
+            {/* Step 4 */}
+            <div className="landing-step-card" style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '16px',
+              padding: '24px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '20px',
+              position: 'relative',
+              overflow: 'hidden',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, zIndex: 1 }}>
+                <div style={{ position: 'relative', flexShrink: 0 }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: 'var(--accent)', color: 'var(--bg)',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.82rem', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    position: 'absolute', top: '-8px', left: '-8px', zIndex: 2,
+                  }}>4</div>
+                  <div style={{
+                    width: '52px', height: '52px', borderRadius: '50%',
+                    background: 'var(--surface2)', border: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+                  </div>
+                </div>
+                <div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '4px' }}>Get your plan</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', color: 'var(--text2)', lineHeight: 1.5 }}>Personalized insights to help you improve.</p>
+                </div>
+              </div>
+              {/* Illustration: plan + bar chart */}
+              <div className="landing-step-illust" style={{ flexShrink: 0, zIndex: 1 }}>
+                <div style={{
+                  background: 'var(--surface2)', border: '1px solid var(--border)',
+                  borderRadius: '12px', padding: '10px 14px',
+                  display: 'flex', alignItems: 'center', gap: '12px',
+                }}>
+                  <div>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', fontWeight: 600, color: 'var(--text)', marginBottom: '2px' }}>Your Plan</p>
+                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.5rem', color: 'var(--text2)', lineHeight: 1.3 }}>Improve to 52<br />in 8 weeks</p>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'flex-end', gap: '3px', height: '36px' }}>
+                    {[25, 35, 40, 50, 60, 72, 85, 100].map((h, i) => (
+                      <div key={i} style={{ width: '6px', height: `${h}%`, background: 'var(--accent)', borderRadius: '2px', opacity: 0.5 + (i * 0.06) }} />
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Trust strip */}
+          <div style={{
+            background: 'var(--surface)',
+            border: '1px solid var(--border)',
+            borderRadius: '14px',
+            padding: '14px 24px',
+            marginTop: '14px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+            flexWrap: 'wrap',
+          }}>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text)' }}>Clinically validated</span>
+            <span style={{ color: 'var(--accent)', fontSize: '0.5rem' }}>&#9679;</span>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text)' }}>No signup required</span>
+            <span style={{ color: 'var(--accent)', fontSize: '0.5rem' }}>&#9679;</span>
+            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 600, color: 'var(--text)' }}>Works with any device</span>
           </div>
         </div>
       </section>
@@ -1387,24 +1586,16 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .landing-sticky-cta.landing-sticky-visible { display: flex; }
         }
 
-        /* Steps grid */
-        .landing-steps-grid {
-          display: flex;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 0;
-        }
+        /* Steps container */
         @media (max-width: 1023px) {
           .landing-steps-container { padding: 48px 40px !important; }
         }
         @media (max-width: 767px) {
-          .landing-steps-grid {
-            display: grid !important;
-            grid-template-columns: 1fr 1fr;
-            gap: 24px;
-          }
-          .landing-step-connector { display: none !important; }
           .landing-steps-container { padding: 48px 24px !important; }
+        }
+        @media (max-width: 480px) {
+          .landing-step-illust { display: none !important; }
+          .landing-step-card { padding: 18px !important; }
         }
 
         /* What You Get grid */
