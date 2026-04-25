@@ -373,7 +373,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 className="uppercase landing-stagger-1"
                 style={{
                   fontFamily: 'var(--font-mono)',
-                  fontSize: '0.62rem',
+                  fontSize: '0.75rem',
                   letterSpacing: '0.18em',
                   color: 'var(--accent)',
                   marginBottom: '24px',
@@ -382,14 +382,13 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 At-Home VO₂ Max Assessment
               </p>
 
-              {/* Desktop Headline */}
+              {/* Headline */}
               <h1
-                className="landing-stagger-2 landing-headline landing-desktop-only"
+                className="landing-stagger-2 landing-headline"
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontWeight: 700,
                   color: 'var(--text)',
-                  lineHeight: 1.05,
                   letterSpacing: '-0.02em',
                   margin: 0,
                   marginBottom: '12px',
@@ -398,16 +397,14 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 VO₂ max is the #1 predictor of how long you'll live.
               </h1>
 
-              {/* Desktop Sub-headline */}
+              {/* Sub-headline */}
               <p
-                className="landing-stagger-2 landing-desktop-only"
+                className="landing-stagger-2 landing-subheadline"
                 style={{
                   fontFamily: 'var(--font-display)',
-                  fontSize: '1.8rem',
                   fontStyle: 'italic',
                   fontWeight: 400,
                   color: 'var(--accent)',
-                  lineHeight: 1.15,
                   letterSpacing: '-0.01em',
                   marginBottom: '28px',
                 }}
@@ -415,39 +412,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 This is the easiest way to measure yours.
               </p>
 
-              {/* Mobile Headline */}
-              <h1
-                className="landing-stagger-2 landing-mobile-only"
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '2.4rem',
-                  fontWeight: 700,
-                  lineHeight: 1.1,
-                  margin: 0,
-                  marginBottom: '16px',
-                }}
-              >
-                <span style={{ color: 'var(--text)', display: 'block' }}>Know your VO₂ max.</span>
-                <span style={{ color: 'var(--accent)', display: 'block' }}>Train smarter.</span>
-                <span style={{ color: 'var(--accent)', display: 'block' }}>Live longer.</span>
-              </h1>
-
-              {/* Mobile Subheadline */}
-              <p
-                className="landing-stagger-3 landing-mobile-only"
-                style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.9rem',
-                  color: 'var(--text2)',
-                  lineHeight: 1.65,
-                  marginBottom: '20px',
-                }}
-              >
-                A free, science-backed 10-minute step test that shows your true
-                fitness level — and exactly how to improve it.
-              </p>
-
-              {/* Desktop Description */}
+              {/* Description */}
               <p
                 className="landing-stagger-3 landing-desktop-only"
                 style={{
@@ -465,9 +430,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 a personalized plan to improve it. No lab visit. No signup.
               </p>
 
-              {/* Trust badges — desktop */}
+              {/* Trust badges */}
               <div
-                className="flex flex-wrap landing-stagger-4 landing-desktop-only"
+                className="flex flex-wrap landing-stagger-4"
                 style={{ gap: '8px', marginBottom: '20px' }}
               >
                 {pills.map((pill) => (
@@ -487,20 +452,6 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   >
                     ✓ {pill}
                   </span>
-                ))}
-              </div>
-
-              {/* Trust bullets — mobile */}
-              <div className="landing-stagger-4 landing-mobile-only" style={{ marginBottom: '20px' }}>
-                {[
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, text: 'Clinically Validated' },
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, text: 'No Signup Required' },
-                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>, text: 'Works With Any Device' },
-                ].map((item) => (
-                  <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                    {item.icon}
-                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{item.text}</span>
-                  </div>
                 ))}
               </div>
 
@@ -1025,7 +976,12 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           width: 100%;
         }
         .landing-headline {
-          font-size: clamp(2.8rem, 4vw, 4rem);
+          font-size: 4rem;
+          line-height: 1.05;
+        }
+        .landing-subheadline {
+          font-size: 1.6rem;
+          line-height: 1.3;
         }
         .landing-right-col {
           display: flex;
@@ -1041,7 +997,8 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
             max-width: 600px;
             margin: 0 auto;
           }
-          .landing-headline { font-size: clamp(2.2rem, 4vw, 2.8rem); }
+          .landing-headline { font-size: 3rem; line-height: 1.1; }
+          .landing-subheadline { font-size: 1.4rem; }
           .landing-container { padding: 0 40px !important; }
           .landing-preview-card { display: none; }
           .landing-footer { padding: 20px 40px !important; }
@@ -1049,7 +1006,8 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
         /* Mobile */
         @media (max-width: 767px) {
-          .landing-headline { font-size: clamp(1.8rem, 5vw, 2.2rem); }
+          .landing-headline { font-size: 2rem; line-height: 1.15; }
+          .landing-subheadline { font-size: 1.15rem; }
           .landing-container { padding: 0 24px !important; }
           .landing-right-col { display: none; }
           .landing-footer {
@@ -1061,7 +1019,7 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
 
         /* Large screens */
         @media (min-width: 1400px) {
-          .landing-headline { font-size: 4.5rem; }
+          .landing-headline { font-size: 4rem; }
         }
 
         /* Audience grid */
