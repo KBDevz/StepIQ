@@ -447,20 +447,46 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 ))}
               </div>
 
-              {/* HR note */}
-              <p
-                className="landing-stagger-4"
+              {/* What You Need strip */}
+              <div
+                className="landing-stagger-4 landing-need-strip"
                 style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.75rem',
-                  fontStyle: 'italic',
-                  color: 'var(--text2)',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '12px',
+                  padding: '14px 24px',
                   marginBottom: '32px',
-                  maxWidth: '480px',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  maxWidth: '100%',
+                  gap: '8px',
                 }}
               >
-                ♥ Requires a heart rate monitor — watch or chest strap.
-              </p>
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>10 Minutes</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>to complete</span>
+                </div>
+                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>HR Monitor</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>watch or strap</span>
+                </div>
+                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>12&quot; Step</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)', fontStyle: 'italic' }}>or measure your stairs</span>
+                </div>
+                <div className="landing-need-divider" style={{ width: '1px', height: '28px', background: 'var(--border)', flexShrink: 0 }} />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', gap: '3px' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)' }}>Your Phone</span>
+                  <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.68rem', color: 'var(--text2)' }}>any browser</span>
+                </div>
+              </div>
 
               {/* CTA */}
               <div className="landing-stagger-5">
@@ -1018,6 +1044,17 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         @keyframes landingSlideRight {
           from { opacity: 0; transform: translateX(20px); }
           to { opacity: 1; transform: translateX(0); }
+        }
+        @media (max-width: 480px) {
+          .landing-need-strip {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px !important;
+            padding: 16px !important;
+          }
+          .landing-need-divider {
+            display: none !important;
+          }
         }
       `}</style>
     </div>
