@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import {
   LineChart,
   Line,
@@ -310,6 +311,16 @@ function TestPreviewCard() {
    ───────────────────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
   const pills = ['Free · No Signup', 'Clinically Validated', 'Personalized Insights'];
+  const [showSticky, setShowSticky] = useState(true);
+
+  useEffect(() => {
+    const onScroll = () => {
+      const distFromBottom = document.body.scrollHeight - window.scrollY - window.innerHeight;
+      setShowSticky(distFromBottom >= 200);
+    };
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <div
@@ -371,9 +382,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 At-Home VO₂ Max Assessment
               </p>
 
-              {/* Headline */}
+              {/* Desktop Headline */}
               <h1
-                className="landing-stagger-2 landing-headline"
+                className="landing-stagger-2 landing-headline landing-desktop-only"
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontWeight: 700,
@@ -387,9 +398,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 VO₂ max is the #1 predictor of how long you'll live.
               </h1>
 
-              {/* Sub-headline */}
+              {/* Desktop Sub-headline */}
               <p
-                className="landing-stagger-2"
+                className="landing-stagger-2 landing-desktop-only"
                 style={{
                   fontFamily: 'var(--font-display)',
                   fontSize: '1.8rem',
@@ -404,9 +415,41 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 This is the easiest way to measure yours.
               </p>
 
-              {/* Description */}
+              {/* Mobile Headline */}
+              <h1
+                className="landing-stagger-2 landing-mobile-only"
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '2.4rem',
+                  fontWeight: 700,
+                  lineHeight: 1.1,
+                  margin: 0,
+                  marginBottom: '16px',
+                }}
+              >
+                <span style={{ color: 'var(--text)', display: 'block' }}>Know your VO₂ max.</span>
+                <span style={{ color: 'var(--accent)', display: 'block' }}>Train smarter.</span>
+                <span style={{ color: 'var(--accent)', display: 'block' }}>Live longer.</span>
+              </h1>
+
+              {/* Mobile Subheadline */}
               <p
-                className="landing-stagger-3"
+                className="landing-stagger-3 landing-mobile-only"
+                style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.9rem',
+                  color: 'var(--text2)',
+                  lineHeight: 1.65,
+                  marginBottom: '20px',
+                }}
+              >
+                A free, science-backed 10-minute step test that shows your true
+                fitness level — and exactly how to improve it.
+              </p>
+
+              {/* Desktop Description */}
+              <p
+                className="landing-stagger-3 landing-desktop-only"
                 style={{
                   fontFamily: 'var(--font-body)',
                   fontSize: '0.95rem',
@@ -422,9 +465,9 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 a personalized plan to improve it. No lab visit. No signup.
               </p>
 
-              {/* Trust badges */}
+              {/* Trust badges — desktop */}
               <div
-                className="flex flex-wrap landing-stagger-4"
+                className="flex flex-wrap landing-stagger-4 landing-desktop-only"
                 style={{ gap: '8px', marginBottom: '20px' }}
               >
                 {pills.map((pill) => (
@@ -444,6 +487,20 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                   >
                     ✓ {pill}
                   </span>
+                ))}
+              </div>
+
+              {/* Trust bullets — mobile */}
+              <div className="landing-stagger-4 landing-mobile-only" style={{ marginBottom: '20px' }}>
+                {[
+                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>, text: 'Clinically Validated' },
+                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>, text: 'No Signup Required' },
+                  { icon: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12" y2="18"/></svg>, text: 'Works With Any Device' },
+                ].map((item) => (
+                  <div key={item.text} style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
+                    {item.icon}
+                    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.8rem', fontWeight: 600, color: 'var(--text)', letterSpacing: '0.04em', textTransform: 'uppercase' }}>{item.text}</span>
+                  </div>
                 ))}
               </div>
 
@@ -551,6 +608,22 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
                 >
                   Free · No Account · 10 Minutes
                 </p>
+                <span
+                  onClick={() => {
+                    document.getElementById('how-it-works-section')?.scrollIntoView({ behavior: 'smooth' });
+                  }}
+                  style={{
+                    fontFamily: 'var(--font-body)',
+                    fontSize: '0.85rem',
+                    color: 'var(--accent)',
+                    textAlign: 'center',
+                    display: 'block',
+                    marginTop: '14px',
+                    cursor: 'pointer',
+                  }}
+                >
+                  See how it works ↓
+                </span>
               </div>
             </div>
 
@@ -563,7 +636,215 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
+      {/* ── HOW IT WORKS — FOUR STEPS ── */}
+      <section
+        id="how-it-works-section"
+        className="relative z-10"
+        style={{
+          background: 'var(--bg)',
+          borderTop: '1px solid var(--border)',
+        }}
+      >
+        <div
+          className="landing-steps-container"
+          style={{
+            maxWidth: '960px',
+            margin: '0 auto',
+            padding: '64px 64px',
+          }}
+        >
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              letterSpacing: '0.16em',
+              color: 'var(--text2)',
+              textAlign: 'center',
+              marginBottom: '28px',
+            }}
+          >
+            Get Your Score in 10 Minutes
+          </p>
 
+          <div className="landing-steps-grid">
+            {[
+              {
+                num: 1,
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>,
+                title: 'Step to the beat',
+                desc: 'Follow the guided pace.',
+              },
+              {
+                num: 2,
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>,
+                title: 'Track your heart rate',
+                desc: 'Use a watch, strap, or phone.',
+              },
+              {
+                num: 3,
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>,
+                title: 'We calculate your VO₂ max',
+                desc: 'Using validated protocols.',
+              },
+              {
+                num: 4,
+                icon: <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>,
+                title: 'Get your plan',
+                desc: 'Personalized insights to improve.',
+              },
+            ].map((step, i, arr) => (
+              <div key={step.num} style={{ display: 'flex', alignItems: 'flex-start' }}>
+                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', flex: 1 }}>
+                  <div style={{
+                    width: '36px', height: '36px', borderRadius: '50%',
+                    background: 'var(--accent)', color: 'var(--bg)',
+                    fontFamily: 'var(--font-mono)', fontSize: '0.78rem', fontWeight: 700,
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                    marginBottom: '8px',
+                  }}>
+                    {step.num}
+                  </div>
+                  <div style={{
+                    width: '40px', height: '40px', borderRadius: '50%',
+                    background: 'var(--surface)', border: '1px solid var(--border)',
+                    display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  }}>
+                    {step.icon}
+                  </div>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 600, color: 'var(--text)', marginTop: '8px' }}>{step.title}</p>
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text2)', lineHeight: 1.5, maxWidth: '120px' }}>{step.desc}</p>
+                </div>
+                {i < arr.length - 1 && (
+                  <div className="landing-step-connector" style={{
+                    flex: '0 0 40px', height: '1px',
+                    borderTop: '1px dashed var(--border)',
+                    marginTop: '18px',
+                  }} />
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── WHAT YOU GET ── */}
+      <section
+        className="relative z-10"
+        style={{
+          background: 'var(--surface)',
+          borderTop: '1px solid var(--border)',
+        }}
+      >
+        <div
+          className="landing-whatyouget-container"
+          style={{
+            maxWidth: '860px',
+            margin: '0 auto',
+            padding: '64px 64px',
+          }}
+        >
+          <p
+            className="uppercase"
+            style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.6rem',
+              letterSpacing: '0.16em',
+              color: 'var(--text2)',
+              textAlign: 'center',
+              marginBottom: '28px',
+            }}
+          >
+            What You Get
+          </p>
+
+          <div className="landing-whatyouget-grid">
+            {/* Card 1 — VO₂ Max Score */}
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              padding: '20px',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                background: 'var(--bg)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '14px',
+              }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '4px' }}>VO₂ Max</p>
+                <p style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 1 }}>45.6</p>
+                <span style={{
+                  fontFamily: 'var(--font-mono)', fontSize: '0.55rem',
+                  color: 'var(--accent)', background: 'var(--accent-dark)',
+                  border: '1px solid rgba(0,184,162,0.25)',
+                  borderRadius: '20px', padding: '2px 8px',
+                  display: 'inline-block', marginTop: '6px',
+                }}>Good</span>
+              </div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text)' }}>Your VO₂ Max Score</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--text2)', marginTop: '4px' }}>Know exactly where you stand.</p>
+            </div>
+
+            {/* Card 2 — Training Zones */}
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              padding: '20px',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                background: 'var(--bg)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '14px',
+              }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Training Zones</p>
+                {[
+                  { color: '#FF4444', zone: 'Zone 5', pct: '90-100%' },
+                  { color: '#FF8C42', zone: 'Zone 4', pct: '80-90%' },
+                  { color: '#00E5A0', zone: 'Zone 3', pct: '70-80%' },
+                ].map((z) => (
+                  <div key={z.zone} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', marginBottom: '4px' }}>
+                    <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: z.color, flexShrink: 0 }} />
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>{z.zone}</span>
+                    <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)' }}>{z.pct}</span>
+                  </div>
+                ))}
+              </div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text)' }}>Your Training Zones</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--text2)', marginTop: '4px' }}>Stop guessing your intensity.</p>
+            </div>
+
+            {/* Card 3 — 8-Week Plan */}
+            <div style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--border)',
+              borderRadius: '14px',
+              padding: '20px',
+              textAlign: 'center',
+            }}>
+              <div style={{
+                background: 'var(--bg)',
+                borderRadius: '8px',
+                padding: '12px',
+                marginBottom: '14px',
+              }}>
+                <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.55rem', color: 'var(--text2)', textTransform: 'uppercase', letterSpacing: '0.1em', marginBottom: '8px' }}>Week 1</p>
+                <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'center', gap: '4px', height: '40px' }}>
+                  {[30, 45, 55, 70, 85].map((h, i) => (
+                    <div key={i} style={{ width: '14px', height: `${h}%`, background: 'var(--accent)', borderRadius: '2px' }} />
+                  ))}
+                </div>
+              </div>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', fontWeight: 600, color: 'var(--text)' }}>Your 8-Week Plan</p>
+              <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', color: 'var(--text2)', marginTop: '4px' }}>A clear path to improve your fitness.</p>
+            </div>
+          </div>
+        </div>
+      </section>
 
       {/* ── WHO IS STEPIQ FOR? ── */}
       <section
@@ -894,6 +1175,54 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         <ThemeToggle />
       </footer>
 
+      {/* ── STICKY MOBILE CTA ── */}
+      <div
+        className={`landing-sticky-cta${showSticky ? ' landing-sticky-visible' : ''}`}
+        style={{
+          position: 'fixed',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          zIndex: 50,
+          background: 'var(--bg)',
+          borderTop: '1px solid var(--border)',
+          padding: '12px 24px',
+          paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <button
+          onClick={onStart}
+          className="uppercase cursor-pointer"
+          style={{
+            width: '100%',
+            height: '52px',
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.78rem',
+            fontWeight: 600,
+            letterSpacing: '0.1em',
+            textTransform: 'uppercase',
+            color: 'var(--bg)',
+            background: 'var(--accent)',
+            border: 'none',
+            borderRadius: '10px',
+            boxShadow: 'var(--shadow-accent)',
+          }}
+        >
+          Start Free VO₂ Max Test →
+        </button>
+        <p style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.58rem',
+          color: 'var(--text2)',
+          textAlign: 'center',
+          marginTop: '6px',
+        }}>
+          100% free · No signup · 10 minutes
+        </p>
+      </div>
+
       {/* ── RESPONSIVE & ANIMATIONS ── */}
       <style>{`
         /* Desktop grid */
@@ -1045,6 +1374,56 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           from { opacity: 0; transform: translateX(20px); }
           to { opacity: 1; transform: translateX(0); }
         }
+
+        /* Mobile/Desktop visibility */
+        .landing-mobile-only { display: none; }
+        .landing-desktop-only { display: block; }
+        .landing-sticky-cta { display: none; }
+
+        @media (max-width: 767px) {
+          .landing-mobile-only { display: block !important; }
+          .landing-desktop-only { display: none !important; }
+          .landing-mobile-only.flex { display: flex !important; }
+          .landing-sticky-cta.landing-sticky-visible { display: flex; }
+        }
+
+        /* Steps grid */
+        .landing-steps-grid {
+          display: flex;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 0;
+        }
+        @media (max-width: 1023px) {
+          .landing-steps-container { padding: 48px 40px !important; }
+        }
+        @media (max-width: 767px) {
+          .landing-steps-grid {
+            display: grid !important;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+          }
+          .landing-step-connector { display: none !important; }
+          .landing-steps-container { padding: 48px 24px !important; }
+        }
+
+        /* What You Get grid */
+        .landing-whatyouget-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 16px;
+        }
+        @media (max-width: 1023px) {
+          .landing-whatyouget-container { padding: 48px 40px !important; }
+        }
+        @media (max-width: 767px) {
+          .landing-whatyouget-grid {
+            grid-template-columns: 1fr;
+          }
+          .landing-whatyouget-container { padding: 48px 24px !important; }
+        }
+
+        /* Need strip mobile */
         @media (max-width: 480px) {
           .landing-need-strip {
             display: grid !important;
@@ -1055,6 +1434,11 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .landing-need-divider {
             display: none !important;
           }
+        }
+
+        /* Mobile bottom padding for sticky CTA */
+        @media (max-width: 767px) {
+          .landing-footer { padding-bottom: 110px !important; }
         }
       `}</style>
     </div>
