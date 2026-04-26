@@ -440,8 +440,8 @@ function LeadSuccessState({
 
 /* ── Main Results Screen ── */
 export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWorks, authNavProps, isLoggedIn, userId, userProfile, onOpenSignIn, signUpFromLead }: ResultsScreenProps) {
-  const [firstName, setFirstName] = useState(userProfile?.first_name || state.name?.split(' ')[0] || '');
-  const [lastName, setLastName] = useState(userProfile?.last_name || state.name?.split(' ').slice(1).join(' ') || '');
+  const [firstName, setFirstName] = useState(userProfile?.first_name || state.firstName || '');
+  const [lastName, setLastName] = useState(userProfile?.last_name || state.lastName || '');
   const [email, setEmail] = useState(userProfile?.email || '');
   const [phone, setPhone] = useState('');
   const [smsOptIn, setSmsOptIn] = useState(false);

@@ -1,7 +1,8 @@
 // ── Chester Step Test Types ──
 
 export interface TestState {
-  name: string;
+  firstName: string;
+  lastName: string;
   age: number;
   sex: 'male' | 'female';
   betaBlocker: boolean;

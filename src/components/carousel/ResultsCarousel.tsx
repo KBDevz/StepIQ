@@ -53,8 +53,8 @@ export default function ResultsCarousel({
   const [prevMoment, setPrevMoment] = useState<number | null>(null);
 
   // Lead capture state
-  const [firstName, setFirstName] = useState(userProfile?.first_name || state.name?.split(' ')[0] || '');
-  const [lastName, setLastName] = useState(userProfile?.last_name || state.name?.split(' ').slice(1).join(' ') || '');
+  const [firstName, setFirstName] = useState(userProfile?.first_name || state.firstName || '');
+  const [lastName, setLastName] = useState(userProfile?.last_name || state.lastName || '');
   const [hasSubmittedContact, setHasSubmittedContact] = useState(!!isLoggedIn);
   const [authError, setAuthError] = useState<string | null>(null);
   const [isDuplicateEmail, setIsDuplicateEmail] = useState(false);

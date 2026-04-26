@@ -183,7 +183,7 @@ Return ONLY raw JSON (no markdown, no code fences, no extra text).
 CRITICAL: Keep all string values concise. score_meaning: 2-3 sentences max. Each observation: 1 sentence. Each protocol field: brief phrase, not paragraph. Total response must fit in 3000 tokens.
 
 Patient:
-  Name: ${state.name || 'Not provided'}
+  Name: ${state.firstName && state.lastName ? `${state.firstName} ${state.lastName}` : 'Not provided'}
   Age: ${state.age}
   Sex: ${state.sex}
   Resting HR: ${state.restingHR ?? 'Not recorded'}

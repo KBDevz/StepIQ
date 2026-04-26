@@ -11,7 +11,8 @@ function getTimeOfDay(hour: number): string {
 }
 
 const initialState: TestState = {
-  name: '',
+  firstName: '',
+  lastName: '',
   age: 30,
   sex: 'male',
   betaBlocker: false,
@@ -30,7 +31,7 @@ export function useTestState() {
   const [screen, setScreen] = useState<Screen>('landing');
 
   const updateSetup = useCallback(
-    (fields: Partial<Pick<TestState, 'name' | 'age' | 'sex' | 'betaBlocker'>>) => {
+    (fields: Partial<Pick<TestState, 'firstName' | 'lastName' | 'age' | 'sex' | 'betaBlocker'>>) => {
       setState((s) => {
         const next = { ...s, ...fields };
         const age = next.age;

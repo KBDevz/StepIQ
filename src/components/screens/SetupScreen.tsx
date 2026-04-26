@@ -4,7 +4,7 @@ import NavBar from '../ui/NavBar';
 
 interface SetupScreenProps {
   state: TestState;
-  updateSetup: (fields: Partial<Pick<TestState, 'name' | 'age' | 'sex' | 'betaBlocker'>>) => void;
+  updateSetup: (fields: Partial<Pick<TestState, 'firstName' | 'lastName' | 'age' | 'sex' | 'betaBlocker'>>) => void;
   toggleDevMode: () => void;
   onBegin: () => void;
   onLogoClick: () => void;
@@ -89,6 +89,8 @@ function SetupForm({
   const tapCount = useRef(0);
   const tapTimer = useRef<number | null>(null);
   const ageValid = state.age >= 13 && state.age <= 80;
+  const nameValid = state.firstName.trim().length > 0 && state.lastName.trim().length > 0;
+  const canBegin = ageValid && nameValid;
 
   const handleDevTap = useCallback(() => {
     tapCount.current++;
@@ -152,19 +154,41 @@ function SetupForm({
         </div>
       )}
 
-      {/* Name field */}
+      {/* First Name */}
       <div style={{ marginBottom: '20px' }}>
         <label style={labelStyle}>
-          Name <span style={{ color: 'var(--text2)', fontWeight: 400, textTransform: 'none' as const, letterSpacing: 0 }}>(optional)</span>
+          First Name <span style={{ color: 'var(--danger)', fontSize: '0.55rem' }}>*</span>
         </label>
         <input
           type="text"
-          value={state.name}
-          onChange={(e) => updateSetup({ name: e.target.value })}
-          placeholder="Enter your name"
-          style={inputStyle}
+          value={state.firstName}
+          onChange={(e) => updateSetup({ firstName: e.target.value })}
+          placeholder="e.g. Jane"
+          style={{
+            ...inputStyle,
+            borderColor: state.firstName.length === 0 && state.lastName.length > 0 ? 'var(--danger)' : 'var(--border)',
+          }}
           onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
-          onBlur={(e) => { e.target.style.borderColor = 'var(--border)'; }}
+          onBlur={(e) => { e.target.style.borderColor = state.firstName.trim() ? 'var(--border)' : 'var(--danger)'; }}
+        />
+      </div>
+
+      {/* Last Name */}
+      <div style={{ marginBottom: '20px' }}>
+        <label style={labelStyle}>
+          Last Name <span style={{ color: 'var(--danger)', fontSize: '0.55rem' }}>*</span>
+        </label>
+        <input
+          type="text"
+          value={state.lastName}
+          onChange={(e) => updateSetup({ lastName: e.target.value })}
+          placeholder="e.g. Doe"
+          style={{
+            ...inputStyle,
+            borderColor: state.lastName.length === 0 && state.firstName.length > 0 ? 'var(--danger)' : 'var(--border)',
+          }}
+          onFocus={(e) => { e.target.style.borderColor = 'var(--accent)'; }}
+          onBlur={(e) => { e.target.style.borderColor = state.lastName.trim() ? 'var(--border)' : 'var(--danger)'; }}
         />
       </div>
 
@@ -275,23 +299,23 @@ function SetupForm({
       {/* Submit button */}
       <button
         onClick={onBegin}
-        disabled={!ageValid}
+        disabled={!canBegin}
         className="font-mono uppercase"
         style={{
           width: '100%',
           padding: '16px',
           marginTop: '28px',
-          background: ageValid ? 'var(--accent)' : 'var(--accent-dark)',
+          background: canBegin ? 'var(--accent)' : 'var(--accent-dark)',
           color: '#060C18',
           fontSize: '0.8rem',
           fontWeight: 700,
           letterSpacing: '0.1em',
           borderRadius: '10px',
           border: 'none',
-          cursor: ageValid ? 'pointer' : 'not-allowed',
-          boxShadow: ageValid ? 'var(--shadow-accent)' : 'none',
+          cursor: canBegin ? 'pointer' : 'not-allowed',
+          boxShadow: canBegin ? 'var(--shadow-accent)' : 'none',
           transition: 'all 0.2s',
-          opacity: ageValid ? 1 : 0.4,
+          opacity: canBegin ? 1 : 0.4,
         }}
       >
         Continue →
