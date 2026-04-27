@@ -22,6 +22,7 @@ export default function NavBar({
   onSignOut,
 }: NavBarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [betaModalOpen, setBetaModalOpen] = useState(false);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
@@ -33,13 +34,20 @@ export default function NavBar({
   }, [drawerOpen]);
 
   useEffect(() => {
-    if (drawerOpen) {
+    if (drawerOpen || betaModalOpen) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
     }
     return () => { document.body.style.overflow = ''; };
-  }, [drawerOpen]);
+  }, [drawerOpen, betaModalOpen]);
+
+  useEffect(() => {
+    if (!betaModalOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setBetaModalOpen(false); };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [betaModalOpen]);
 
   const logo = (
     <div className="flex items-center gap-3">
@@ -65,6 +73,23 @@ export default function NavBar({
       </div>
       <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--text)', fontWeight: 700, letterSpacing: '-0.01em' }}>
         StepIQ
+      </span>
+      <span
+        onClick={(e) => { e.stopPropagation(); setBetaModalOpen(true); }}
+        style={{
+          fontFamily: 'var(--font-mono)',
+          fontSize: '0.65rem',
+          fontWeight: 600,
+          color: 'var(--accent)',
+          background: 'rgba(20,230,180,0.10)',
+          border: '1px solid rgba(20,230,180,0.30)',
+          borderRadius: '999px',
+          padding: '4px 10px',
+          cursor: 'pointer',
+          lineHeight: 1,
+        }}
+      >
+        BETA
       </span>
     </div>
   );
@@ -341,6 +366,147 @@ export default function NavBar({
           Start Free Assessment →
         </button>
       </div>
+
+      {/* Beta Modal */}
+      {betaModalOpen && (
+        <div
+          onClick={() => setBetaModalOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(6,12,24,0.85)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 200,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '24px',
+          }}
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            style={{
+              position: 'relative',
+              width: '100%',
+              maxWidth: '420px',
+              background: 'var(--surface)',
+              border: '1px solid var(--accent)',
+              borderRadius: '16px',
+              padding: '32px 28px',
+              boxShadow: '0 8px 40px rgba(20,230,180,0.20)',
+            }}
+          >
+            {/* Close button */}
+            <button
+              onClick={() => setBetaModalOpen(false)}
+              style={{
+                position: 'absolute',
+                top: '16px',
+                right: '16px',
+                width: '28px',
+                height: '28px',
+                background: 'none',
+                border: 'none',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: 'var(--text3)',
+                fontSize: '18px',
+                lineHeight: 1,
+                transition: 'color 0.15s',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text3)'; }}
+            >
+              &#x2715;
+            </button>
+
+            {/* Eyebrow */}
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <span style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: 'var(--accent)',
+                boxShadow: '0 0 12px var(--accent)',
+                flexShrink: 0,
+              }} />
+              <span style={{
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.7rem',
+                fontWeight: 600,
+                textTransform: 'uppercase',
+                letterSpacing: '0.16em',
+                color: 'var(--accent)',
+              }}>
+                Active Beta
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '1.6rem',
+              fontWeight: 700,
+              color: 'var(--text)',
+              lineHeight: 1.2,
+              marginBottom: '14px',
+            }}>
+              StepIQ is in active beta.
+            </h2>
+
+            {/* Body */}
+            <p style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '0.95rem',
+              color: 'var(--text2)',
+              lineHeight: 1.55,
+              marginBottom: '14px',
+            }}>
+              I'm shaping the product based on what beta users tell me. If you take the test and have 30 seconds to share what worked, what didn't, or what surprised you — that's the most valuable thing you can give me.
+            </p>
+
+            {/* Signature */}
+            <p style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: '0.95rem',
+              fontStyle: 'italic',
+              color: 'var(--text2)',
+              marginBottom: '24px',
+            }}>
+              — Keith, founder
+            </p>
+
+            {/* CTA */}
+            <a
+              href="mailto:keith@stepiq.app?subject=StepIQ%20Beta%20Feedback"
+              onClick={() => setBetaModalOpen(false)}
+              style={{
+                display: 'block',
+                width: '100%',
+                padding: '15px 24px',
+                fontFamily: 'var(--font-mono)',
+                fontSize: '0.82rem',
+                fontWeight: 700,
+                textTransform: 'uppercase',
+                letterSpacing: '0.12em',
+                color: 'var(--bg)',
+                background: 'var(--accent)',
+                border: 'none',
+                borderRadius: '10px',
+                boxShadow: 'var(--shadow-accent)',
+                cursor: 'pointer',
+                textAlign: 'center',
+                textDecoration: 'none',
+              }}
+            >
+              Send Feedback
+            </a>
+          </div>
+        </div>
+      )}
 
       <style>{`
         .hiw-nav-pad { padding: 0 64px; }
