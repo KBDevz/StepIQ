@@ -12,7 +12,7 @@ function getCtx(): AudioContext {
   return sharedCtx;
 }
 
-function beep(freq: number, vol: number, duration: number) {
+function beep(freq: number, vol: number, duration: number, when: number) {
   try {
     const ctx = getCtx();
     if (ctx.state === 'suspended') ctx.resume();
@@ -25,13 +25,12 @@ function beep(freq: number, vol: number, duration: number) {
     osc.frequency.value = freq;
     osc.type = 'sine';
 
-    const now = ctx.currentTime;
-    gain.gain.setValueAtTime(0, now);
-    gain.gain.linearRampToValueAtTime(vol, now + 0.002);
-    gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+    gain.gain.setValueAtTime(0, when);
+    gain.gain.linearRampToValueAtTime(vol, when + 0.002);
+    gain.gain.exponentialRampToValueAtTime(0.001, when + duration);
 
-    osc.start(now);
-    osc.stop(now + duration + 0.01);
+    osc.start(when);
+    osc.stop(when + duration + 0.01);
     osc.onended = () => { osc.disconnect(); gain.disconnect(); };
   } catch (e) {
     console.error('Beep failed:', e);
@@ -60,6 +59,10 @@ const BEAT_TONES: [number, number][] = [
   [560, 0.35],
 ];
 
+export function getSharedAudioContext(): AudioContext {
+  return getCtx();
+}
+
 export function useMetronome() {
   const schedulerRef = useRef<number | null>(null);
   const nextBeatTimeRef = useRef(0);
@@ -67,15 +70,31 @@ export function useMetronome() {
   const bpmRef = useRef(60);
   const runningRef = useRef(false);
   const onBeatRef = useRef<((beat: number) => void) | null>(null);
+  const audioSuspendedRef = useRef(false);
 
   const scheduler = useCallback(() => {
     if (!runningRef.current) return;
     const ctx = getCtx();
+
+    if (ctx.state === 'suspended' || ctx.state === 'interrupted' as any) {
+      audioSuspendedRef.current = true;
+      ctx.resume().then(() => {
+        if (runningRef.current) {
+          schedulerRef.current = window.setTimeout(scheduler, LOOKAHEAD_MS);
+        }
+      });
+      return;
+    }
+
+    if (audioSuspendedRef.current) {
+      audioSuspendedRef.current = false;
+      nextBeatTimeRef.current = ctx.currentTime + 0.05;
+    }
+
     while (nextBeatTimeRef.current < ctx.currentTime + SCHEDULE_AHEAD) {
       const pos = beatIndexRef.current % 4;
       const [freq, vol] = BEAT_TONES[pos];
-      beep(freq, vol, 0.08);
-      // Fire callback asynchronously so speech synthesis can't block the scheduler
+      beep(freq, vol, 0.08, nextBeatTimeRef.current);
       const beatPos = pos;
       setTimeout(() => onBeatRef.current?.(beatPos), 0);
       nextBeatTimeRef.current += 60.0 / bpmRef.current;
@@ -86,7 +105,6 @@ export function useMetronome() {
 
   const start = useCallback(
     (bpm: number, onBeat?: (beat: number) => void) => {
-      // Re-unlock audio synchronously in case context suspended since last gesture
       unlockAudio();
 
       if (runningRef.current) {
@@ -96,6 +114,7 @@ export function useMetronome() {
       bpmRef.current = bpm;
       runningRef.current = true;
       beatIndexRef.current = 0;
+      audioSuspendedRef.current = false;
       onBeatRef.current = onBeat ?? null;
 
       const ctx = getCtx();
@@ -116,14 +135,16 @@ export function useMetronome() {
 
   const playBeep = useCallback(
     (freq: number, vol: number, duration = 0.08) => {
-      beep(freq, vol, duration);
+      const ctx = getCtx();
+      beep(freq, vol, duration, ctx.currentTime);
     },
     [],
   );
 
   const playCountBeep = useCallback(
     (isLast: boolean) => {
-      beep(isLast ? 1100 : 600, isLast ? 0.6 : 0.3, 0.12);
+      const ctx = getCtx();
+      beep(isLast ? 1100 : 600, isLast ? 0.6 : 0.3, 0.12, ctx.currentTime);
     },
     [],
   );
@@ -133,10 +154,22 @@ export function useMetronome() {
   }, []);
 
   useEffect(() => {
+    const ctx = getCtx();
+    const handleStateChange = () => {
+      if (ctx.state === 'running' && audioSuspendedRef.current && runningRef.current) {
+        audioSuspendedRef.current = false;
+        nextBeatTimeRef.current = ctx.currentTime + 0.05;
+        if (schedulerRef.current === null) {
+          scheduler();
+        }
+      }
+    };
+    ctx.addEventListener('statechange', handleStateChange);
     return () => {
       stop();
+      ctx.removeEventListener('statechange', handleStateChange);
     };
-  }, [stop]);
+  }, [stop, scheduler]);
 
   return { start, stop, playBeep, playCountBeep, resumeAudio };
 }

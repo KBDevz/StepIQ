@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import type { TestState } from '../../types';
 import { getLevelProtocol, LEVEL_DURATION, DEV_LEVEL_DURATION } from '../../utils/protocol';
 import { onBeat, speakHRAlert, cancelSpeech } from '../../utils/voiceCoach';
+import { getSharedAudioContext } from '../../hooks/useMetronome';
 import BeatDots from '../test/BeatDots';
 import StepCues from '../test/StepCues';
 import LevelTimer from '../test/LevelTimer';
@@ -37,6 +38,7 @@ export default function ActiveLevelScreen({
   const [totalTime, setTotalTime] = useState(0);
   const [hrAlert, setHrAlert] = useState(false);
   const [hrAdvisory, setHrAdvisory] = useState(false);
+  const [audioInterrupted, setAudioInterrupted] = useState(false);
   const hrAlertFired = useRef(false);
 
   const timerId = useRef<number>(0);
@@ -50,6 +52,69 @@ export default function ActiveLevelScreen({
   startMetronomeRef.current = startMetronome;
   const stopMetronomeRef = useRef(stopMetronome);
   stopMetronomeRef.current = stopMetronome;
+  const wakeLockRef = useRef<any>(null);
+
+  // Wake Lock — keep screen on during test
+  useEffect(() => {
+    let lock: any = null;
+    const acquire = async () => {
+      try {
+        if ('wakeLock' in navigator) {
+          lock = await (navigator as any).wakeLock.request('screen');
+          wakeLockRef.current = lock;
+          lock.addEventListener('release', () => { wakeLockRef.current = null; });
+        }
+      } catch { /* not fatal */ }
+    };
+    acquire();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && !wakeLockRef.current) {
+        acquire();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      if (wakeLockRef.current) {
+        wakeLockRef.current.release().catch(() => {});
+        wakeLockRef.current = null;
+      }
+    };
+  }, []);
+
+  // AudioContext interruption detection via statechange + visibility
+  useEffect(() => {
+    const ctx = getSharedAudioContext();
+    const checkSuspended = () => {
+      const s = ctx.state as string;
+      if (s === 'suspended' || s === 'interrupted') {
+        setAudioInterrupted(true);
+      }
+    };
+
+    ctx.addEventListener('statechange', checkSuspended);
+
+    const handleVisibility = () => {
+      if (document.visibilityState === 'visible') {
+        checkSuspended();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibility);
+
+    return () => {
+      ctx.removeEventListener('statechange', checkSuspended);
+      document.removeEventListener('visibilitychange', handleVisibility);
+    };
+  }, []);
+
+  const handleResumeAudio = useCallback(() => {
+    const ctx = getSharedAudioContext();
+    ctx.resume().then(() => {
+      setAudioInterrupted(false);
+    });
+  }, []);
 
   function stopTimer() {
     clearInterval(timerId.current);
@@ -301,6 +366,60 @@ export default function ActiveLevelScreen({
       {/* Bottom spacing */}
       <div style={{ height: '16px', flexShrink: 0 }} />
 
+      {/* Audio interrupted overlay */}
+      {audioInterrupted && (
+        <div
+          onClick={handleResumeAudio}
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: 'rgba(6,12,24,0.92)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 50,
+            cursor: 'pointer',
+          }}
+        >
+          <div style={{
+            width: '64px', height: '64px', borderRadius: '50%',
+            background: 'rgba(0,184,162,0.15)',
+            border: '2px solid var(--accent)',
+            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            marginBottom: '20px',
+            animation: 'resumePulse 1.5s ease-in-out infinite',
+          }}>
+            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polygon points="5 3 19 12 5 21 5 3" />
+            </svg>
+          </div>
+          <p style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.85rem',
+            fontWeight: 700,
+            textTransform: 'uppercase',
+            letterSpacing: '0.14em',
+            color: 'var(--accent)',
+            marginBottom: '8px',
+          }}>
+            Tap to resume
+          </p>
+          <p style={{
+            fontFamily: 'var(--font-body)',
+            fontSize: '0.85rem',
+            color: 'var(--text2)',
+            textAlign: 'center',
+            maxWidth: '260px',
+            lineHeight: 1.5,
+          }}>
+            Audio was interrupted. Tap anywhere to resume the metronome.
+          </p>
+        </div>
+      )}
+
       {/* Overlays */}
       {showCountdown && (
         <InlineCountdown
@@ -314,6 +433,10 @@ export default function ActiveLevelScreen({
         @keyframes hrAlertPulse {
           0%, 100% { opacity: 1; }
           50% { opacity: 0.5; }
+        }
+        @keyframes resumePulse {
+          0%, 100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(0,184,162,0.4); }
+          50% { transform: scale(1.05); box-shadow: 0 0 20px 4px rgba(0,184,162,0.2); }
         }
       `}</style>
     </div>
