@@ -5,7 +5,6 @@ interface Moment5Props {
   classification: ClassificationResult;
   age: number;
   onSubmit: (data: { firstName: string; lastName: string; email: string; phone: string; smsOptIn: boolean }) => void;
-  onSkip: () => void;
   defaultFirstName?: string;
   defaultLastName?: string;
   loading?: boolean;
@@ -25,7 +24,7 @@ function getSubtext(classification: ClassificationResult, age: number): string {
   }
 }
 
-export default function Moment5({ classification, age, onSubmit, onSkip, defaultFirstName, defaultLastName, loading, authError, onSignInInstead }: Moment5Props) {
+export default function Moment5({ classification, age, onSubmit, defaultFirstName, defaultLastName, loading, authError, onSignInInstead }: Moment5Props) {
   const [firstName, setFirstName] = useState(defaultFirstName || '');
   const [lastName, setLastName] = useState(defaultLastName || '');
   const [email, setEmail] = useState('');
@@ -294,26 +293,6 @@ export default function Moment5({ classification, age, onSubmit, onSkip, default
         {loading ? 'Generating...' : 'Unlock My Full Report →'}
       </button>
 
-      {/* Skip link */}
-      <button
-        type="button"
-        onClick={onSkip}
-        style={{
-          display: 'block',
-          margin: '12px auto 0',
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.65rem',
-          color: 'var(--text2)',
-          background: 'none',
-          border: 'none',
-          cursor: 'pointer',
-          transition: 'color 0.2s',
-        }}
-        onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }}
-        onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
-      >
-        View report without saving &rarr;
-      </button>
     </div>
   );
 }

@@ -191,11 +191,6 @@ export default function ResultsCarousel({
     goForward();
   };
 
-  const handleSkip = () => {
-    handleGenerateClick();
-    goForward();
-  };
-
   const handleSignInInstead = () => {
     if (onOpenSignIn) onOpenSignIn();
   };
@@ -271,7 +266,6 @@ export default function ResultsCarousel({
           classification={classification}
           age={state.age}
           onSubmit={handleLeadSubmit}
-          onSkip={handleSkip}
           defaultFirstName={firstName}
           defaultLastName={lastName}
           loading={reportLoading}

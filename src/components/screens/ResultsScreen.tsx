@@ -50,7 +50,6 @@ function LeadCaptureCard({
   smsOptIn,
   setSmsOptIn,
   onSubmit,
-  onSkip,
   loading,
   authError,
   onSignInInstead,
@@ -66,7 +65,6 @@ function LeadCaptureCard({
   smsOptIn: boolean;
   setSmsOptIn: (b: boolean) => void;
   onSubmit: () => void;
-  onSkip: () => void;
   loading: boolean;
   authError?: string | null;
   onSignInInstead?: () => void;
@@ -258,16 +256,6 @@ function LeadCaptureCard({
         No spam. Your data stays private.
       </p>
 
-      <button
-        type="button"
-        onClick={onSkip}
-        className="font-mono"
-        style={{ display: 'block', margin: '8px auto 0', fontSize: '0.65rem', color: '#5A7090', background: 'none', border: 'none', cursor: 'pointer', textDecoration: 'none', transition: 'color 0.2s' }}
-        onMouseEnter={(e) => { (e.target as HTMLElement).style.color = '#00E5A0'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
-        onMouseLeave={(e) => { (e.target as HTMLElement).style.color = '#5A7090'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
-      >
-        View report without saving →
-      </button>
     </div>
   );
 }
@@ -544,11 +532,6 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
     handleGenerateClick();
   };
 
-  const handleSkip = () => {
-    setLeadCaptured(true);
-    handleGenerateClick();
-  };
-
   const handleSignInInstead = () => {
     if (onOpenSignIn) onOpenSignIn(email);
   };
@@ -703,7 +686,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                     email={email} setEmail={setEmail}
                     phone={phone} setPhone={setPhone}
                     smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
-                    onSubmit={handleLeadSubmit} onSkip={handleSkip}
+                    onSubmit={handleLeadSubmit}
                     loading={loading}
                     authError={authError}
                     onSignInInstead={isDuplicateEmail ? handleSignInInstead : undefined}
@@ -838,7 +821,7 @@ export default function ResultsScreen({ state, stopReason, onNewTest, onHowItWor
                   email={email} setEmail={setEmail}
                   phone={phone} setPhone={setPhone}
                   smsOptIn={smsOptIn} setSmsOptIn={setSmsOptIn}
-                  onSubmit={handleLeadSubmit} onSkip={handleSkip}
+                  onSubmit={handleLeadSubmit}
                   loading={loading}
                 />
                 {!isLoggedIn && onOpenSignIn && (
