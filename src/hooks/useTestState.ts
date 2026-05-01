@@ -26,6 +26,28 @@ const initialState: TestState = {
   testedAtTimeOfDay: null,
 };
 
+const demoReportState: TestState = {
+  firstName: 'Demo',
+  lastName: 'User',
+  age: 37,
+  sex: 'female',
+  betaBlocker: false,
+  maxHR: 183,
+  stopHR: 156,
+  restingHR: 62,
+  currentLevel: 5,
+  data: [
+    { level: 1, hr: 104, rpe: 2, vo2Estimate: LEVELS[0].vo2 },
+    { level: 2, hr: 116, rpe: 3, vo2Estimate: LEVELS[1].vo2 },
+    { level: 3, hr: 128, rpe: 4, vo2Estimate: LEVELS[2].vo2 },
+    { level: 4, hr: 141, rpe: 6, vo2Estimate: LEVELS[3].vo2 },
+    { level: 5, hr: 154, rpe: 7, vo2Estimate: LEVELS[4].vo2 },
+  ],
+  devMode: true,
+  testedAtHour: 9,
+  testedAtTimeOfDay: 'morning',
+};
+
 export function useTestState() {
   const [state, setState] = useState<TestState>(initialState);
   const [screen, setScreen] = useState<Screen>('landing');
@@ -104,6 +126,11 @@ export function useTestState() {
     setScreen('landing');
   }, []);
 
+  const loadDemoReport = useCallback(() => {
+    setState(demoReportState);
+    setScreen('results');
+  }, []);
+
   const lastHR = useMemo(() => {
     if (state.data.length === 0) return null;
     return state.data[state.data.length - 1].hr;
@@ -121,6 +148,7 @@ export function useTestState() {
     checkStopConditions,
     captureTestTime,
     resetTest,
+    loadDemoReport,
     lastHR,
   };
 }

@@ -1,8 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from 'react';
+import type { User } from '@supabase/supabase-js';
 import type { TestState, AIReport } from '../../types';
 import { calcVO2Max, classify, calculateHRZones, CLASSIFICATION_NAMES } from '../../utils/scoring';
-import { buildReportPrompt, extractJSON } from '../../utils/reportPrompt';
+import { buildReportPrompt } from '../../utils/reportPrompt';
 import { saveTestResult } from '../../lib/testResults';
+import { generateAIReport } from '../../lib/aiReport';
 import ProgressDots from './ProgressDots';
 import BackButton from './BackButton';
 import Moment0 from './Moment0';
@@ -13,7 +15,6 @@ import Moment4 from './Moment4';
 import Moment5 from './Moment5';
 import Moment6 from './Moment6';
 import RegressionChart from '../results/RegressionChart';
-import APIKeyModal from '../results/APIKeyModal';
 
 interface ResultsCarouselProps {
   state: TestState;
@@ -29,7 +30,7 @@ interface ResultsCarouselProps {
     lastName: string;
     mobile?: string;
     smsOptIn?: boolean;
-  }) => Promise<{ error: string | null; user: any; isDuplicate: boolean }>;
+  }) => Promise<{ error: string | null; user: User | null; isDuplicate: boolean }>;
 }
 
 type Direction = 'forward' | 'back';
@@ -60,9 +61,6 @@ export default function ResultsCarousel({
   const [isDuplicateEmail, setIsDuplicateEmail] = useState(false);
 
   // Report state
-  const [apiKey, setApiKey] = useState<string>(import.meta.env.VITE_ANTHROPIC_API_KEY || '');
-  const [showKeyModal, setShowKeyModal] = useState(false);
-  const [keyError, setKeyError] = useState<string | null>(null);
   const [report, setReport] = useState<AIReport | null>(null);
   const [reportLoading, setReportLoading] = useState(false);
   const [reportError, setReportError] = useState<string | null>(null);
@@ -78,51 +76,15 @@ export default function ResultsCarousel({
 
   // Report generation
   const generateReport = useCallback(
-    async (key: string) => {
+    async () => {
       setReportLoading(true);
       setReportError(null);
-      setShowKeyModal(false);
 
       try {
         const prompt = buildReportPrompt(state, vo2Max, classification, stopReason);
-        const models = ['claude-sonnet-4-6', 'claude-sonnet-4-5-20250514', 'claude-3-5-sonnet-20241022', 'claude-3-5-sonnet-latest'];
-        let res: Response | null = null;
-        let lastError = '';
-
-        for (const model of models) {
-          res = await fetch('https://api.anthropic.com/v1/messages', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'x-api-key': key,
-              'anthropic-version': '2023-06-01',
-              'anthropic-dangerous-direct-browser-access': 'true',
-            },
-            body: JSON.stringify({ model, max_tokens: 8192, messages: [{ role: 'user', content: prompt }] }),
-          });
-
-          if (res.status === 401 || res.status === 403) {
-            setApiKey('');
-            setKeyError('Invalid API key. Please try again.');
-            setShowKeyModal(true);
-            setReportLoading(false);
-            return;
-          }
-          if (res.ok) break;
-          if (res.status === 404) { lastError = `Model ${model} not available`; continue; }
-          const errBody = await res.text();
-          throw new Error(`API error ${res.status}: ${errBody.slice(0, 200)}`);
-        }
-
-        if (!res || !res.ok) throw new Error(lastError || 'No available model found');
-        const body = await res.json();
-        const text = body.content?.[0]?.text || '';
-        const jsonStr = extractJSON(text);
-        const parsed: AIReport = JSON.parse(jsonStr);
-        setReport(parsed);
-        setApiKey(key);
-      } catch (err: any) {
-        setReportError(err.message || 'Failed to generate report');
+        setReport(await generateAIReport(prompt));
+      } catch (err) {
+        setReportError(err instanceof Error ? err.message : 'Failed to generate report');
       } finally {
         setReportLoading(false);
       }
@@ -131,9 +93,8 @@ export default function ResultsCarousel({
   );
 
   const handleGenerateClick = useCallback(() => {
-    if (apiKey) generateReport(apiKey);
-    else setShowKeyModal(true);
-  }, [apiKey, generateReport]);
+    generateReport();
+  }, [generateReport]);
 
   // Auto-generate for logged-in users
   const autoGenRef = useRef(false);
@@ -554,15 +515,6 @@ export default function ResultsCarousel({
           {renderDesktopPanel()}
         </div>
       </div>
-
-      {/* API Key Modal */}
-      {showKeyModal && (
-        <APIKeyModal
-          onSubmit={(key) => { setKeyError(null); generateReport(key); }}
-          onClose={() => setShowKeyModal(false)}
-          error={keyError}
-        />
-      )}
 
       <style>{`
         @keyframes dotPulse {
