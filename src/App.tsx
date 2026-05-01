@@ -30,6 +30,7 @@ export default function App() {
     checkStopConditions,
     captureTestTime,
     resetTest,
+    loadDemoReport,
   } = useTestState();
 
   const metronome = useMetronome();
@@ -46,6 +47,12 @@ export default function App() {
       setScreen('setPassword');
     }
     const params = new URLSearchParams(window.location.search);
+    const demoMode = params.get('demo');
+    if (demoMode === 'report' || demoMode === 'results') {
+      loadDemoReport();
+      setStopReason('Demo report fixture');
+      return;
+    }
     if (params.get('dev') === 'true' && !state.devMode) {
       toggleDevMode();
     }
