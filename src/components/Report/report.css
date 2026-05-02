@@ -1,0 +1,420 @@
+/* ── Report Layout ── */
+.report-root {
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+}
+
+.report-page {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 64px 32px;
+  position: relative;
+}
+
+.report-page + .report-page {
+  border-top: 1px solid var(--border);
+}
+
+/* ── Typography ── */
+.report-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+  margin-bottom: 12px;
+}
+
+.report-headline {
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.15;
+  margin-bottom: 16px;
+}
+
+.report-subhead {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1.25;
+  margin-bottom: 14px;
+}
+
+.report-body {
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  color: var(--text2);
+  line-height: 1.65;
+}
+
+.report-body + .report-body {
+  margin-top: 14px;
+}
+
+.report-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--text3);
+}
+
+.report-accent {
+  color: var(--accent);
+}
+
+.report-bold {
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* ── Cards ── */
+.report-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 20px;
+}
+
+.report-card--accent {
+  border-color: var(--accent);
+  box-shadow: 0 4px 30px rgba(20, 230, 180, 0.12);
+}
+
+/* ── Callout ── */
+.report-callout {
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--accent);
+  border-radius: 14px;
+  padding: 20px 20px 20px 48px;
+  margin: 24px 0;
+}
+
+.report-callout::before {
+  content: '';
+  position: absolute;
+  left: 20px;
+  top: 20px;
+  bottom: 20px;
+  width: 3px;
+  background: var(--accent);
+  border-radius: 2px;
+}
+
+.report-callout p {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* ── Section divider ── */
+.report-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 32px 0;
+}
+
+/* ── Grid layouts ── */
+.report-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.report-stat-tile {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 12px;
+  text-align: center;
+}
+
+.report-stat-tile .value {
+  font-family: var(--font-display);
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+}
+
+.report-stat-tile .label {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-top: 8px;
+  line-height: 1.4;
+}
+
+/* ── Zone table ── */
+.report-zone-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.report-zone-table th {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  text-align: left;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-zone-table td {
+  font-family: var(--font-mono);
+  font-size: 0.82rem;
+  color: var(--text);
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.report-zone-table tr:last-child td {
+  border-bottom: none;
+}
+
+.report-zone-table .zone-dot {
+  display: inline-block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.report-zone-table .zone-highlight td {
+  background: rgba(20, 230, 180, 0.06);
+}
+
+/* ── Protocol table ── */
+.report-protocol-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.report-protocol-table th {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text3);
+  text-align: left;
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-protocol-table td {
+  font-family: var(--font-body);
+  font-size: 0.85rem;
+  color: var(--text2);
+  padding: 12px 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  vertical-align: top;
+}
+
+.report-protocol-table tr:last-child td {
+  border-bottom: none;
+}
+
+.report-protocol-table .week-label {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  color: var(--accent);
+  white-space: nowrap;
+}
+
+/* ── Data table (test results) ── */
+.report-data-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0;
+}
+
+.report-data-table th {
+  font-family: var(--font-mono);
+  font-size: 0.55rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  text-align: right;
+  padding: 10px 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.report-data-table th:first-child {
+  text-align: left;
+}
+
+.report-data-table td {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  color: var(--text);
+  text-align: right;
+  padding: 12px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+}
+
+.report-data-table td:first-child {
+  text-align: left;
+  font-weight: 600;
+}
+
+.report-data-table tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Bell curve ── */
+.report-bell-curve {
+  margin: 24px 0;
+}
+
+/* ── Cover-specific ── */
+.report-cover {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+}
+
+.report-cover-score {
+  font-family: var(--font-display);
+  font-size: 7rem;
+  font-weight: 700;
+  color: var(--accent);
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+
+.report-cover-unit {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  color: var(--text3);
+  letter-spacing: 0.06em;
+  margin-top: 6px;
+}
+
+.report-cover-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 20px;
+  background: rgba(20, 230, 180, 0.08);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--accent);
+  margin-top: 20px;
+}
+
+/* ── Page number ── */
+.report-page-num {
+  position: absolute;
+  bottom: 24px;
+  right: 32px;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  color: var(--text3);
+  letter-spacing: 0.08em;
+}
+
+/* ── Nutrition card ── */
+.report-nutrition-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+/* ── Bullet list ── */
+.report-bullets {
+  list-style: none;
+  padding: 0;
+  margin: 16px 0;
+}
+
+.report-bullets li {
+  position: relative;
+  padding-left: 20px;
+  font-family: var(--font-body);
+  font-size: 0.92rem;
+  color: var(--text2);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.report-bullets li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10px;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .report-page {
+    padding: 48px 20px;
+  }
+  .report-headline {
+    font-size: 1.8rem;
+  }
+  .report-subhead {
+    font-size: 1.25rem;
+  }
+  .report-cover-score {
+    font-size: 5rem;
+  }
+  .report-stat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .report-nutrition-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Print ── */
+@media print {
+  .report-page {
+    page-break-after: always;
+    padding: 48px 40px;
+  }
+  .report-page:last-child {
+    page-break-after: auto;
+  }
+  .report-root {
+    background: #fff;
+    color: #1a1a1a;
+  }
+  .report-card,
+  .report-stat-tile {
+    border-color: #ddd;
+    background: #f9f9f9;
+  }
+}

@@ -17,6 +17,9 @@ import ChecklistScreen from './components/screens/ChecklistScreen';
 import PhoneFrame from './components/ui/PhoneFrame';
 import AuthModal from './components/ui/AuthModal';
 
+import Report from './components/Report/Report';
+import { HARDCODED_REPORT } from './lib/report-data';
+
 export default function App() {
   const {
     state,
@@ -82,6 +85,12 @@ export default function App() {
     onSignIn: () => openSignIn(),
     onSignOut: auth.signOut,
   };
+
+  // ── REPORT PAGE — standalone route ──
+  const reportMatch = window.location.pathname.match(/^\/report\/(.+)$/);
+  if (reportMatch) {
+    return <Report data={HARDCODED_REPORT} />;
+  }
 
   // ── SET PASSWORD PAGE ──
   if (screen === 'setPassword') {
