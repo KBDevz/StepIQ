@@ -8,9 +8,9 @@ interface LandingPageProps {
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
-/* ─────────────────────────────────────────────
+/* ────────────────────────────────
    Main Landing Page
-   ───────────────────────────────────────────── */
+   ──────────────────────────────── */
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
   const [showSticky, setShowSticky] = useState(false);
   const heroCTARef = useRef<HTMLDivElement>(null);
@@ -486,6 +486,172 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
         </div>
       </section>
 
+      {/* ── STEPIQ FOR PROFESSIONALS ── */}
+      <section
+        className="relative z-10"
+        style={{ padding: '0', borderTop: '1px solid var(--border)' }}
+      >
+        <div
+          className="landing-pros-container"
+          style={{
+            maxWidth: '1200px',
+            margin: '0 auto',
+            padding: '80px 64px',
+          }}
+        >
+          <div style={{ textAlign: 'center', marginBottom: '48px', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
+            <p style={{
+              fontFamily: 'var(--font-mono)',
+              fontSize: '0.72rem',
+              fontWeight: 600,
+              textTransform: 'uppercase',
+              letterSpacing: '0.18em',
+              color: 'var(--accent)',
+              marginBottom: '16px',
+            }}>
+              StepIQ for Professionals
+            </p>
+            <h2 style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
+              fontWeight: 700,
+              color: 'var(--text)',
+              lineHeight: 1.15,
+              marginBottom: '14px',
+            }}>
+              Add clinical-grade VO&#x2082; testing to your practice, facility, or workforce.
+            </h2>
+            <p style={{
+              fontFamily: 'var(--font-body)',
+              fontSize: '1rem',
+              color: 'var(--text2)',
+              lineHeight: 1.55,
+            }}>
+              The same protocol you just took — deployed in clinics, wellness facilities, and workforce fitness programs.
+            </p>
+          </div>
+
+          <div
+            className="landing-pros-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(3, 1fr)',
+              gap: '20px',
+            }}
+          >
+            {[
+              {
+                href: '/clinics',
+                label: 'For Clinics',
+                subtitle: 'Longevity, concierge & sports medicine practices',
+                tagline: 'Clinical-grade VO₂ assessment without a $50k treadmill.',
+                bullets: ['Multi-patient roster', 'HIPAA-ready hosting', 'Branded PDF reports'],
+              },
+              {
+                href: '/facilities',
+                label: 'For Facilities',
+                subtitle: 'Gyms, wellness centers & studios',
+                tagline: 'Turn a corner of your gym into a testing station.',
+                bullets: ['Assisted-mode testing', 'Cohort challenges', 'Personal training upsell'],
+              },
+              {
+                href: '/teams',
+                label: 'For Teams',
+                subtitle: 'Fire departments, corporate wellness & workforce fitness',
+                tagline: 'Annual VO₂ compliance for your whole roster.',
+                bullets: ['NFPA 1582 pass/fail', 'Batch reporting', 'In-house testing'],
+              },
+            ].map((card) => (
+              <a
+                key={card.href}
+                href={card.href}
+                className="landing-pros-card"
+                style={{
+                  display: 'flex',
+                  flexDirection: 'column',
+                  padding: '28px',
+                  background: 'var(--surface)',
+                  border: '1px solid var(--border)',
+                  borderRadius: '16px',
+                  textDecoration: 'none',
+                  color: 'inherit',
+                  transition: 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
+                }}
+              >
+                <p style={{
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.68rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.14em',
+                  color: 'var(--accent)',
+                  marginBottom: '8px',
+                }}>
+                  {card.label}
+                </p>
+                <p style={{
+                  fontFamily: 'var(--font-body)',
+                  fontSize: '0.78rem',
+                  color: 'var(--text3)',
+                  marginBottom: '16px',
+                  letterSpacing: '0.02em',
+                }}>
+                  {card.subtitle}
+                </p>
+                <p style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: '1.15rem',
+                  fontWeight: 700,
+                  color: 'var(--text)',
+                  lineHeight: 1.3,
+                  marginBottom: '20px',
+                }}>
+                  {card.tagline}
+                </p>
+                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0' }}>
+                  {card.bullets.map((b) => (
+                    <li
+                      key={b}
+                      style={{
+                        position: 'relative',
+                        paddingLeft: '18px',
+                        fontFamily: 'var(--font-body)',
+                        fontSize: '0.88rem',
+                        color: 'var(--text2)',
+                        lineHeight: 1.6,
+                        marginBottom: '6px',
+                      }}
+                    >
+                      <span style={{
+                        position: 'absolute',
+                        left: 0,
+                        top: '10px',
+                        width: '5px',
+                        height: '5px',
+                        borderRadius: '50%',
+                        background: 'var(--accent)',
+                      }} />
+                      {b}
+                    </li>
+                  ))}
+                </ul>
+                <span style={{
+                  marginTop: 'auto',
+                  fontFamily: 'var(--font-mono)',
+                  fontSize: '0.72rem',
+                  fontWeight: 600,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.12em',
+                  color: 'var(--accent)',
+                }}>
+                  Learn More →
+                </span>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── WHAT YOUR SCORE UNLOCKS ── */}
       <section
         className="relative z-10"
@@ -780,6 +946,30 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
           .landing-unlocks-container {
             padding: 48px 24px !important;
           }
+        }
+
+        /* Pros grid */
+        @media (max-width: 1023px) {
+          .landing-pros-grid {
+            grid-template-columns: 1fr !important;
+            gap: 16px !important;
+          }
+          .landing-pros-container {
+            padding: 60px 40px !important;
+          }
+        }
+        @media (max-width: 767px) {
+          .landing-pros-container {
+            padding: 48px 24px !important;
+          }
+          .landing-pros-card {
+            padding: 22px !important;
+          }
+        }
+        .landing-pros-card:hover {
+          border-color: var(--accent) !important;
+          transform: translateY(-2px);
+          box-shadow: 0 8px 32px rgba(20,230,180,0.12);
         }
 
         /* CTA hover */
