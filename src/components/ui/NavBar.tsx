@@ -112,7 +112,32 @@ export default function NavBar({
         </div>
 
         {/* Desktop nav items */}
-        <div className="nav-desktop-items flex items-center" style={{ gap: '28px' }}>
+        <div className="nav-desktop-items flex items-center" style={{ gap: '22px' }}>
+          {[
+            { label: 'For Clinics', href: '/clinics' },
+            { label: 'For Facilities', href: '/facilities' },
+            { label: 'For Teams', href: '/teams' },
+          ].map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              className="nav-segment-link transition-colors"
+              style={{
+                fontFamily: 'var(--font-body)',
+                fontSize: '0.85rem',
+                fontWeight: 400,
+                color: 'var(--text2)',
+                textDecoration: 'none',
+              }}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }}
+              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
+            >
+              {link.label}
+            </a>
+          ))}
+
+          <span style={{ width: '1px', height: '18px', background: 'var(--border)' }} />
+
           <span
             onClick={onHowItWorks}
             className="cursor-pointer transition-colors"
@@ -287,6 +312,28 @@ export default function NavBar({
 
         {/* Drawer menu items */}
         <div style={{ flex: 1 }}>
+          {[
+            { label: 'For Clinics', href: '/clinics' },
+            { label: 'For Facilities', href: '/facilities' },
+            { label: 'For Teams', href: '/teams' },
+          ].map((link) => (
+            <a
+              key={link.href}
+              href={link.href}
+              style={{
+                display: 'block',
+                fontFamily: 'var(--font-display)',
+                fontSize: '1.3rem',
+                color: 'var(--text)',
+                padding: '16px 0',
+                borderBottom: '1px solid var(--border)',
+                textDecoration: 'none',
+              }}
+            >
+              {link.label}
+            </a>
+          ))}
+
           <div
             onClick={() => { closeDrawer(); onHowItWorks(); }}
             style={{
@@ -517,6 +564,8 @@ export default function NavBar({
         }
         @media (min-width: 768px) and (max-width: 1023px) {
           .hiw-nav-pad { padding: 0 40px !important; }
+          .nav-desktop-items { display: none !important; }
+          .nav-hamburger { display: flex !important; }
         }
         @media (min-width: 768px) {
           .nav-drawer-overlay,
