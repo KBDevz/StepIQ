@@ -19,6 +19,8 @@ import AuthModal from './components/ui/AuthModal';
 
 import Report from './components/Report/Report';
 import { HARDCODED_REPORT } from './lib/report-data';
+import SegmentPage from './components/screens/SegmentPage';
+import type { SegmentSlug } from './data/segments';
 
 export default function App() {
   const {
@@ -90,6 +92,21 @@ export default function App() {
   const reportMatch = window.location.pathname.match(/^\/report\/(.+)$/);
   if (reportMatch) {
     return <Report data={HARDCODED_REPORT} />;
+  }
+
+  // ── SEGMENT PAGES — /clinics, /facilities, /teams ──
+  const segmentMatch = window.location.pathname.match(/^\/(clinics|facilities|teams)\/?$/);
+  if (segmentMatch) {
+    const segment = segmentMatch[1] as SegmentSlug;
+    return (
+      <SegmentPage
+        segment={segment}
+        onLogoClick={() => { window.location.href = '/'; }}
+        onHowItWorks={() => { window.location.href = '/'; setTimeout(() => setScreen('howItWorks'), 0); }}
+        onStart={() => { window.location.href = '/'; }}
+        authNavProps={authNavProps}
+      />
+    );
   }
 
   // ── SET PASSWORD PAGE ──
