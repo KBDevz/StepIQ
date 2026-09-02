@@ -26,7 +26,7 @@ function ProgressSteps() {
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.65rem', fontFamily: 'IBM Plex Mono, monospace', fontWeight: 700,
                 ...(i === 0
-                  ? { background: 'var(--accent)', color: '#060C18' }
+                  ? { background: 'var(--accent)', color: '#FFFFFF' }
                   : { background: 'transparent', border: '1px solid var(--border)', color: 'var(--text2)' }),
               }}
             >
@@ -306,7 +306,7 @@ function SetupForm({
           padding: '16px',
           marginTop: '28px',
           background: canBegin ? 'var(--accent)' : 'var(--accent-dark)',
-          color: '#060C18',
+          color: '#FFFFFF',
           fontSize: '0.8rem',
           fontWeight: 700,
           letterSpacing: '0.1em',

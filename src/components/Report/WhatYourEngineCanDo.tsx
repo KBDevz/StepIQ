@@ -44,7 +44,7 @@ export default function WhatYourEngineCanDo({ data }: { data: ReportData }) {
                   background: isUser ? 'rgba(20,230,180,0.10)' : undefined,
                   border: isUser ? '1px solid var(--accent)' : undefined,
                   borderRadius: isUser ? '10px' : undefined,
-                  borderBottom: !isUser && i < sorted.length - 1 ? '1px solid rgba(255,255,255,0.04)' : undefined,
+                  borderBottom: !isUser && i < sorted.length - 1 ? '1px solid var(--border)' : undefined,
                 }}
               >
                 <span style={{

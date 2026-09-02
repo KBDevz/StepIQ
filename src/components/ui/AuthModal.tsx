@@ -38,24 +38,24 @@ export default function AuthModal({
 
   const inputStyle = (field?: string): React.CSSProperties => ({
     width: '100%',
-    background: 'rgba(6,12,24,0.8)',
-    border: `1px solid ${errors[field || ''] ? '#FF4444' : '#1C2F4A'}`,
+    background: 'var(--surface2)',
+    border: `1px solid ${errors[field || ''] ? 'var(--danger)' : 'var(--border)'}`,
     borderRadius: '10px',
     padding: '13px 16px',
     fontFamily: 'IBM Plex Mono, monospace',
     fontSize: '0.85rem',
-    color: '#EEF2FF',
+    color: 'var(--text)',
     outline: 'none',
     transition: 'border-color 0.2s, box-shadow 0.2s',
   });
 
   const handleFocus = (e: React.FocusEvent<HTMLInputElement>) => {
-    e.target.style.borderColor = '#00E5A0';
-    e.target.style.boxShadow = '0 0 0 2px rgba(0,229,160,0.1)';
+    e.target.style.borderColor = 'var(--accent)';
+    e.target.style.boxShadow = '0 0 0 2px rgba(31,94,74,0.1)';
   };
 
   const handleBlur = (e: React.FocusEvent<HTMLInputElement>, field?: string) => {
-    e.target.style.borderColor = errors[field || ''] ? '#FF4444' : '#1C2F4A';
+    e.target.style.borderColor = errors[field || ''] ? 'var(--danger)' : 'var(--border)';
     e.target.style.boxShadow = 'none';
   };
 
@@ -136,7 +136,7 @@ export default function AuthModal({
       style={{
         position: 'fixed', inset: 0, zIndex: 200,
         display: 'flex', alignItems: 'center', justifyContent: 'center',
-        background: 'rgba(6,12,24,0.85)',
+        background: 'rgba(27,31,28,0.45)',
         backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)',
       }}
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -145,15 +145,15 @@ export default function AuthModal({
         className="animate-fadeIn"
         style={{
           width: '100%', maxWidth: '420px', margin: '0 24px',
-          background: 'linear-gradient(145deg, #0D2238 0%, #0D1829 100%)',
-          border: '1px solid rgba(0,229,160,0.25)',
+          background: 'var(--surface)',
+          border: '1px solid rgba(31,94,74,0.25)',
           borderRadius: '20px', padding: '36px',
           boxShadow: '0 20px 60px rgba(0,0,0,0.5)',
           position: 'relative', overflow: 'hidden',
         }}
       >
         {/* Top accent */}
-        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, #00E5A0, transparent)' }} />
+        <div style={{ position: 'absolute', top: 0, left: 0, right: 0, height: '2px', background: 'linear-gradient(90deg, var(--accent), transparent)' }} />
 
         {/* Close button */}
         <button
@@ -161,7 +161,7 @@ export default function AuthModal({
           style={{
             position: 'absolute', top: '16px', right: '16px',
             background: 'none', border: 'none', cursor: 'pointer',
-            color: '#5A7090', fontSize: '1.2rem', lineHeight: 1,
+            color: 'var(--text2)', fontSize: '1.2rem', lineHeight: 1,
           }}
         >
           ×
@@ -171,7 +171,7 @@ export default function AuthModal({
         <h2 className="font-serif" style={{ fontSize: '1.5rem', fontWeight: 700, color: '#fff', marginBottom: '8px' }}>
           {mode === 'signup' ? 'Create Account' : mode === 'signin' ? 'Welcome Back' : 'Reset Password'}
         </h2>
-        <p className="font-mono" style={{ fontSize: '0.72rem', color: mode === 'signin' && welcomeBack ? '#00E5A0' : '#5A7090', lineHeight: 1.7, marginBottom: '24px' }}>
+        <p className="font-mono" style={{ fontSize: '0.72rem', color: mode === 'signin' && welcomeBack ? 'var(--accent)' : 'var(--text2)', lineHeight: 1.7, marginBottom: '24px' }}>
           {mode === 'signup'
             ? 'Sign up to save your results and track progress over time.'
             : mode === 'signin'
@@ -181,13 +181,13 @@ export default function AuthModal({
 
         {errors.form && (
           <div style={{ background: 'rgba(255,68,68,0.1)', border: '1px solid rgba(255,68,68,0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px' }}>
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF4444' }}>{errors.form}</p>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--danger)' }}>{errors.form}</p>
           </div>
         )}
 
         {success && (
-          <div style={{ background: 'rgba(0,229,160,0.1)', border: '1px solid rgba(0,229,160,0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px' }}>
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#00E5A0' }}>{success}</p>
+          <div style={{ background: 'rgba(31,94,74,0.1)', border: '1px solid rgba(31,94,74,0.3)', borderRadius: '10px', padding: '10px 14px', marginBottom: '16px' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--accent)' }}>{success}</p>
           </div>
         )}
 
@@ -197,7 +197,7 @@ export default function AuthModal({
             <div style={{ display: 'flex', gap: '10px', marginBottom: '12px' }}>
               <div style={{ flex: 1 }}>
                 <input type="text" value={firstName} onChange={e => { setFirstName(e.target.value); setErrors(p => ({ ...p, firstName: '' })); }} placeholder="First name" style={inputStyle('firstName')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'firstName')} />
-                {errors.firstName && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.firstName}</p>}
+                {errors.firstName && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.firstName}</p>}
               </div>
               <div style={{ flex: 1 }}>
                 <input type="text" value={lastName} onChange={e => setLastName(e.target.value)} placeholder="Last name" style={inputStyle()} onFocus={handleFocus} onBlur={e => handleBlur(e)} />
@@ -206,29 +206,29 @@ export default function AuthModal({
 
             <div style={{ marginBottom: '12px' }}>
               <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }} placeholder="Email address" style={inputStyle('email')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'email')} />
-              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.email}</p>}
+              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.email}</p>}
             </div>
 
             <div style={{ marginBottom: '12px' }}>
               <input type="password" value={password} onChange={e => { setPassword(e.target.value); setErrors(p => ({ ...p, password: '' })); }} placeholder="Password" style={inputStyle('password')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'password')} />
-              {errors.password && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.password}</p>}
+              {errors.password && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.password}</p>}
             </div>
 
             <div style={{ marginBottom: '4px' }}>
               <input type="tel" value={mobile} onChange={e => { setMobile(e.target.value); setErrors(p => ({ ...p, mobile: '' })); }} placeholder="Mobile number (optional)" style={inputStyle('mobile')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'mobile')} />
-              {errors.mobile && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.mobile}</p>}
+              {errors.mobile && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.mobile}</p>}
             </div>
 
             {/* SMS toggle */}
-            <div style={{ background: 'rgba(6,12,24,0.5)', border: '1px solid #1C2F4A', borderRadius: '10px', padding: '12px 14px', marginTop: '4px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+            <div style={{ background: 'var(--surface2)', border: '1px solid var(--border)', borderRadius: '10px', padding: '12px 14px', marginTop: '4px', marginBottom: '20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ marginRight: '12px' }}>
-                <p className="font-mono" style={{ fontSize: '0.75rem', color: '#EEF2FF' }}>Retest reminders via text</p>
-                <p className="font-mono" style={{ fontSize: '0.62rem', color: '#5A7090', marginTop: '2px' }}>We'll remind you to retest every 8 weeks.</p>
+                <p className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text)' }}>Retest reminders via text</p>
+                <p className="font-mono" style={{ fontSize: '0.62rem', color: 'var(--text2)', marginTop: '2px' }}>We'll remind you to retest every 8 weeks.</p>
               </div>
               <button
                 type="button"
                 onClick={() => setSmsOptIn(!smsOptIn)}
-                style={{ position: 'relative', width: '44px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0, background: smsOptIn ? '#00E5A0' : '#1C2F4A' }}
+                style={{ position: 'relative', width: '44px', height: '26px', borderRadius: '13px', border: 'none', cursor: 'pointer', transition: 'background 0.2s', flexShrink: 0, background: smsOptIn ? 'var(--accent)' : 'var(--border)' }}
               >
                 <span style={{ position: 'absolute', top: '3px', left: smsOptIn ? '22px' : '3px', width: '20px', height: '20px', borderRadius: '50%', background: '#fff', transition: 'left 0.2s' }} />
               </button>
@@ -240,29 +240,29 @@ export default function AuthModal({
               className="font-mono uppercase"
               style={{
                 width: '100%', padding: '16px',
-                background: loading ? 'rgba(0,229,160,0.4)' : '#00E5A0',
-                color: '#060C18', fontSize: '0.8rem', fontWeight: 700,
+                background: loading ? 'rgba(31,94,74,0.4)' : 'var(--accent)',
+                color: '#FFFFFF', fontSize: '0.8rem', fontWeight: 700,
                 letterSpacing: '0.12em', borderRadius: '10px', border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 0 30px rgba(0,229,160,0.3)',
+                boxShadow: '0 0 30px rgba(31,94,74,0.3)',
                 transition: 'all 0.2s',
               }}
             >
               {loading ? 'Creating account...' : 'Create Account'}
             </button>
 
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '16px' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text2)', textAlign: 'center', marginTop: '16px' }}>
               Already have an account?{' '}
-              <span onClick={() => { setMode('signin'); setErrors({}); setSuccess(''); }} style={{ color: '#00E5A0', cursor: 'pointer' }}>
+              <span onClick={() => { setMode('signin'); setErrors({}); setSuccess(''); }} style={{ color: 'var(--accent)', cursor: 'pointer' }}>
                 Sign in
               </span>
             </p>
             <p className="font-mono" style={{ fontSize: '0.65rem', textAlign: 'center', marginTop: '8px' }}>
               <span
                 onClick={() => { setMode('forgot'); setErrors({}); setSuccess(''); }}
-                style={{ color: '#5A7090', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
-                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#00E5A0'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
-                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#5A7090'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
+                style={{ color: 'var(--text2)', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.color = 'var(--accent)'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.color = 'var(--text2)'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
               >
                 Forgot your password?
               </span>
@@ -275,22 +275,22 @@ export default function AuthModal({
           <>
             <div style={{ marginBottom: '12px' }}>
               <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '', emailHint: '' })); setWelcomeBack(false); }} placeholder="Email address" style={inputStyle('email')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'email')} />
-              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.email}</p>}
+              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.email}</p>}
               {errors.emailHint && <p className="font-mono" style={{ fontSize: '0.7rem', color: '#FF8C42', marginTop: '4px' }}>{errors.emailHint}</p>}
             </div>
 
             <div style={{ marginBottom: '8px' }}>
               <input type="password" value={password} onChange={e => { setPassword(e.target.value); setErrors(p => ({ ...p, password: '' })); }} placeholder="Password" style={inputStyle('password')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'password')} />
-              {errors.password && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.password}</p>}
+              {errors.password && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.password}</p>}
             </div>
 
             <div style={{ textAlign: 'right', marginBottom: '20px' }}>
               <span
                 onClick={() => { setMode('forgot'); setErrors({}); setSuccess(''); setWelcomeBack(false); }}
                 className="font-mono"
-                style={{ fontSize: '0.65rem', color: '#5A7090', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
-                onMouseEnter={e => { (e.target as HTMLElement).style.color = '#00E5A0'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
-                onMouseLeave={e => { (e.target as HTMLElement).style.color = '#5A7090'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
+                style={{ fontSize: '0.65rem', color: 'var(--text2)', cursor: 'pointer', transition: 'color 0.2s, text-decoration 0.2s' }}
+                onMouseEnter={e => { (e.target as HTMLElement).style.color = 'var(--accent)'; (e.target as HTMLElement).style.textDecoration = 'underline'; }}
+                onMouseLeave={e => { (e.target as HTMLElement).style.color = 'var(--text2)'; (e.target as HTMLElement).style.textDecoration = 'none'; }}
               >
                 Forgot password?
               </span>
@@ -302,20 +302,20 @@ export default function AuthModal({
               className="font-mono uppercase"
               style={{
                 width: '100%', padding: '16px',
-                background: loading ? 'rgba(0,229,160,0.4)' : '#00E5A0',
-                color: '#060C18', fontSize: '0.8rem', fontWeight: 700,
+                background: loading ? 'rgba(31,94,74,0.4)' : 'var(--accent)',
+                color: '#FFFFFF', fontSize: '0.8rem', fontWeight: 700,
                 letterSpacing: '0.12em', borderRadius: '10px', border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 0 30px rgba(0,229,160,0.3)',
+                boxShadow: '0 0 30px rgba(31,94,74,0.3)',
                 transition: 'all 0.2s',
               }}
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
 
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '16px' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text2)', textAlign: 'center', marginTop: '16px' }}>
               Don't have an account?{' '}
-              <span onClick={() => { setMode('signup'); setErrors({}); setSuccess(''); }} style={{ color: '#00E5A0', cursor: 'pointer' }}>
+              <span onClick={() => { setMode('signup'); setErrors({}); setSuccess(''); }} style={{ color: 'var(--accent)', cursor: 'pointer' }}>
                 Sign up
               </span>
             </p>
@@ -327,7 +327,7 @@ export default function AuthModal({
           <>
             <div style={{ marginBottom: '20px' }}>
               <input type="email" value={email} onChange={e => { setEmail(e.target.value); setErrors(p => ({ ...p, email: '' })); }} placeholder="Email address" style={inputStyle('email')} onFocus={handleFocus} onBlur={e => handleBlur(e, 'email')} />
-              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: '#FF4444', marginTop: '4px' }}>{errors.email}</p>}
+              {errors.email && <p className="font-mono" style={{ fontSize: '0.6rem', color: 'var(--danger)', marginTop: '4px' }}>{errors.email}</p>}
             </div>
 
             <button
@@ -336,19 +336,19 @@ export default function AuthModal({
               className="font-mono uppercase"
               style={{
                 width: '100%', padding: '16px',
-                background: loading ? 'rgba(0,229,160,0.4)' : '#00E5A0',
-                color: '#060C18', fontSize: '0.8rem', fontWeight: 700,
+                background: loading ? 'rgba(31,94,74,0.4)' : 'var(--accent)',
+                color: '#FFFFFF', fontSize: '0.8rem', fontWeight: 700,
                 letterSpacing: '0.12em', borderRadius: '10px', border: 'none',
                 cursor: loading ? 'not-allowed' : 'pointer',
-                boxShadow: '0 0 30px rgba(0,229,160,0.3)',
+                boxShadow: '0 0 30px rgba(31,94,74,0.3)',
                 transition: 'all 0.2s',
               }}
             >
               {loading ? 'Sending...' : 'Send Reset Link'}
             </button>
 
-            <p className="font-mono" style={{ fontSize: '0.7rem', color: '#5A7090', textAlign: 'center', marginTop: '16px' }}>
-              <span onClick={() => { setMode('signin'); setErrors({}); setSuccess(''); }} style={{ color: '#00E5A0', cursor: 'pointer' }}>
+            <p className="font-mono" style={{ fontSize: '0.7rem', color: 'var(--text2)', textAlign: 'center', marginTop: '16px' }}>
+              <span onClick={() => { setMode('signin'); setErrors({}); setSuccess(''); }} style={{ color: 'var(--accent)', cursor: 'pointer' }}>
                 Back to sign in
               </span>
             </p>

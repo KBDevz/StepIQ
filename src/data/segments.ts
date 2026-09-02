@@ -26,6 +26,12 @@ export interface SegmentConfig {
   subhead: string;
   socialProof: string;
   demoEmailSubject: string;
+  heroImage: string;
+  heroAlt: string;
+  supportImage: string;
+  supportAlt: string;
+  stats: { value: string; label: string }[];
+  replaces: { label: string; cost: string; note: string; highlight?: boolean }[];
   features: SegmentFeature[];
   steps: SegmentStep[];
   pricingHeadline: string;
@@ -46,6 +52,20 @@ export const SEGMENTS: Record<SegmentSlug, SegmentConfig> = {
     socialProof:
       'Built on the Chester Step Test — a validated submaximal protocol used in clinical and occupational health settings since 2004.',
     demoEmailSubject: 'StepIQ for Clinics — Demo Request',
+    heroImage: 'hero-clinics.jpg',
+    heroAlt: 'Physician reviewing results with a patient in a bright consultation room',
+    supportImage: 'portrait-physician.jpg',
+    supportAlt: 'Physician in a bright clinic room',
+    stats: [
+      { value: '0.92', label: 'Correlation with laboratory CPET (r)' },
+      { value: '6 min', label: 'Assisted test, start to score' },
+      { value: '$0', label: 'Capital equipment required' },
+    ],
+    replaces: [
+      { label: 'Metabolic cart (CPET)', cost: '$30–80k', note: 'Plus a technician, calibration, and a 45-minute slot per patient.' },
+      { label: 'Referral to hospital lab', cost: '$200–500 / patient', note: 'You lose the visit, the revenue, and the follow-up.' },
+      { label: 'StepIQ', cost: '$299 / mo', note: 'Unlimited patients. Any exam room. Chart-ready in a click.', highlight: true },
+    ],
     features: [
       {
         title: 'Multi-patient roster',
@@ -128,6 +148,20 @@ export const SEGMENTS: Record<SegmentSlug, SegmentConfig> = {
     socialProof:
       'The same protocol used in clinical practice — now in the hands of wellness centers, boutique studios, and franchise fitness.',
     demoEmailSubject: 'StepIQ for Facilities — Demo Request',
+    heroImage: 'hero-facilities.jpg',
+    heroAlt: 'Trainer guiding a member through a step test in a sunlit studio',
+    supportImage: 'detail-hr.jpg',
+    supportAlt: 'Heart-rate strap and watch beside an exercise step',
+    stats: [
+      { value: '6 min', label: 'Per member, any staff can run it' },
+      { value: '$50–99', label: 'Typical retail price per test' },
+      { value: '8 wks', label: 'Retest cadence that drives retention' },
+    ],
+    replaces: [
+      { label: 'Body-composition scan', cost: '$40–60 / scan', note: 'Tells members what they weigh, not how fit they are.' },
+      { label: 'Nothing', cost: '$0', note: 'Most facilities sell workouts, not measurable outcomes.' },
+      { label: 'StepIQ', cost: 'From $149 / mo', note: 'Or $12 per test wholesale. A new line on the menu from day one.', highlight: true },
+    ],
     features: [
       {
         title: 'Assisted-mode testing',
@@ -210,6 +244,20 @@ export const SEGMENTS: Record<SegmentSlug, SegmentConfig> = {
     socialProof:
       'Built on the same protocol used in occupational health and fitness-for-duty testing for two decades.',
     demoEmailSubject: 'StepIQ for Teams — Demo Request',
+    heroImage: 'hero-teams.jpg',
+    heroAlt: 'Two firefighters running a step test in a station fitness room',
+    supportImage: 'team-training.jpg',
+    supportAlt: 'Fitness coordinator with a tablet in a station gym',
+    stats: [
+      { value: '100', label: 'People tested in a single week, on site' },
+      { value: '$40', label: 'Per employee per year, unlimited retests' },
+      { value: '42', label: 'ml/kg/min NFPA 1582 target, built in' },
+    ],
+    replaces: [
+      { label: 'Hospital occupational medicine', cost: '$300–800 / employee', note: 'Half a day off shift and a form that says pass or fail.' },
+      { label: 'Clipboard peer testing', cost: '$0', note: 'No data trail, no trend, nothing an auditor can read.' },
+      { label: 'StepIQ', cost: 'From $40 / employee / yr', note: 'Roster, standards, roll-ups, and a plan for everyone below the line.', highlight: true },
+    ],
     features: [
       {
         title: 'Roster management',

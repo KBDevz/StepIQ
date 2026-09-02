@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import NavBar from '../ui/NavBar';
-import ThemeToggle from '../ui/ThemeToggle';
+import SiteFooter from '../ui/SiteFooter';
+import Photo from '../ui/Photo';
 
 interface LandingPageProps {
   onStart: () => void;
@@ -8,23 +9,49 @@ interface LandingPageProps {
   authNavProps?: { userName: string | null; onSignIn: () => void; onSignOut: () => void };
 }
 
-/* ────────────────────────────────
-   Main Landing Page
-   ──────────────────────────────── */
+const Check = () => (
+  <svg className="mk-check" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M20 6L9 17l-5-5" />
+  </svg>
+);
+
+/* Small product peek: the regression chart from a sample result */
+function SampleResultCard() {
+  return (
+    <div className="mk-card" style={{ padding: '20px 22px', borderRadius: '18px', boxShadow: 'var(--shadow-lg)', background: 'var(--surface)' }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}>
+        <span className="mk-small" style={{ fontWeight: 600, letterSpacing: '0.06em', textTransform: 'uppercase', fontSize: '0.7rem' }}>Your VO₂ max</span>
+        <span className="mk-pill" style={{ fontSize: '0.72rem', padding: '4px 10px' }}>Good</span>
+      </div>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '8px' }}>
+        <span style={{ fontFamily: 'var(--font-display)', fontSize: '2.8rem', lineHeight: 1, color: 'var(--accent)', letterSpacing: '-0.02em' }}>41.2</span>
+        <span className="mk-small">ml · kg⁻¹ · min⁻¹</span>
+      </div>
+      <svg width="100%" height="64" viewBox="0 0 320 90" preserveAspectRatio="none" style={{ display: 'block' }}>
+        <line x1="0" y1="30" x2="320" y2="30" stroke="var(--border)" strokeWidth="1" />
+        <line x1="0" y1="60" x2="320" y2="60" stroke="var(--border)" strokeWidth="1" />
+        <defs><linearGradient id="lpArea" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="var(--accent)" stopOpacity="0.16" /><stop offset="100%" stopColor="var(--accent)" stopOpacity="0" /></linearGradient></defs>
+        <path d="M20 72 L90 58 L160 46 L230 34 L230 90 L20 90 Z" fill="url(#lpArea)" />
+        <polyline points="20,72 90,58 160,46 230,34" fill="none" stroke="var(--accent)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <line x1="230" y1="34" x2="300" y2="18" stroke="var(--clay)" strokeWidth="2" strokeDasharray="6 4" strokeLinecap="round" />
+        {[[20,72],[90,58],[160,46],[230,34]].map(([x,y]) => <circle key={x} cx={x} cy={y} r="4" fill="var(--accent)" />)}
+        <circle cx="300" cy="18" r="7" fill="var(--clay)" opacity="0.25" /><circle cx="300" cy="18" r="4" fill="var(--clay)" />
+      </svg>
+      <p className="mk-small" style={{ marginTop: '6px', fontSize: '0.72rem' }}>Sample · 4 of 5 levels · age 35</p>
+    </div>
+  );
+}
+
 export default function LandingPage({ onStart, onHowItWorks, authNavProps }: LandingPageProps) {
   const [showSticky, setShowSticky] = useState(false);
   const heroCTARef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(() => {
     if (!heroCTARef.current) return;
-    const heroBottom = heroCTARef.current.getBoundingClientRect().bottom;
-    const pastHero = heroBottom < 0;
+    const pastHero = heroCTARef.current.getBoundingClientRect().bottom < 0;
     const finalCTA = document.querySelector('[data-final-cta]');
     let nearFinal = false;
-    if (finalCTA) {
-      const rect = finalCTA.getBoundingClientRect();
-      nearFinal = Math.abs(rect.top - window.innerHeight) < 200;
-    }
+    if (finalCTA) nearFinal = Math.abs(finalCTA.getBoundingClientRect().top - window.innerHeight) < 200;
     const distFromBottom = document.body.scrollHeight - window.scrollY - window.innerHeight;
     setShowSticky(pastHero && !nearFinal && distFromBottom > 200);
   }, []);
@@ -35,990 +62,222 @@ export default function LandingPage({ onStart, onHowItWorks, authNavProps }: Lan
   }, [handleScroll]);
 
   return (
-    <div
-      style={{
-        minHeight: '100vh',
-        background: 'var(--bg)',
-        color: 'var(--text)',
-        position: 'relative',
-        overflowX: 'hidden',
-      }}
-    >
-      {/* Background grid */}
-      <div
-        className="fixed inset-0 pointer-events-none"
-        style={{
-          backgroundImage: `
-            linear-gradient(var(--grid-color) 1px, transparent 1px),
-            linear-gradient(90deg, var(--grid-color) 1px, transparent 1px)
-          `,
-          backgroundSize: '40px 40px',
-        }}
-      />
-
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
       <NavBar onStart={onStart} onHowItWorks={onHowItWorks} {...authNavProps} />
 
-      {/* ── HERO ── */}
-      <section
-        className="hero relative z-10"
-        style={{ marginTop: '64px' }}
-      >
-        <div
-          className="landing-hero-container"
-          style={{
-            width: '100%',
-            maxWidth: '720px',
-            margin: '0 auto',
-            padding: '56px 24px 40px',
-          }}
-        >
-          {/* 1 — Eyebrow */}
-          <div className="landing-stagger-1" style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '18px' }}>
-            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 10px var(--accent)', flexShrink: 0 }} />
-            <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.72rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent)' }}>
-              Free · 10 Minutes · No Lab
-            </span>
-          </div>
+      <main style={{ paddingTop: '72px' }}>
 
-          {/* 2 — Headline */}
-          <h1
-            className="landing-stagger-2 landing-headline"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontWeight: 700,
-              color: 'var(--text)',
-              letterSpacing: '-0.01em',
-              lineHeight: 1.1,
-              margin: 0,
-              marginBottom: '14px',
-            }}
-          >
-            VO₂ max is the #1 predictor of how long you'll live.
-          </h1>
-
-          {/* 3 — Subhead */}
-          <p
-            className="landing-stagger-2 landing-subheadline"
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontWeight: 400,
-              color: 'var(--accent)',
-              lineHeight: 1.4,
-              letterSpacing: '-0.01em',
-              marginBottom: '18px',
-            }}
-          >
-            This is the easiest way to measure yours.
-          </p>
-
-          {/* 4 — Blurb */}
-          <p
-            className="landing-stagger-3 landing-blurb"
-            style={{
-              fontFamily: 'var(--font-body)',
-              color: 'var(--text2)',
-              lineHeight: 1.55,
-              marginBottom: '22px',
-            }}
-          >
-            StepIQ is a 10-minute guided step test you can take at home or at the gym. All you need is a step, a heart rate monitor, and your phone.
-          </p>
-
-          {/* 5 — Accuracy strip */}
-          <div
-            className="landing-stagger-3"
-            style={{
-              background: 'linear-gradient(90deg, rgba(20,230,180,0.08), rgba(20,230,180,0.02))',
-              border: '1px solid rgba(20,230,180,0.15)',
-              borderLeft: '3px solid var(--accent)',
-              borderRadius: '10px',
-              padding: '14px 16px',
-              display: 'flex',
-              gap: '12px',
-              alignItems: 'center',
-              marginBottom: '26px',
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-            <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text)', fontWeight: 500 }}>
-              Accurate within <span style={{ color: 'var(--accent)', fontWeight: 700 }}>±8-10%</span> of a lab VO₂ test
-            </span>
-          </div>
-
-          {/* 6 — Primary CTA */}
-          <div ref={heroCTARef}>
-            <button
-              onClick={onStart}
-              className="landing-cta-btn uppercase cursor-pointer transition-all landing-stagger-4"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                width: '100%',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                letterSpacing: '0.12em',
-                color: 'var(--bg)',
-                background: 'var(--accent)',
-                padding: '15px 24px',
-                borderRadius: '10px',
-                border: 'none',
-                boxShadow: '0 8px 28px rgba(20,230,180,0.3)',
-                marginBottom: '12px',
-              }}
-            >
-              Start Free VO₂ Max Test →
-            </button>
-          </div>
-
-          {/* 7 — Risk reversal */}
-          <p
-            className="uppercase landing-stagger-4"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.68rem',
-              letterSpacing: '0.08em',
-              color: 'var(--text3)',
-              textAlign: 'center',
-              marginBottom: '28px',
-            }}
-          >
-            No Credit Card · No Email · No Account
-          </p>
-
-          {/* 8 — Sample result preview */}
-          <div className="landing-stagger-5" style={{ marginBottom: '28px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center', marginBottom: '12px' }}>
-              <span style={{ flex: '0 0 28px', height: '1px', background: 'var(--border)' }} />
-              <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.68rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)' }}>A Look at Your Result</span>
-              <span style={{ flex: '0 0 28px', height: '1px', background: 'var(--border)' }} />
-            </div>
-            <div style={{
-              background: 'linear-gradient(180deg, var(--surface) 0%, var(--surface2) 100%)',
-              border: '1px solid var(--border)',
-              borderRadius: '16px',
-              padding: '24px 22px',
-              boxShadow: '0 4px 20px rgba(0,0,0,0.4)',
-              maxWidth: '560px',
-              margin: '0 auto',
-            }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '10px' }}>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text3)' }}>Your VO₂ Max</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', border: '1px solid var(--accent)', borderRadius: '999px', padding: '4px 12px' }}>Good</span>
+        {/* ── HERO ── */}
+        <section className="mk-section" style={{ paddingTop: '64px' }}>
+          <div className="mk-container">
+            <div className="mk-split mk-split--wide-media lp-hero">
+              <div>
+                <p className="mk-eyebrow">Clinical-grade VO₂ max · at home</p>
+                <h1 className="mk-display-xl" style={{ marginBottom: '22px' }}>
+                  The one fitness number that predicts <em>how long you'll live.</em>
+                </h1>
+                <p className="mk-lede" style={{ marginBottom: '32px', maxWidth: '520px' }}>
+                  StepIQ turns a clinically validated step test into a ten-minute VO₂ max assessment you can do in your living room — accurate to within 8–10% of a laboratory test. Then it tells you exactly what to do about it.
+                </p>
+                <div ref={heroCTARef} style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '18px' }}>
+                  <button type="button" onClick={onStart} className="mk-btn mk-btn--primary mk-btn--lg">Take the free test</button>
+                  <button type="button" onClick={onHowItWorks} className="mk-btn mk-btn--secondary mk-btn--lg">See how it works</button>
+                </div>
+                <p className="mk-small">No account · No credit card · Ten minutes</p>
               </div>
-              <div style={{ display: 'flex', alignItems: 'baseline', gap: '8px', marginBottom: '12px' }}>
-                <span style={{ fontFamily: 'var(--font-display)', fontSize: '4rem', fontWeight: 700, color: 'var(--accent)', lineHeight: 0.95 }}>41.2</span>
-                <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', color: 'var(--text3)' }}>ml · kg⁻¹ · min⁻¹</span>
+
+              <div style={{ position: 'relative' }}>
+                <Photo name="hero-home.jpg" alt="Woman stepping onto a low oak step in a bright living room" ratio="4 / 5" radius={28} priority hint="Hero photo — person mid step-test, warm daylight" />
+                <div className="lp-hero-card" style={{ position: 'absolute', left: '-28px', bottom: '36px', width: 'min(300px, 80%)' }}>
+                  <SampleResultCard />
+                </div>
               </div>
-              <svg width="100%" height="90" viewBox="0 0 320 90" preserveAspectRatio="none" style={{ display: 'block', marginBottom: '12px' }}>
-                <line x1="0" y1="30" x2="320" y2="30" stroke="var(--border)" strokeWidth="0.5" />
-                <line x1="0" y1="60" x2="320" y2="60" stroke="var(--border)" strokeWidth="0.5" />
-                <defs><linearGradient id="areaFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#3B82F6" stopOpacity="0.15" /><stop offset="100%" stopColor="#3B82F6" stopOpacity="0" /></linearGradient></defs>
-                <path d="M20 72 L90 58 L160 46 L230 34 L230 90 L20 90 Z" fill="url(#areaFill)" />
-                <polyline points="20,72 90,58 160,46 230,34" fill="none" stroke="#3B82F6" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-                <line x1="230" y1="34" x2="300" y2="18" stroke="var(--accent)" strokeWidth="2" strokeDasharray="6 4" strokeLinecap="round" />
-                <circle cx="20" cy="72" r="4" fill="#3B82F6" /><circle cx="90" cy="58" r="4" fill="#3B82F6" /><circle cx="160" cy="46" r="4" fill="#3B82F6" /><circle cx="230" cy="34" r="4" fill="#3B82F6" />
-                <circle cx="300" cy="18" r="6" fill="var(--accent)" opacity="0.3" /><circle cx="300" cy="18" r="4" fill="var(--accent)" />
-              </svg>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.05em', textTransform: 'uppercase', color: 'var(--text3)', textAlign: 'center' }}>
-                Sample Result · 4 of 5 Levels · Age 35 · Male
-              </p>
             </div>
           </div>
+        </section>
 
-          {/* 9 — Wedge card */}
-          <div style={{
-            background: 'var(--surface)',
-            border: '1px solid var(--border)',
-            borderRadius: '14px',
-            padding: '18px',
-            marginBottom: '28px',
-          }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.16em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '8px' }}>
-              vs Your Apple Watch
-            </p>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', lineHeight: 1.5, color: 'var(--text2)' }}>
-              Your watch <strong style={{ color: 'var(--text)', fontWeight: 600 }}>estimates</strong> VO₂ max from passive movement. StepIQ <strong style={{ color: 'var(--text)', fontWeight: 600 }}>measures</strong> it from a clinically validated active protocol — the same method physiologists use.
-            </p>
-          </div>
-
-          {/* 10 — Trust strip */}
-          <div style={{ borderTop: '1px solid var(--border)', borderBottom: '1px solid var(--border)', padding: '18px 0', marginBottom: '26px' }}>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
-                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Clinically validated</strong> — Chester Step Test, used in cardiac rehab worldwide
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
-                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>Linear regression scoring</strong> — fits a line through 5 data points, the way physiologists do
-              </span>
-            </div>
-            <div style={{ display: 'flex', gap: '12px', alignItems: 'flex-start', padding: '8px 0' }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
-              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.86rem', lineHeight: 1.45, color: 'var(--text2)' }}>
-                <strong style={{ color: 'var(--text)', fontWeight: 600 }}>AI-powered 8-week plan</strong> — personalized HR zones, protocol, and next-test target
-              </span>
-            </div>
-          </div>
-
-          {/* 11 — Citations */}
-          <div style={{ textAlign: 'center', marginBottom: '28px' }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.65rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)', marginBottom: '10px' }}>
-              Research Cited In
-            </p>
-            <p style={{ fontFamily: 'var(--font-display)', fontSize: '0.84rem', fontStyle: 'italic', lineHeight: 1.6, color: 'var(--text2)' }}>
-              JAMA · Mayo Clinic Proceedings · Occupational Medicine
-            </p>
-          </div>
-
-          {/* 12 — Equipment grid */}
-          <div style={{ marginBottom: '22px' }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.7rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--text3)', textAlign: 'center', marginBottom: '14px' }}>
-              What You'll Need
-            </p>
-            <div className="landing-equip-grid">
+        {/* ── TRUST STRIP ── */}
+        <section className="mk-section--tinted" style={{ padding: '48px 0' }}>
+          <div className="mk-container">
+            <div className="mk-grid-4">
               {[
-                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>, title: '10 Minutes', sub: 'to complete' },
-                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>, title: 'HR Monitor', sub: 'watch or strap' },
-                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="8" width="18" height="12" rx="2"/><path d="M7 8V6a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v2"/></svg>, title: 'A Step', sub: '15-30cm, stairs work' },
-                { icon: <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>, title: 'Your Phone', sub: 'any browser' },
-              ].map((item) => (
-                <div key={item.title} style={{ background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: '12px', padding: '16px 12px', textAlign: 'center' }}>
-                  <div style={{ marginBottom: '8px' }}>{item.icon}</div>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)', marginBottom: '4px' }}>{item.title}</p>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.72rem', color: 'var(--text3)', lineHeight: 1.3 }}>{item.sub}</p>
+                { v: '0.92', l: 'Correlation with lab VO₂ testing (r)' },
+                { v: '±8%', l: 'Typical accuracy vs. a metabolic cart' },
+                { v: '10 min', l: 'Start to score, including setup' },
+                { v: '1998', l: 'Protocol in clinical use since' },
+              ].map((s) => (
+                <div key={s.l}>
+                  <p className="mk-stat">{s.v}</p>
+                  <p className="mk-stat-label">{s.l}</p>
+                </div>
+              ))}
+            </div>
+            <p className="mk-small" style={{ marginTop: '32px' }}>
+              Chester Step Test · Sykes &amp; Roberts, <em>Occupational Medicine</em> 2004 · Research cited in JAMA and Mayo Clinic Proceedings
+            </p>
+          </div>
+        </section>
+
+        {/* ── HOW IT WORKS ── */}
+        <section className="mk-section" id="how-it-works-section">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">How it works</p>
+              <h2 className="mk-display-lg">Ten minutes. A step. A heart-rate monitor.</h2>
+            </div>
+            <div className="mk-grid-3">
+              <div>
+                <Photo name="detail-hr.jpg" alt="Heart-rate strap and watch beside an exercise step" ratio="4 / 3" radius={20} hint="Detail — HR strap + step" />
+                <p className="mk-eyebrow" style={{ marginTop: '22px', marginBottom: '8px' }}>01 · Set up</p>
+                <h3 className="mk-display-md" style={{ marginBottom: '8px' }}>Grab a step and a monitor</h3>
+                <p className="mk-body">Any 15–30 cm step works — stairs included. A chest strap or watch gives us your heart rate. Enter your age and sex. Thirty seconds.</p>
+              </div>
+              <div>
+                <Photo name="hero-home.jpg" alt="Stepping to a guided cadence" ratio="4 / 3" radius={20} hint="Action — stepping to the beat" />
+                <p className="mk-eyebrow" style={{ marginTop: '22px', marginBottom: '8px' }}>02 · Step</p>
+                <h3 className="mk-display-md" style={{ marginBottom: '8px' }}>Follow the beat</h3>
+                <p className="mk-body">Up to five two-minute levels, each a little faster, with a metronome and on-screen cues. Most people finish three or four. You never go to exhaustion.</p>
+              </div>
+              <div>
+                <div style={{ aspectRatio: '4 / 3', borderRadius: 20, background: 'var(--surface2)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+                  <div style={{ width: '100%', maxWidth: '300px' }}><SampleResultCard /></div>
+                </div>
+                <p className="mk-eyebrow" style={{ marginTop: '22px', marginBottom: '8px' }}>03 · Understand</p>
+                <h3 className="mk-display-md" style={{ marginBottom: '8px' }}>Get your score and a plan</h3>
+                <p className="mk-body">We fit a line through your heart-rate data and project to your maximum — the same method physiologists use. You get your VO₂ max, your percentile, and an eight-week protocol.</p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── WHY IT MATTERS ── */}
+        <section className="mk-section mk-section--tinted">
+          <div className="mk-container">
+            <div className="mk-split">
+              <Photo name="portrait-man.jpg" alt="Man in his fifties resting after a workout in a sunlit room" ratio="4 / 5" radius={28} hint="Portrait — post-workout, warm light" />
+              <div>
+                <p className="mk-eyebrow">Why VO₂ max</p>
+                <h2 className="mk-display-lg" style={{ marginBottom: '20px' }}>Your heart's engine size, <em>in one number.</em></h2>
+                <p className="mk-body" style={{ marginBottom: '16px' }}>
+                  VO₂ max is how much oxygen your body can use at full effort. In a 2018 JAMA study of 122,000 patients, it outperformed smoking, diabetes and high blood pressure as a predictor of all-cause mortality — and there was no upper limit to the benefit.
+                </p>
+                <p className="mk-body" style={{ marginBottom: '24px' }}>
+                  It also moves. With the right training, most people see measurable gains inside eight weeks.
+                </p>
+                <ul className="mk-list">
+                  <li><Check /><span><strong>Measured, not guessed.</strong> Your watch estimates VO₂ from passive movement. StepIQ measures it from a controlled, graded effort.</span></li>
+                  <li><Check /><span><strong>Safe by design.</strong> The protocol is submaximal — you stop at a comfortable effort and we project the rest.</span></li>
+                  <li><Check /><span><strong>Actionable.</strong> Every score comes with heart-rate zones and a plan calibrated to where you are today.</span></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ── WHO IT'S FOR ── */}
+        <section className="mk-section">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">Who it's for</p>
+              <h2 className="mk-display-lg">Built for anyone who takes their health seriously.</h2>
+            </div>
+            <div className="mk-grid-4">
+              {[
+                { t: 'The optimizer', b: 'You already track sleep and steps. You want a rigorous VO₂ number your wearable can\'t give you — and a way to move it.' },
+                { t: 'The baseline seeker', b: 'You want to know exactly where your cardiovascular fitness stands, without booking a lab.' },
+                { t: 'The comeback', b: 'You\'re returning after illness, injury or a long break and need a safe, validated starting point.' },
+                { t: 'The professional', b: 'Your role requires cardiovascular screening. StepIQ follows the same protocol used in occupational health.' },
+              ].map((c) => (
+                <div key={c.t} className="mk-card mk-card--flat">
+                  <h3 className="mk-display-md" style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{c.t}</h3>
+                  <p className="mk-body">{c.b}</p>
                 </div>
               ))}
             </div>
           </div>
+        </section>
 
-          {/* 13 — Secondary CTA */}
-          <button
-            data-final-cta
-            onClick={() => document.getElementById('how-it-works-section')?.scrollIntoView({ behavior: 'smooth' })}
-            className="cursor-pointer uppercase"
-            style={{
-              width: '100%',
-              padding: '14px',
-              background: 'transparent',
-              color: 'var(--accent)',
-              border: '1px solid var(--border)',
-              borderRadius: '12px',
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.78rem',
-              letterSpacing: '0.14em',
-              transition: 'border-color 0.2s',
-            }}
-            onMouseEnter={(e) => { e.currentTarget.style.borderColor = 'var(--accent)'; }}
-            onMouseLeave={(e) => { e.currentTarget.style.borderColor = 'var(--border)'; }}
-          >
-            See How It Works ↓
-          </button>
-        </div>
-      </section>
-
-      {/* ── WHO IS STEPIQ FOR? ── */}
-      <section
-        id="how-it-works-section"
-        className="relative z-10"
-        style={{
-          background: 'var(--surface)',
-          borderTop: '1px solid var(--border)',
-          borderBottom: '1px solid var(--border)',
-        }}
-      >
-        <div
-          className="landing-audience-container"
-          style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '80px 64px',
-          }}
-        >
-          <p
-            className="uppercase"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.62rem',
-              letterSpacing: '0.18em',
-              color: 'var(--accent)',
-              textAlign: 'center',
-              marginBottom: '12px',
-            }}
-          >
-            Who Is StepIQ For?
-          </p>
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '2rem',
-              fontWeight: 700,
-              color: 'var(--text)',
-              textAlign: 'center',
-              marginBottom: '40px',
-              lineHeight: 1.2,
-            }}
-          >
-            Built for Anyone Who Takes
-            <br />
-            Their Health Seriously
-          </h2>
-
-          <div className="landing-audience-grid">
-            {[
-              {
-                accent: '#00B8A2',
-                title: 'The Health Optimizer',
-                body: 'You track your fitness seriously and want a more rigorous VO₂ max measurement than your wearable provides. StepIQ uses a clinically validated protocol — not an algorithm.',
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#00B8A2" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                  </svg>
-                ),
-              },
-              {
-                accent: '#4A9EFF',
-                title: 'The Fitness Baseline Seeker',
-                body: 'You want to know exactly where your cardiovascular fitness stands and have a science-backed plan to improve it. No lab required.',
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#4A9EFF" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <circle cx="12" cy="12" r="10" />
-                    <circle cx="12" cy="12" r="6" />
-                    <circle cx="12" cy="12" r="2" />
-                  </svg>
-                ),
-              },
-              {
-                accent: '#FFD166',
-                title: 'The Comeback Story',
-                body: "You're returning to fitness after illness, injury, or a long break and want a safe, validated starting point. The test never pushes you to exhaustion.",
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FFD166" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                  </svg>
-                ),
-              },
-              {
-                accent: '#FF8C42',
-                title: 'Occupational Health',
-                body: 'Your industry requires cardiovascular fitness screening. StepIQ follows the Chester Step Test protocol used in cardiac rehabilitation and occupational health worldwide.',
-                icon: (
-                  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="#FF8C42" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
-                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16" />
-                  </svg>
-                ),
-              },
-            ].map((card) => (
-              <div
-                key={card.title}
-                className="landing-audience-card"
-                style={{
-                  position: 'relative',
-                  background: 'var(--bg)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '16px',
-                  padding: '24px',
-                  overflow: 'hidden',
-                  transition: 'border-color 0.2s, transform 0.2s',
-                  cursor: 'default',
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--accent)';
-                  e.currentTarget.style.transform = 'translateY(-3px)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'var(--border)';
-                  e.currentTarget.style.transform = 'translateY(0)';
-                }}
-              >
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    height: '3px',
-                    background: card.accent,
-                    borderRadius: '3px 3px 0 0',
-                  }}
-                />
-                <div style={{ marginBottom: '14px' }}>{card.icon}</div>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1rem',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    marginBottom: '8px',
-                  }}
-                >
-                  {card.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.78rem',
-                    color: 'var(--text2)',
-                    lineHeight: 1.7,
-                  }}
-                >
-                  {card.body}
-                </p>
-              </div>
-            ))}
+        {/* ── FOR PROFESSIONALS (ink band) ── */}
+        <section className="mk-section mk-section--ink">
+          <div className="mk-container">
+            <div style={{ maxWidth: '680px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">StepIQ for professionals</p>
+              <h2 className="mk-display-lg" style={{ color: '#F4F7F5' }}>Built for clinics, gyms, and whole departments.</h2>
+              <p className="mk-lede" style={{ marginTop: '16px' }}>The same protocol, deployed at scale — with rosters, branded reports, and the compliance tooling each setting needs.</p>
+            </div>
+            <div className="mk-grid-3">
+              {[
+                { href: '/clinics', l: 'For clinics', t: 'Clinical-grade VO₂ assessment without a metabolic cart.', b: ['Multi-patient roster', 'HIPAA-ready hosting', 'Branded PDF reports'] },
+                { href: '/facilities', l: 'For facilities', t: 'Turn a corner of your gym into a testing station.', b: ['Assisted-mode testing', 'Cohort challenges', 'Training upsell surface'] },
+                { href: '/teams', l: 'For teams', t: 'Annual VO₂ compliance for your whole roster.', b: ['NFPA 1582 pass/fail', 'Batch reporting', 'On-site testing'] },
+              ].map((c) => (
+                <a key={c.href} href={c.href} className="mk-card lp-pro-card" style={{ textDecoration: 'none', color: 'inherit', display: 'flex', flexDirection: 'column', background: '#FFFFFF', borderColor: 'transparent' }}>
+                  <p className="mk-eyebrow" style={{ marginBottom: '10px' }}>{c.l}</p>
+                  <h3 className="mk-display-md" style={{ fontSize: '1.35rem', marginBottom: '16px' }}>{c.t}</h3>
+                  <ul className="mk-list" style={{ gap: '8px', marginBottom: '22px' }}>
+                    {c.b.map((x) => <li key={x} style={{ fontSize: '0.95rem' }}><Check />{x}</li>)}
+                  </ul>
+                  <span style={{ marginTop: 'auto', fontFamily: 'var(--font-body)', fontWeight: 600, color: 'var(--accent)' }}>Learn more →</span>
+                </a>
+              ))}
+            </div>
           </div>
+        </section>
 
-          <p
-            style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.78rem',
-              color: 'var(--text2)',
-              fontStyle: 'italic',
-              textAlign: 'center',
-              marginTop: '28px',
-            }}
-          >
-            Not sure which category you're in? It doesn't matter — the test is the same for everyone.
-          </p>
-        </div>
-      </section>
-
-      {/* ── STEPIQ FOR PROFESSIONALS ── */}
-      <section
-        className="relative z-10"
-        style={{ padding: '0', borderTop: '1px solid var(--border)' }}
-      >
-        <div
-          className="landing-pros-container"
-          style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '80px 64px',
-          }}
-        >
-          <div style={{ textAlign: 'center', marginBottom: '48px', maxWidth: '640px', marginLeft: 'auto', marginRight: 'auto' }}>
-            <p style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.72rem',
-              fontWeight: 600,
-              textTransform: 'uppercase',
-              letterSpacing: '0.18em',
-              color: 'var(--accent)',
-              marginBottom: '16px',
-            }}>
-              StepIQ for Professionals
-            </p>
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(1.8rem, 4vw, 2.6rem)',
-              fontWeight: 700,
-              color: 'var(--text)',
-              lineHeight: 1.15,
-              marginBottom: '14px',
-            }}>
-              Add clinical-grade VO&#x2082; testing to your practice, facility, or workforce.
-            </h2>
-            <p style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '1rem',
-              color: 'var(--text2)',
-              lineHeight: 1.55,
-            }}>
-              The same protocol you just took — deployed in clinics, wellness facilities, and workforce fitness programs.
-            </p>
+        {/* ── WHAT YOU GET ── */}
+        <section className="mk-section">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">What your score unlocks</p>
+              <h2 className="mk-display-lg">One test. Three outcomes.</h2>
+            </div>
+            <div className="mk-grid-3">
+              {[
+                { n: '01', t: 'Know your number', b: 'A validated VO₂ max estimate, your percentile against people your age and sex, and a fitness age you\'ll actually remember.' },
+                { n: '02', t: 'A plan to improve it', b: 'An eight-week protocol built from your result — heart-rate zones, session lengths, and a target for your next test.' },
+                { n: '03', t: 'Track what matters', b: 'Retest every eight to twelve weeks and watch the trend. Your score climbs, your resting heart rate falls.' },
+              ].map((c) => (
+                <div key={c.n}>
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: '2.4rem', color: 'var(--clay)', lineHeight: 1, marginBottom: '14px' }}>{c.n}</p>
+                  <h3 className="mk-display-md" style={{ marginBottom: '10px' }}>{c.t}</h3>
+                  <p className="mk-body">{c.b}</p>
+                </div>
+              ))}
+            </div>
           </div>
+        </section>
 
-          <div
-            className="landing-pros-grid"
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(3, 1fr)',
-              gap: '20px',
-            }}
-          >
-            {[
-              {
-                href: '/clinics',
-                label: 'For Clinics',
-                subtitle: 'Longevity, concierge & sports medicine practices',
-                tagline: 'Clinical-grade VO₂ assessment without a $50k treadmill.',
-                bullets: ['Multi-patient roster', 'HIPAA-ready hosting', 'Branded PDF reports'],
-              },
-              {
-                href: '/facilities',
-                label: 'For Facilities',
-                subtitle: 'Gyms, wellness centers & studios',
-                tagline: 'Turn a corner of your gym into a testing station.',
-                bullets: ['Assisted-mode testing', 'Cohort challenges', 'Personal training upsell'],
-              },
-              {
-                href: '/teams',
-                label: 'For Teams',
-                subtitle: 'Fire departments, corporate wellness & workforce fitness',
-                tagline: 'Annual VO₂ compliance for your whole roster.',
-                bullets: ['NFPA 1582 pass/fail', 'Batch reporting', 'In-house testing'],
-              },
-            ].map((card) => (
-              <a
-                key={card.href}
-                href={card.href}
-                className="landing-pros-card"
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  padding: '28px',
-                  background: 'var(--surface)',
-                  border: '1px solid var(--border)',
-                  borderRadius: '16px',
-                  textDecoration: 'none',
-                  color: 'inherit',
-                  transition: 'border-color 0.2s, transform 0.2s, box-shadow 0.2s',
-                }}
-              >
-                <p style={{
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.68rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.14em',
-                  color: 'var(--accent)',
-                  marginBottom: '8px',
-                }}>
-                  {card.label}
-                </p>
-                <p style={{
-                  fontFamily: 'var(--font-body)',
-                  fontSize: '0.78rem',
-                  color: 'var(--text3)',
-                  marginBottom: '16px',
-                  letterSpacing: '0.02em',
-                }}>
-                  {card.subtitle}
-                </p>
-                <p style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.15rem',
-                  fontWeight: 700,
-                  color: 'var(--text)',
-                  lineHeight: 1.3,
-                  marginBottom: '20px',
-                }}>
-                  {card.tagline}
-                </p>
-                <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 24px 0' }}>
-                  {card.bullets.map((b) => (
-                    <li
-                      key={b}
-                      style={{
-                        position: 'relative',
-                        paddingLeft: '18px',
-                        fontFamily: 'var(--font-body)',
-                        fontSize: '0.88rem',
-                        color: 'var(--text2)',
-                        lineHeight: 1.6,
-                        marginBottom: '6px',
-                      }}
-                    >
-                      <span style={{
-                        position: 'absolute',
-                        left: 0,
-                        top: '10px',
-                        width: '5px',
-                        height: '5px',
-                        borderRadius: '50%',
-                        background: 'var(--accent)',
-                      }} />
-                      {b}
-                    </li>
-                  ))}
-                </ul>
-                <span style={{
-                  marginTop: 'auto',
-                  fontFamily: 'var(--font-mono)',
-                  fontSize: '0.72rem',
-                  fontWeight: 600,
-                  textTransform: 'uppercase',
-                  letterSpacing: '0.12em',
-                  color: 'var(--accent)',
-                }}>
-                  Learn More →
-                </span>
-              </a>
-            ))}
+        {/* ── FINAL CTA ── */}
+        <section className="mk-section mk-section--tinted">
+          <div className="mk-narrow" style={{ textAlign: 'center' }}>
+            <h2 className="mk-display-lg" style={{ marginBottom: '16px' }}>Ten minutes. One number. <em>A plan.</em></h2>
+            <p className="mk-lede" style={{ marginBottom: '32px' }}>Find out where you stand today.</p>
+            <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <button type="button" data-final-cta onClick={onStart} className="mk-btn mk-btn--primary mk-btn--lg">Take the free test</button>
+              <a href="/report/demo" className="mk-btn mk-btn--secondary mk-btn--lg">See a sample report</a>
+            </div>
+            <p className="mk-small" style={{ marginTop: '18px' }}>Free · No account · Works on any phone</p>
           </div>
-        </div>
-      </section>
+        </section>
+      </main>
 
-      {/* ── WHAT YOUR SCORE UNLOCKS ── */}
-      <section
-        className="relative z-10"
-        style={{ padding: '0' }}
-      >
-        <div
-          className="landing-unlocks-container"
-          style={{
-            maxWidth: '1200px',
-            margin: '0 auto',
-            padding: '80px 64px',
-          }}
-        >
-          <p
-            className="uppercase"
-            style={{
-              fontFamily: 'var(--font-mono)',
-              fontSize: '0.62rem',
-              letterSpacing: '0.18em',
-              color: 'var(--accent)',
-              textAlign: 'center',
-              marginBottom: '12px',
-            }}
-          >
-            What Your Score Unlocks
-          </p>
-          <h2
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '2rem',
-              fontWeight: 700,
-              color: 'var(--text)',
-              textAlign: 'center',
-              marginBottom: '48px',
-              lineHeight: 1.2,
-            }}
-          >
-            One Test. Three Outcomes.
-          </h2>
+      <SiteFooter onStart={onStart} onHowItWorks={onHowItWorks} />
 
-          <div className="landing-unlocks-grid">
-            {[
-              {
-                number: '01',
-                title: 'Know Your Number',
-                body: 'Get a clinically validated VO₂ max estimate — the single best predictor of cardiovascular health and all-cause mortality. Know exactly where you stand compared to your age and sex.',
-                accent: 'var(--accent)',
-              },
-              {
-                number: '02',
-                title: 'A Plan to Improve It',
-                body: 'Receive a personalized 8-week training protocol built from your results — with specific heart rate zones, session durations, and progression targets. Not generic advice.',
-                accent: '#4A9EFF',
-              },
-              {
-                number: '03',
-                title: 'Track What Matters',
-                body: 'Retest every 8–12 weeks and see your progress over time. Watch your score climb, your resting heart rate drop, and your classification improve.',
-                accent: '#FFD166',
-              },
-            ].map((col) => (
-              <div key={col.number} style={{ textAlign: 'center' }}>
-                <span
-                  style={{
-                    fontFamily: 'var(--font-mono)',
-                    fontSize: '0.65rem',
-                    letterSpacing: '0.12em',
-                    color: col.accent,
-                    display: 'block',
-                    marginBottom: '14px',
-                  }}
-                >
-                  {col.number}
-                </span>
-                <h3
-                  style={{
-                    fontFamily: 'var(--font-display)',
-                    fontSize: '1.15rem',
-                    fontWeight: 700,
-                    color: 'var(--text)',
-                    marginBottom: '12px',
-                  }}
-                >
-                  {col.title}
-                </h3>
-                <p
-                  style={{
-                    fontFamily: 'var(--font-body)',
-                    fontSize: '0.8rem',
-                    color: 'var(--text2)',
-                    lineHeight: 1.75,
-                    maxWidth: '340px',
-                    margin: '0 auto',
-                  }}
-                >
-                  {col.body}
-                </p>
-              </div>
-            ))}
-          </div>
-
-          <div style={{ textAlign: 'center', marginTop: '48px' }}>
-            <button
-              onClick={onStart}
-              className="landing-cta-btn uppercase cursor-pointer transition-all"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.82rem',
-                fontWeight: 600,
-                letterSpacing: '0.12em',
-                color: 'var(--bg)',
-                background: 'var(--accent)',
-                padding: '15px 40px',
-                borderRadius: '10px',
-                border: 'none',
-                boxShadow: 'var(--shadow-accent)',
-              }}
-            >
-              Start Free Assessment →
-            </button>
-            <p
-              className="uppercase"
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.6rem',
-                letterSpacing: '0.12em',
-                color: 'var(--text2)',
-                marginTop: '12px',
-              }}
-            >
-              Free · No Account · 10 Minutes
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* ── FOOTER ── */}
-      <footer
-        className="relative z-10 landing-footer"
-        style={{
-          borderTop: '1px solid var(--border)',
-          padding: '20px 64px',
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          gap: '16px',
-        }}
-      >
-        <span
-          className="uppercase"
-          style={{
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.52rem',
-            letterSpacing: '0.1em',
-            color: 'var(--text3)',
-          }}
-        >
-          Powered by Chester Step Test Protocol · K. Sykes, 1998
-        </span>
-
-        <ThemeToggle />
-      </footer>
-
-      {/* ── STICKY MOBILE CTA ── */}
-      <div
-        className={`landing-sticky-cta${showSticky ? ' landing-sticky-visible' : ''}`}
-        style={{
-          position: 'fixed',
-          bottom: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-          background: 'var(--bg)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderTop: '1px solid var(--border)',
-          padding: '12px 16px',
-          paddingBottom: 'max(12px, env(safe-area-inset-bottom))',
-          flexDirection: 'row',
-          alignItems: 'center',
-          gap: '8px',
-        }}
-      >
-        <button
-          onClick={onStart}
-          className="uppercase cursor-pointer"
-          style={{
-            width: '100%',
-            padding: '14px',
-            fontFamily: 'var(--font-mono)',
-            fontSize: '0.78rem',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-            color: 'var(--bg)',
-            background: 'var(--accent)',
-            border: 'none',
-            borderRadius: '10px',
-            boxShadow: '0 8px 28px rgba(20,230,180,0.3)',
-          }}
-        >
-          Start Free VO₂ Max Test →
-        </button>
+      {/* Sticky mobile CTA */}
+      <div className={`lp-sticky${showSticky ? ' lp-sticky--on' : ''}`} style={{ position: 'fixed', bottom: 0, left: 0, right: 0, zIndex: 40, background: 'rgba(250,248,244,0.92)', backdropFilter: 'blur(12px)', WebkitBackdropFilter: 'blur(12px)', borderTop: '1px solid var(--border)', padding: '12px 16px', paddingBottom: 'max(12px, env(safe-area-inset-bottom))' }}>
+        <button type="button" onClick={onStart} className="mk-btn mk-btn--primary" style={{ width: '100%' }}>Take the free test</button>
       </div>
 
-      {/* ── RESPONSIVE & ANIMATIONS ── */}
       <style>{`
-        /* Hero layout */
-        .landing-headline {
-          font-size: 4rem;
-          line-height: 1.1;
-        }
-        .landing-subheadline {
-          font-size: 1.6rem;
-          line-height: 1.4;
-        }
-        .landing-blurb {
-          font-size: 1.05rem;
-        }
-        .landing-equip-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 12px;
-        }
-
-        /* Tablet */
-        @media (max-width: 1023px) {
-          .landing-headline { font-size: 3rem; }
-          .landing-subheadline { font-size: 1.4rem; }
-          .landing-blurb { font-size: 1rem; }
-          .landing-hero-container { padding: 48px 24px 36px !important; }
-          .landing-footer { padding: 20px 40px !important; }
-        }
-
-        /* Mobile */
+        .lp-pro-card { transition: transform 0.18s, box-shadow 0.18s; }
+        .lp-pro-card:hover { transform: translateY(-3px); box-shadow: var(--shadow-lg); }
+        .lp-sticky { display: none; }
         @media (max-width: 767px) {
-          .landing-headline { font-size: 2.2rem; line-height: 1.1; }
-          .landing-subheadline { font-size: 1.15rem; }
-          .landing-blurb { font-size: 0.95rem; }
-          .landing-equip-grid {
-            grid-template-columns: 1fr 1fr;
-          }
-          .landing-footer {
-            padding: 20px 24px !important;
-            flex-direction: column;
-            align-items: flex-start;
-          }
-        }
-
-        /* Audience grid */
-        .landing-audience-grid {
-          display: grid;
-          grid-template-columns: repeat(4, 1fr);
-          gap: 20px;
+          .lp-sticky--on { display: block; }
+          .lp-hero-card { position: static !important; width: 100% !important; margin-top: 16px; }
         }
         @media (max-width: 1023px) {
-          .landing-audience-grid {
-            grid-template-columns: repeat(2, 1fr);
-          }
-          .landing-audience-container {
-            padding: 60px 40px !important;
-          }
-        }
-        @media (max-width: 767px) {
-          .landing-audience-grid {
-            grid-template-columns: 1fr;
-          }
-          .landing-audience-container {
-            padding: 48px 24px !important;
-          }
-          .landing-audience-card {
-            padding: 20px !important;
-          }
-        }
-
-        /* Unlocks grid */
-        .landing-unlocks-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 40px;
-        }
-        @media (max-width: 1023px) {
-          .landing-unlocks-container {
-            padding: 60px 40px !important;
-          }
-        }
-        @media (max-width: 767px) {
-          .landing-unlocks-grid {
-            grid-template-columns: 1fr;
-            gap: 32px;
-          }
-          .landing-unlocks-container {
-            padding: 48px 24px !important;
-          }
-        }
-
-        /* Pros grid */
-        @media (max-width: 1023px) {
-          .landing-pros-grid {
-            grid-template-columns: 1fr !important;
-            gap: 16px !important;
-          }
-          .landing-pros-container {
-            padding: 60px 40px !important;
-          }
-        }
-        @media (max-width: 767px) {
-          .landing-pros-container {
-            padding: 48px 24px !important;
-          }
-          .landing-pros-card {
-            padding: 22px !important;
-          }
-        }
-        .landing-pros-card:hover {
-          border-color: var(--accent) !important;
-          transform: translateY(-2px);
-          box-shadow: 0 8px 32px rgba(20,230,180,0.12);
-        }
-
-        /* CTA hover */
-        .landing-cta-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 0 60px rgba(0,184,162,0.4), 0 8px 24px rgba(0,184,162,0.2);
-        }
-        .landing-cta-btn:active {
-          transform: scale(0.98);
-        }
-
-        /* Staggered entrance */
-        .landing-stagger-1,
-        .landing-stagger-2,
-        .landing-stagger-3,
-        .landing-stagger-4,
-        .landing-stagger-5,
-        .landing-stagger-card {
-          opacity: 0;
-          animation: landingFadeUp 0.6s ease-out forwards;
-        }
-        .landing-stagger-1 { animation-delay: 0.1s; }
-        .landing-stagger-2 { animation-delay: 0.2s; }
-        .landing-stagger-3 { animation-delay: 0.3s; }
-        .landing-stagger-4 { animation-delay: 0.4s; }
-        .landing-stagger-5 { animation-delay: 0.5s; }
-        .landing-stagger-card {
-          animation-delay: 0.4s;
-          animation-name: landingSlideRight;
-        }
-
-        @keyframes landingFadeUp {
-          from { opacity: 0; transform: translateY(16px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes landingSlideRight {
-          from { opacity: 0; transform: translateX(20px); }
-          to { opacity: 1; transform: translateX(0); }
-        }
-
-        /* Sticky CTA */
-        .landing-sticky-cta { display: none; }
-        @media (max-width: 767px) {
-          .landing-sticky-cta.landing-sticky-visible { display: flex; }
-        }
-
-        /* Mobile bottom padding for sticky CTA */
-        @media (max-width: 767px) {
-          .landing-footer { padding-bottom: 110px !important; }
+          .lp-hero-card { left: 16px !important; bottom: 16px !important; }
         }
       `}</style>
     </div>

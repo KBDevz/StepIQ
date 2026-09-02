@@ -424,7 +424,7 @@ export default function ResultsCarousel({
   };
 
   return (
-    <div className="results-carousel-root" style={{
+    <div className="results-carousel-root theme-dark" style={{
       position: 'fixed',
       inset: 0,
       background: 'var(--bg)',

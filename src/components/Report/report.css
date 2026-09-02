@@ -182,7 +182,7 @@
   font-size: 0.82rem;
   color: var(--text);
   padding: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border);
 }
 
 .report-zone-table tr:last-child td {
@@ -226,7 +226,7 @@
   font-size: 0.85rem;
   color: var(--text2);
   padding: 12px 8px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border);
   vertical-align: top;
 }
 
@@ -270,7 +270,7 @@
   color: var(--text);
   text-align: right;
   padding: 12px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  border-bottom: 1px solid var(--border);
 }
 
 .report-data-table td:first-child {

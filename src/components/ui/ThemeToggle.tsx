@@ -3,10 +3,10 @@ import { useEffect, useState } from 'react';
 type Theme = 'dark' | 'light';
 
 function getInitialTheme(): Theme {
-  if (typeof window === 'undefined') return 'dark';
+  if (typeof window === 'undefined') return 'light';
   const stored = window.localStorage.getItem('stepiq-theme');
   if (stored === 'light' || stored === 'dark') return stored;
-  return 'dark';
+  return 'light';
 }
 
 export default function ThemeToggle() {
@@ -14,8 +14,8 @@ export default function ThemeToggle() {
 
   useEffect(() => {
     const root = document.documentElement;
-    if (theme === 'light') {
-      root.setAttribute('data-theme', 'light');
+    if (theme === 'dark') {
+      root.setAttribute('data-theme', 'dark');
     } else {
       root.removeAttribute('data-theme');
     }

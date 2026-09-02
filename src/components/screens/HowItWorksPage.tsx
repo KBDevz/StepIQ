@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import NavBar from '../ui/NavBar';
+import SiteFooter from '../ui/SiteFooter';
+import Photo from '../ui/Photo';
 
 interface HowItWorksPageProps {
   onStart: () => void;
@@ -8,470 +10,224 @@ interface HowItWorksPageProps {
   onLogoClick: () => void;
 }
 
-/* ── Classification data ── */
-const ageBands = ['15\u201319', '20\u201329', '30\u201339', '40\u201349', '50\u201359', '60\u201365'];
+const ageBands = ['15–19', '20–29', '30–39', '40–49', '50–59', '60–65'];
 
-const maleData = [
-  { label: 'Excellent', color: '#00E5A0', values: ['60+', '55+', '50+', '46+', '44+', '40+'] },
-  { label: 'Good', color: '#06D6A0', values: ['48\u201359', '44\u201354', '40\u201349', '37\u201345', '35\u201343', '33\u201339'] },
-  { label: 'Average', color: '#FFD166', values: ['39\u201347', '35\u201343', '34\u201339', '32\u201336', '29\u201334', '25\u201332'] },
-  { label: 'Below Avg', color: '#FF8C42', values: ['30\u201338', '28\u201334', '26\u201333', '25\u201331', '23\u201328', '20\u201324'] },
-  { label: 'Poor', color: '#FF4444', values: ['<30', '<28', '<26', '<25', '<23', '<20'] },
+type Row = { label: string; color: string; values: string[] };
+const maleData: Row[] = [
+  { label: 'Excellent', color: 'var(--class-excellent)', values: ['60+', '55+', '50+', '46+', '44+', '40+'] },
+  { label: 'Good', color: 'var(--class-good)', values: ['48–59', '44–54', '40–49', '37–45', '35–43', '33–39'] },
+  { label: 'Average', color: 'var(--class-average)', values: ['39–47', '35–43', '34–39', '32–36', '29–34', '25–32'] },
+  { label: 'Below average', color: 'var(--class-below-avg)', values: ['30–38', '28–34', '26–33', '25–31', '23–28', '20–24'] },
+  { label: 'Poor', color: 'var(--class-poor)', values: ['<30', '<28', '<26', '<25', '<23', '<20'] },
+];
+const femaleData: Row[] = [
+  { label: 'Excellent', color: 'var(--class-excellent)', values: ['55+', '50+', '46+', '43+', '41+', '39+'] },
+  { label: 'Good', color: 'var(--class-good)', values: ['44–54', '40–49', '36–45', '34–42', '33–40', '31–38'] },
+  { label: 'Average', color: 'var(--class-average)', values: ['36–43', '32–39', '30–35', '28–33', '26–32', '24–30'] },
+  { label: 'Below average', color: 'var(--class-below-avg)', values: ['29–35', '27–31', '25–29', '22–27', '21–25', '19–23'] },
+  { label: 'Poor', color: 'var(--class-poor)', values: ['<29', '<27', '<25', '<22', '<21', '<19'] },
 ];
 
-const femaleData = [
-  { label: 'Excellent', color: '#00E5A0', values: ['55+', '50+', '46+', '43+', '41+', '39+'] },
-  { label: 'Good', color: '#06D6A0', values: ['44\u201354', '40\u201349', '36\u201345', '34\u201342', '33\u201340', '31\u201338'] },
-  { label: 'Average', color: '#FFD166', values: ['36\u201343', '32\u201339', '30\u201335', '28\u201333', '26\u201332', '24\u201330'] },
-  { label: 'Below Avg', color: '#FF8C42', values: ['29\u201335', '27\u201331', '25\u201329', '22\u201327', '21\u201325', '19\u201323'] },
-  { label: 'Poor', color: '#FF4444', values: ['<29', '<27', '<25', '<22', '<21', '<19'] },
-];
-
-/* ── 3 Steps data ── */
 const steps = [
-  {
-    title: 'Enter Your Details',
-    desc: 'Age, sex, and step height — takes under 30 seconds.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Step to a Guided Pace',
-    desc: 'Five 2-minute levels with a metronome and animated step guide — most people complete 3 to 4 levels.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M4 20h6V14h4V8h6" /><path d="M4 20h16" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Get Your Score and Insights',
-    desc: 'Linear regression calculates your VO₂ max estimate — you receive a fitness classification, AI analysis, and an 8-week training plan.',
-    icon: (
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-        <circle cx="12" cy="12" r="10" /><circle cx="12" cy="12" r="6" /><circle cx="12" cy="12" r="2" />
-      </svg>
-    ),
-  },
+  { n: '01', title: 'Enter your details', desc: 'Age, sex, and whether you take a beta-blocker. That is all we need to predict your maximum heart rate. Under thirty seconds.' },
+  { n: '02', title: 'Step to a guided pace', desc: 'Up to five two-minute levels, each slightly faster, with a metronome and on-screen cues. Most people complete three or four. You stop at a comfortable effort.' },
+  { n: '03', title: 'Get your score and plan', desc: 'We fit a regression line through your heart-rate data and project to your maximum. You receive a VO₂ max, a classification, and an eight-week protocol.' },
 ];
 
+const compare = [
+  { label: 'Clinically validated', lab: true, wear: false, cst: true, siq: true },
+  { label: 'Accessible at home', lab: false, wear: true, cst: true, siq: true },
+  { label: 'Published research basis', lab: true, wear: false, cst: true, siq: true },
+  { label: 'Safe at every fitness level', lab: false, wear: true, cst: true, siq: true },
+  { label: 'Accuracy vs. lab test', lab: 'Reference standard', wear: '±20%+ (unvalidated)', cst: '±8–10% (r = 0.92)', siq: '±8–10% (r = 0.92)' },
+  { label: 'Equipment needed', lab: 'Specialist lab', wear: '$200–400 device', cst: '30 cm step', siq: '30 cm step' },
+  { label: 'Cost', lab: '$300–500', wear: '$200–400', cst: 'Free', siq: 'Free' },
+] as const;
 
-/* ── Section divider component ── */
-function Divider() {
-  return <div style={{ height: '1px', background: 'var(--border)', opacity: 0.5, width: '100%' }} />;
-}
+const Cell = ({ v, strong }: { v: boolean | string; strong?: boolean }) =>
+  typeof v === 'boolean' ? (
+    <span style={{ color: v ? 'var(--accent)' : 'var(--text3)', fontWeight: 700 }}>{v ? '✓' : '—'}</span>
+  ) : (
+    <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: strong ? 'var(--accent)' : 'var(--text2)', fontWeight: strong ? 600 : 400 }}>{v}</span>
+  );
 
-/* ══════════════════════════════════════════════
-   PAGE COMPONENT
-   ══════════════════════════════════════════════ */
 export default function HowItWorksPage({ onStart, onHowItWorks, onLogoClick, authNavProps }: HowItWorksPageProps) {
   const [tableSex, setTableSex] = useState<'male' | 'female'>('male');
   const tableData = tableSex === 'male' ? maleData : femaleData;
 
-  return (
-    <div className="min-h-screen bg-[#060C18] text-[#EEF2FF] relative">
-      {/* Background grid */}
-      <div className="fixed inset-0 pointer-events-none" style={{ backgroundImage: 'linear-gradient(rgba(28,47,74,0.15) 1px, transparent 1px), linear-gradient(90deg, rgba(28,47,74,0.15) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
-      <div className="fixed inset-0 pointer-events-none" style={{ background: 'radial-gradient(ellipse at center, rgba(6,12,24,0) 30%, rgba(6,12,24,0.6) 60%, #060C18 100%)' }} />
+  const th: React.CSSProperties = { fontFamily: 'var(--font-body)', fontSize: '0.78rem', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'var(--text3)', padding: '14px 16px', textAlign: 'center', background: 'var(--surface2)', borderBottom: '1px solid var(--border)' };
 
+  return (
+    <div style={{ minHeight: '100vh', background: 'var(--bg)', color: 'var(--text)' }}>
       <NavBar onStart={onStart} onHowItWorks={onHowItWorks} onLogoClick={onLogoClick} {...authNavProps} />
 
-      <div className="relative z-10">
+      <main style={{ paddingTop: '72px' }}>
 
-        {/* ────── SECTION 1: HERO ────── */}
-        <section className="hiw-section-pad" style={{ paddingTop: '152px', paddingBottom: '100px' }}>
-          <div style={{ maxWidth: '800px', margin: '0 auto', textAlign: 'center' }}>
-            <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.18em', textTransform: 'uppercase', color: 'var(--accent)', marginBottom: '20px' }}>
-              Why the Chester Step Test
+        {/* ── HERO ── */}
+        <section className="mk-section" style={{ paddingTop: '64px', paddingBottom: '48px' }}>
+          <div className="mk-narrow" style={{ textAlign: 'center' }}>
+            <p className="mk-eyebrow">The science</p>
+            <h1 className="mk-display-xl" style={{ marginBottom: '22px' }}>The most credible fitness test you can do <em>without a lab.</em></h1>
+            <p className="mk-lede" style={{ maxWidth: '620px', margin: '0 auto' }}>
+              Peer-reviewed. Validated at r = 0.92 against laboratory VO₂ max. Used in cardiac rehabilitation and occupational health for more than two decades.
             </p>
-            <h1 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(2.2rem, 5.5vw, 3.3rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.15, marginBottom: '20px' }}>
-              The Most Credible Fitness Test You Can Do Without a Lab
-            </h1>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.88rem', color: 'var(--text2)', lineHeight: 1.65, maxWidth: '540px', margin: '0 auto' }}>
-              Peer-reviewed. Validated at r=0.92 against laboratory VO₂ max testing. Used in cardiac rehabilitation and occupational health for decades.
-            </p>
+          </div>
+          <div className="mk-container" style={{ marginTop: '56px' }}>
+            <Photo name="hero-facilities.jpg" alt="A guided step test in a bright, airy studio" ratio="21 / 9" radius={28} priority hint="Wide hero — step test in progress" />
           </div>
         </section>
 
-        <Divider />
-
-        {/* ────── SECTION 2: HOW IT WORKS (3 steps) ────── */}
-        <section className="hiw-section-pad hiw-section-v">
-          <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 className="font-serif" style={{ fontSize: '1.8rem', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '40px' }}>
-              Three Steps to Your VO₂ Score
-            </h2>
-
-            <div className="hiw-steps-grid">
-              {steps.map((step, i) => (
-                <div key={step.title} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', position: 'relative' }}>
-                  {i < steps.length - 1 && (
-                    <div className="hiw-step-connector" />
-                  )}
-
-                  <div style={{ marginBottom: '12px', color: 'var(--accent)' }}>
-                    {step.icon}
-                  </div>
-
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px', marginBottom: '10px' }}>
-                    <span
-                      style={{
-                        width: '26px', height: '26px', borderRadius: '50%',
-                        background: 'var(--accent)', color: 'var(--bg)',
-                        fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.7rem', fontWeight: 700,
-                        display: 'flex', alignItems: 'center', justifyContent: 'center',
-                        flexShrink: 0,
-                      }}
-                    >
-                      {i + 1}
-                    </span>
-                    <h3 style={{
-                      fontFamily: "'IBM Plex Mono', monospace", fontSize: '0.78rem', fontWeight: 700,
-                      textTransform: 'uppercase', letterSpacing: '0.1em', color: 'var(--text)',
-                      margin: 0,
-                    }}>
-                      {step.title}
-                    </h3>
-                  </div>
-
-                  <p className="font-mono" style={{ fontSize: '0.75rem', color: '#5A7090', lineHeight: 1.7, maxWidth: '280px' }}>
-                    {step.desc}
-                  </p>
+        {/* ── THREE STEPS ── */}
+        <section className="mk-section">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">How it works</p>
+              <h2 className="mk-display-lg">Three steps to your VO₂ score.</h2>
+            </div>
+            <div className="mk-grid-3">
+              {steps.map((s) => (
+                <div key={s.n} className="mk-card mk-card--flat">
+                  <p style={{ fontFamily: 'var(--font-display)', fontSize: '2.2rem', color: 'var(--clay)', lineHeight: 1, marginBottom: '16px' }}>{s.n}</p>
+                  <h3 className="mk-display-md" style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{s.title}</h3>
+                  <p className="mk-body">{s.desc}</p>
                 </div>
               ))}
             </div>
           </div>
         </section>
 
-        <Divider />
-
-        {/* ────── SECTION 3: CLINICAL CREDIBILITY ────── */}
-        <section
-          style={{
-            background: 'var(--surface)',
-            borderTop: '1px solid var(--border)',
-            borderBottom: '1px solid var(--border)',
-          }}
-        >
-          <div className="hiw-section-pad hiw-cred-v" style={{ maxWidth: '1200px', margin: '0 auto' }}>
-            <h2 style={{ fontFamily: 'var(--font-display)', fontSize: 'clamp(1.6rem, 4vw, 2.2rem)', fontWeight: 700, color: 'var(--text)', lineHeight: 1.2, textAlign: 'center', marginBottom: '12px' }}>
-              Why the Chester Step Test Works
-            </h2>
-            <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', textAlign: 'center', maxWidth: '560px', margin: '0 auto 48px', lineHeight: 1.65 }}>
-              Developed in clinical settings. Validated in peer-reviewed research. Used in cardiac rehabilitation worldwide.
-            </p>
-
-            {/* 3 credibility cards */}
-            <div className="hiw-cred-grid">
-              {/* Card 1 — Clinical Pedigree */}
-              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
-                  <path d="M22 10v6M2 10l10-5 10 5-10 5z" /><path d="M6 12v5c3 3 6 3 6 3s3 0 6-3v-5" />
-                </svg>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
-                  Clinical Pedigree
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                  Developed by K. Sykes, the Chester Step Test is used in cardiac rehabilitation and occupational health worldwide. It's a real clinical assessment tool — not a wellness app feature.
-                </p>
-              </div>
-
-              {/* Card 2 — The Science Behind It */}
-              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
-                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-                </svg>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
-                  The Science Behind It
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                  Your heart rate response is plotted across up to five known workloads and a regression line is fitted to the data. Extrapolating to your predicted max HR gives a clinically validated VO₂ estimate.
-                </p>
-              </div>
-
-              {/* Card 3 — Submaximal by Design */}
-              <div style={{ background: 'var(--bg)', border: '1px solid var(--border)', borderRadius: '14px', padding: '24px' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ marginBottom: '14px' }}>
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                </svg>
-                <h3 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '10px' }}>
-                  Submaximal by Design
-                </h3>
-                <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.78rem', color: 'var(--text2)', lineHeight: 1.65 }}>
-                  The test estimates your peak capacity from moderate effort data — no exhaustion required. Safe for a wide range of ages and fitness levels including those returning from illness or injury.
-                </p>
-              </div>
+        {/* ── WHY IT WORKS ── */}
+        <section className="mk-section mk-section--tinted">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '48px' }}>
+              <p className="mk-eyebrow">Why the Chester Step Test</p>
+              <h2 className="mk-display-lg">Developed in clinics. <em>Proven in research.</em></h2>
+            </div>
+            <div className="mk-grid-3">
+              {[
+                { t: 'Clinical pedigree', b: 'Developed by Kevin Sykes for cardiac rehabilitation and occupational health, the Chester Step Test is a real clinical assessment tool — not a wellness-app feature.' },
+                { t: 'The method', b: 'Your heart-rate response is plotted across up to five known workloads and a regression line is fitted. Extrapolating to your predicted maximum gives a validated VO₂ estimate.' },
+                { t: 'Submaximal by design', b: 'The test estimates peak capacity from moderate-effort data. No exhaustion required, which makes it safe across ages and fitness levels, including people returning from illness.' },
+              ].map((c) => (
+                <div key={c.t} className="mk-card">
+                  <h3 className="mk-display-md" style={{ fontSize: '1.3rem', marginBottom: '10px' }}>{c.t}</h3>
+                  <p className="mk-body">{c.b}</p>
+                </div>
+              ))}
             </div>
 
-            {/* ── Comparison Table ── */}
-            <div style={{ marginTop: '64px' }}>
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.6rem', letterSpacing: '0.14em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', marginBottom: '20px' }}>
-                How It Compares
-              </p>
-
-              <div className="hiw-compare-table-wrap" style={{ maxWidth: '860px', margin: '0 auto', borderRadius: '14px', border: '1px solid var(--border)', overflow: 'hidden' }}>
-                <div style={{ overflowX: 'auto' }}>
-                  <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '680px' }}>
-                    <thead>
-                      <tr style={{ background: 'var(--surface2)' }}>
-                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'left', padding: '12px 16px', fontWeight: 500 }}>&nbsp;</th>
-                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Lab VO₂ Test</th>
-                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--text2)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Wearable</th>
-                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', textAlign: 'center', padding: '12px 16px', fontWeight: 500 }}>Chester Step Test</th>
-                        <th style={{ fontFamily: 'var(--font-mono)', fontSize: '0.62rem', letterSpacing: '0.1em', textTransform: 'uppercase', color: 'var(--accent)', textAlign: 'center', padding: '12px 16px', fontWeight: 500, borderLeft: '3px solid var(--accent)' }}>StepIQ</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {[
-                        { label: 'Clinically validated', lab: true, wearable: false, chester: true, stepiq: true },
-                        { label: 'Accessible at home', lab: false, wearable: true, chester: true, stepiq: true },
-                        { label: 'Published research basis', lab: true, wearable: false, chester: true, stepiq: true },
-                        { label: 'Safe for all fitness levels', lab: false, wearable: true, chester: true, stepiq: true },
-                        { label: 'Accuracy vs lab test', lab: 'Reference standard', wearable: '±20%+ (unvalidated)', chester: '±8-10% (r=0.92)', stepiq: '±8-10% (r=0.92)', accentAccuracy: true },
-                        { label: 'Equipment needed', lab: 'Specialist lab', wearable: '$200–400 device', chester: '30cm step', stepiq: '30cm step' },
-                        { label: 'Cost', lab: '$300–500', wearable: '$200–400', chester: 'Free', stepiq: 'Free' },
-                      ].map((row, i) => (
-                        <tr key={row.label} style={{ background: i % 2 === 0 ? 'var(--surface)' : 'var(--bg)' }}>
-                          <td style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', fontWeight: 500, color: 'var(--text)', padding: '14px 16px', textAlign: 'left' }}>{row.label}</td>
-                          {(['lab', 'wearable', 'chester', 'stepiq'] as const).map((col) => {
-                            const val = row[col];
-                            const isStepiq = col === 'stepiq';
-                            return (
-                              <td key={col} style={{ textAlign: 'center', padding: '14px 16px', borderLeft: isStepiq ? '3px solid var(--accent)' : undefined }}>
-                                {typeof val === 'boolean' ? (
-                                  <span style={{ fontSize: '1rem', fontWeight: 700, color: val ? 'var(--accent)' : 'var(--danger)' }}>{val ? '✓' : '✗'}</span>
-                                ) : (
-                                  <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: (row as Record<string, unknown>).accentAccuracy && (col === 'chester' || col === 'stepiq') ? 'var(--accent)' : 'var(--text2)', fontWeight: (row as Record<string, unknown>).accentAccuracy && (col === 'chester' || col === 'stepiq') ? 600 : undefined }}>{val}</span>
-                                )}
-                              </td>
-                            );
-                          })}
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-
-              {/* Clinical reference */}
-              <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text3)', fontStyle: 'italic', textAlign: 'center', maxWidth: '600px', margin: '24px auto 0', lineHeight: 1.7 }}>
-                The Chester Step Test was designed by K. Sykes (1998) for cardiac rehabilitation and occupational health settings. Reference: Sykes K. (1998) Chester Step Test Resource Pack. Cheshire: Physique Management Co.
-              </p>
-
-              {/* Validation callout box */}
-              <div style={{ background: 'var(--accent-dark)', border: '1px solid rgba(0,184,162,0.2)', borderRadius: '12px', padding: '24px 28px', maxWidth: '760px', margin: '32px auto 0', display: 'flex', gap: '16px', alignItems: 'flex-start' }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0, marginTop: '2px' }}>
-                  <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" />
-                </svg>
-                <div>
-                  <h4 style={{ fontFamily: 'var(--font-display)', fontSize: '1.1rem', fontWeight: 700, color: 'var(--text)', marginBottom: '8px' }}>
-                    Validated in Peer-Reviewed Research
-                  </h4>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.82rem', color: 'var(--text2)', lineHeight: 1.75 }}>
-                    The Chester Step Test has been validated against direct laboratory VO₂ max measurement with a correlation coefficient of r=0.92 (Sykes & Roberts, 2004). The standard error of estimate is approximately ±3.0-3.5 ml/kg/min, making it the most accurate submaximal cardiovascular fitness test you can perform without specialist equipment.
-                  </p>
-                  <div style={{ marginTop: '12px', paddingTop: '12px', borderTop: '1px solid var(--border)' }}>
-                    <p style={{ fontFamily: 'var(--font-mono)', fontSize: '0.58rem', color: 'var(--text3)', fontStyle: 'italic', lineHeight: 1.6 }}>
-                      Reference: Sykes K, Roberts A. (2004). The Chester step test: a simple yet effective tool for the prediction of aerobic capacity. Occupational Medicine, 54(4), 304-312.
-                    </p>
-                  </div>
-                </div>
+            {/* Validation */}
+            <div className="mk-card" style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'auto 1fr', gap: '24px', alignItems: 'start', borderColor: 'var(--accent)' }}>
+              <span style={{ width: 48, height: 48, borderRadius: 14, background: 'var(--accent-soft)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center' }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20" /><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z" /></svg>
+              </span>
+              <div>
+                <h3 className="mk-display-md" style={{ fontSize: '1.3rem', marginBottom: '8px' }}>Validated in peer-reviewed research</h3>
+                <p className="mk-body" style={{ marginBottom: '12px' }}>
+                  Against direct laboratory VO₂ max measurement the Chester Step Test correlates at r = 0.92, with a standard error of roughly ±3.0–3.5 ml/kg/min — the most accurate submaximal cardiovascular test you can perform without specialist equipment.
+                </p>
+                <p className="mk-small" style={{ fontStyle: 'italic' }}>Sykes K, Roberts A. (2004). The Chester step test: a simple yet effective tool for the prediction of aerobic capacity. <em>Occupational Medicine</em>, 54(4), 304–312.</p>
               </div>
             </div>
           </div>
         </section>
 
-        <Divider />
+        {/* ── COMPARISON ── */}
+        <section className="mk-section">
+          <div className="mk-container">
+            <div style={{ maxWidth: '640px', marginBottom: '40px' }}>
+              <p className="mk-eyebrow">How it compares</p>
+              <h2 className="mk-display-lg">Lab accuracy. Living-room access.</h2>
+            </div>
+            <div className="mk-card mk-card--flat" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '720px' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ ...th, textAlign: 'left' }}>&nbsp;</th>
+                      <th style={th}>Lab VO₂ test</th>
+                      <th style={th}>Wearable</th>
+                      <th style={th}>Chester Step Test</th>
+                      <th style={{ ...th, color: 'var(--accent)', background: 'var(--accent-soft)' }}>StepIQ</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {compare.map((r, i) => {
+                      const accuracy = r.label.startsWith('Accuracy');
+                      return (
+                        <tr key={r.label} style={{ background: i % 2 ? 'var(--surface2)' : 'var(--surface)' }}>
+                          <td style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', fontWeight: 500, color: 'var(--text)', padding: '16px', borderBottom: '1px solid var(--border)' }}>{r.label}</td>
+                          <td style={{ textAlign: 'center', padding: '16px', borderBottom: '1px solid var(--border)' }}><Cell v={r.lab} /></td>
+                          <td style={{ textAlign: 'center', padding: '16px', borderBottom: '1px solid var(--border)' }}><Cell v={r.wear} /></td>
+                          <td style={{ textAlign: 'center', padding: '16px', borderBottom: '1px solid var(--border)' }}><Cell v={r.cst} strong={accuracy} /></td>
+                          <td style={{ textAlign: 'center', padding: '16px', borderBottom: '1px solid var(--border)', background: 'var(--accent-soft)' }}><Cell v={r.siq} strong={accuracy} /></td>
+                        </tr>
+                      );
+                    })}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
 
-        {/* ────── SECTION 4: CLASSIFICATIONS TABLE ────── */}
-        <section className="hiw-section-pad hiw-section-v">
-          <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.76rem, 4.4vw, 2.64rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, textAlign: 'center', marginBottom: '16px' }}>
-              Where Do You Rank?
-            </h2>
-            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.7, textAlign: 'center', maxWidth: '560px', margin: '0 auto 8px' }}>
-              Fitness classifications based on Chester Step Test norms by K. Sykes.
-            </p>
-            <p className="font-mono" style={{ fontSize: '0.72rem', color: '#5A7090', textAlign: 'center', marginBottom: '32px' }}>
-              Your exact score will be calculated after your test. Use this table to see where you might land.
-            </p>
-
-            {/* Sex toggle */}
-            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '32px' }}>
-              <div style={{ display: 'inline-flex', background: '#0a1220', border: '1px solid #1C2F4A', borderRadius: '10px', padding: '4px' }}>
+        {/* ── CLASSIFICATIONS ── */}
+        <section className="mk-section mk-section--tinted">
+          <div className="mk-container">
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', gap: '24px', flexWrap: 'wrap', marginBottom: '32px' }}>
+              <div style={{ maxWidth: '640px' }}>
+                <p className="mk-eyebrow">Where do you rank?</p>
+                <h2 className="mk-display-lg" style={{ marginBottom: '12px' }}>Fitness classifications by age and sex.</h2>
+                <p className="mk-body">Chester Step Test norms. Your exact score is calculated after your test — use this to see where you might land.</p>
+              </div>
+              <div style={{ display: 'inline-flex', background: 'var(--surface)', border: '1px solid var(--border)', borderRadius: 999, padding: 4 }}>
                 {(['male', 'female'] as const).map((sex) => (
-                  <button
-                    key={sex}
-                    onClick={() => setTableSex(sex)}
-                    className="font-mono capitalize"
-                    style={{
-                      fontSize: '0.75rem',
-                      padding: '8px 24px',
-                      borderRadius: '8px',
-                      border: 'none',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      background: tableSex === sex ? 'rgba(0,229,160,0.12)' : 'transparent',
-                      color: tableSex === sex ? '#00E5A0' : '#5A7090',
-                      fontWeight: tableSex === sex ? 600 : 400,
-                    }}
-                  >
+                  <button key={sex} type="button" onClick={() => setTableSex(sex)} style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', fontWeight: 600, padding: '8px 20px', borderRadius: 999, border: 'none', cursor: 'pointer', textTransform: 'capitalize', background: tableSex === sex ? 'var(--accent)' : 'transparent', color: tableSex === sex ? '#fff' : 'var(--text2)', transition: 'all 0.15s' }}>
                     {sex}
                   </button>
                 ))}
               </div>
             </div>
 
-            {/* Table */}
-            <div className="hiw-norms-table-wrap" style={{ overflowX: 'auto', borderRadius: '12px', border: '1px solid rgba(28,47,74,0.6)' }}>
-              <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
-                <thead>
-                  <tr>
-                    <th className="font-mono hiw-norms-sticky-col" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.1em', textAlign: 'left', padding: '11px 13px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
-                      AGE
-                    </th>
-                    {ageBands.map((band) => (
-                      <th key={band} className="font-mono" style={{ fontSize: '0.65rem', color: '#5A7090', letterSpacing: '0.08em', textAlign: 'center', padding: '11px 10px', borderBottom: '1px solid rgba(28,47,74,0.6)', background: '#0a1220', fontWeight: 500 }}>
-                        {band}
-                      </th>
-                    ))}
-                  </tr>
-                </thead>
-                <tbody>
-                  {tableData.map((row, ri) => (
-                    <tr key={row.label} style={{ background: ri % 2 === 0 ? '#0D1829' : '#0a1220' }}>
-                      <td className="hiw-norms-sticky-col" style={{ padding: '10px 13px', borderLeft: `3px solid ${row.color}`, borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none', background: ri % 2 === 0 ? '#0D1829' : '#0a1220' }}>
-                        <span className="font-mono" style={{ fontSize: '0.72rem', fontWeight: 600, color: row.color }}>
-                          {row.label}
-                        </span>
-                      </td>
-                      {row.values.map((val, ci) => (
-                        <td key={ci} className="font-mono" style={{ fontSize: '0.72rem', color: '#EEF2FF', textAlign: 'center', padding: '10px', borderBottom: ri < tableData.length - 1 ? '1px solid rgba(28,47,74,0.6)' : 'none' }}>
-                          {val}
-                        </td>
-                      ))}
+            <div className="mk-card mk-card--flat" style={{ padding: 0, overflow: 'hidden' }}>
+              <div style={{ overflowX: 'auto' }}>
+                <table style={{ width: '100%', borderCollapse: 'collapse', minWidth: '640px' }}>
+                  <thead>
+                    <tr>
+                      <th style={{ ...th, textAlign: 'left' }}>Age</th>
+                      {ageBands.map((b) => <th key={b} style={th}>{b}</th>)}
                     </tr>
-                  ))}
-                </tbody>
-              </table>
+                  </thead>
+                  <tbody>
+                    {tableData.map((row, ri) => (
+                      <tr key={row.label} style={{ background: ri % 2 ? 'var(--surface2)' : 'var(--surface)' }}>
+                        <td style={{ padding: '14px 16px', borderLeft: `4px solid ${row.color}`, borderBottom: '1px solid var(--border)' }}>
+                          <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', fontWeight: 600, color: 'var(--text)' }}>{row.label}</span>
+                        </td>
+                        {row.values.map((v, ci) => (
+                          <td key={ci} style={{ fontFamily: 'var(--font-body)', fontSize: '0.95rem', color: 'var(--text2)', textAlign: 'center', padding: '14px 16px', borderBottom: '1px solid var(--border)' }}>{v}</td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
             </div>
-
-            <p className="font-mono" style={{ fontSize: '0.6rem', color: '#5A7090', opacity: 0.5, textAlign: 'center', marginTop: '16px' }}>
-              Values in ml &middot; kg&#x207B;&#xB9; &middot; min&#x207B;&#xB9;
-            </p>
+            <p className="mk-small" style={{ marginTop: '14px' }}>Values in ml · kg⁻¹ · min⁻¹. Source: K. Sykes, Chester Step Test Resource Pack.</p>
           </div>
         </section>
 
-        <Divider />
-
-        {/* ────── SECTION 6: FINAL CTA ────── */}
-        <section style={{ position: 'relative' }}>
-          <div style={{ position: 'absolute', top: 0, left: '10%', right: '10%', height: '1px', background: 'linear-gradient(90deg, transparent, rgba(0,229,160,0.4), transparent)' }} />
-
-          <div className="hiw-section-pad hiw-section-v" style={{ textAlign: 'center' }}>
-            <h2 className="font-serif" style={{ fontSize: 'clamp(1.8rem, 4vw, 2.5rem)', fontWeight: 700, color: '#fff', lineHeight: 1.2, marginBottom: '20px' }}>
-              Ready to Find Out Where You Stand?
-            </h2>
-            <p className="font-mono" style={{ fontSize: '0.78rem', color: '#5A7090', lineHeight: 1.8, maxWidth: '480px', margin: '0 auto 40px' }}>
-              Takes 10 minutes. No account required. Just a step platform and a heart rate monitor.
-            </p>
-
-            <button
-              onClick={onStart}
-              className="font-mono uppercase cursor-pointer transition-all landing-cta-btn"
-              style={{
-                fontSize: '0.8rem',
-                fontWeight: 700,
-                letterSpacing: '0.1em',
-                color: '#060C18',
-                background: '#00E5A0',
-                padding: '16px 36px',
-                borderRadius: '10px',
-                border: 'none',
-                boxShadow: '0 0 40px rgba(0,229,160,0.3)',
-              }}
-            >
-              Start Your Assessment &rarr;
-            </button>
-
+        {/* ── CTA ── */}
+        <section className="mk-section mk-section--ink">
+          <div className="mk-narrow" style={{ textAlign: 'center' }}>
+            <h2 className="mk-display-lg" style={{ color: '#F4F7F5', marginBottom: '16px' }}>Ready to find out where you stand?</h2>
+            <p className="mk-lede" style={{ marginBottom: '32px' }}>Ten minutes. No account. Just a step and a heart-rate monitor.</p>
+            <button type="button" onClick={onStart} className="mk-btn mk-btn--onink mk-btn--lg">Start your assessment</button>
           </div>
         </section>
+      </main>
 
-      </div>
-
-      {/* ── Responsive styles ── */}
-      <style>{`
-        .hiw-section-pad { padding-left: 64px; padding-right: 64px; }
-        .hiw-section-v { padding-top: 100px; padding-bottom: 100px; }
-
-        .hiw-cred-v { padding-top: 80px; padding-bottom: 80px; }
-        .hiw-cred-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 20px;
-        }
-
-        .hiw-steps-grid {
-          display: grid;
-          grid-template-columns: repeat(3, 1fr);
-          gap: 48px;
-          position: relative;
-        }
-
-        .hiw-step-connector {
-          display: none;
-        }
-
-        @media (min-width: 768px) {
-          .hiw-step-connector {
-            display: block;
-            position: absolute;
-            top: 16px;
-            left: calc(33.33% * var(--step-i, 1) + 24px);
-            width: calc(33.33% - 48px);
-            height: 1px;
-            background: rgba(0,229,160,0.2);
-          }
-        }
-
-        /* Tablet */
-        @media (min-width: 768px) and (max-width: 1023px) {
-          .hiw-section-pad { padding-left: 48px; padding-right: 48px; }
-          .hiw-cred-v { padding-top: 56px; padding-bottom: 56px; }
-          .hiw-cred-grid { grid-template-columns: repeat(3, 1fr); gap: 16px; }
-          .hiw-steps-grid { grid-template-columns: repeat(3, 1fr); gap: 32px; }
-        }
-
-        /* Mobile */
-        @media (max-width: 767px) {
-          .hiw-section-pad { padding-left: 24px; padding-right: 24px; }
-          .hiw-section-v { padding-top: 48px; padding-bottom: 48px; }
-          .hiw-cred-v { padding-top: 48px; padding-bottom: 48px; }
-          .hiw-cred-grid { grid-template-columns: 1fr; }
-          .hiw-steps-grid { grid-template-columns: 1fr; gap: 40px; }
-          .hiw-compare-table-wrap { margin-left: -24px; margin-right: -24px; border-radius: 0 !important; border-left: none !important; border-right: none !important; }
-          .hiw-compare-table-wrap td:first-child,
-          .hiw-compare-table-wrap th:first-child {
-            position: sticky;
-            left: 0;
-            background: var(--surface);
-            z-index: 2;
-          }
-          .hiw-norms-sticky-col {
-            position: sticky;
-            left: 0;
-            z-index: 2;
-          }
-        }
-
-        .landing-cta-btn:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 0 60px rgba(0,229,160,0.45), 0 8px 24px rgba(0,229,160,0.2) !important;
-        }
-      `}</style>
+      <SiteFooter onStart={onStart} onHowItWorks={onHowItWorks} />
     </div>
   );
 }

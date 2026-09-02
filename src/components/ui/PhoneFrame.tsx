@@ -4,7 +4,7 @@ interface PhoneFrameProps {
 
 export default function PhoneFrame({ children }: PhoneFrameProps) {
   return (
-    <div className="page-bg">
+    <div className="page-bg theme-dark">
       <div className="phone-frame-outer">
         <div className="phone-frame-inner">
           <div className="phone-frame-content">

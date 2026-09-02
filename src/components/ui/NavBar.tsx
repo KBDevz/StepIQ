@@ -11,6 +11,12 @@ interface NavBarProps {
   onSignOut?: () => void;
 }
 
+const SEGMENT_LINKS = [
+  { label: 'Clinics', href: '/clinics' },
+  { label: 'Facilities', href: '/facilities' },
+  { label: 'Teams', href: '/teams' },
+];
+
 export default function NavBar({
   onStart,
   onHowItWorks,
@@ -23,8 +29,16 @@ export default function NavBar({
 }: NavBarProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [betaModalOpen, setBetaModalOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
+
+  useEffect(() => {
+    const onScroll = () => setScrolled(window.scrollY > 8);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   useEffect(() => {
     if (!drawerOpen) return;
@@ -34,11 +48,7 @@ export default function NavBar({
   }, [drawerOpen]);
 
   useEffect(() => {
-    if (drawerOpen || betaModalOpen) {
-      document.body.style.overflow = 'hidden';
-    } else {
-      document.body.style.overflow = '';
-    }
+    document.body.style.overflow = drawerOpen || betaModalOpen ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
   }, [drawerOpen, betaModalOpen]);
 
@@ -49,527 +59,191 @@ export default function NavBar({
     return () => window.removeEventListener('keydown', onKey);
   }, [betaModalOpen]);
 
+  const currentPath = typeof window !== 'undefined' ? window.location.pathname : '/';
+
   const logo = (
-    <div className="flex items-center gap-3">
-      <div
-        className="flex items-center justify-center"
-        style={{
-          width: '32px',
-          height: '32px',
-          borderRadius: '8px',
-          background: 'var(--accent-dark)',
-          border: '1px solid rgba(0,184,162,0.3)',
-        }}
-      >
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-          <path
-            d="M3 12h4l3-9 4 18 3-9h4"
-            stroke="var(--accent)"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
+    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <span style={{ width: 34, height: 34, borderRadius: 10, background: 'var(--accent)', display: 'inline-flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none">
+          <path d="M3 12h4l3-9 4 18 3-9h4" stroke="#FFFFFF" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" />
         </svg>
-      </div>
-      <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.15rem', color: 'var(--text)', fontWeight: 700, letterSpacing: '-0.01em' }}>
+      </span>
+      <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', color: 'var(--text)', letterSpacing: '-0.01em' }}>
         StepIQ
       </span>
-      <span
+      <button
+        type="button"
         onClick={(e) => { e.stopPropagation(); setBetaModalOpen(true); }}
-        style={{
-          fontFamily: 'var(--font-mono)',
-          fontSize: '0.65rem',
-          fontWeight: 600,
-          color: 'var(--accent)',
-          background: 'rgba(20,230,180,0.10)',
-          border: '1px solid rgba(20,230,180,0.30)',
-          borderRadius: '999px',
-          padding: '4px 10px',
-          cursor: 'pointer',
-          lineHeight: 1,
-        }}
+        className="mk-pill"
+        style={{ fontSize: '0.68rem', padding: '4px 10px', border: 'none', cursor: 'pointer', letterSpacing: '0.08em' }}
+        aria-label="About the beta"
       >
         BETA
-      </span>
+      </button>
     </div>
   );
+
+  const linkStyle = (active: boolean) => ({
+    fontFamily: 'var(--font-body)',
+    fontSize: '0.95rem',
+    fontWeight: 500,
+    color: active ? 'var(--text)' : 'var(--text2)',
+    textDecoration: 'none',
+    padding: '8px 2px',
+    borderBottom: active ? '2px solid var(--accent)' : '2px solid transparent',
+    transition: 'color 0.15s',
+  });
 
   return (
     <>
       <nav
-        className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between hiw-nav-pad"
+        className="site-nav"
         style={{
-          height: '64px',
-          background: 'rgba(15,14,19,0.85)',
-          backdropFilter: 'blur(12px)',
-          WebkitBackdropFilter: 'blur(12px)',
-          borderBottom: '1px solid var(--border)',
+          position: 'fixed', top: 0, left: 0, right: 0, zIndex: 50,
+          height: '72px',
+          display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+          padding: '0 32px',
+          background: scrolled ? 'rgba(250, 248, 244, 0.86)' : 'rgba(250, 248, 244, 0.6)',
+          backdropFilter: 'blur(14px)',
+          WebkitBackdropFilter: 'blur(14px)',
+          borderBottom: `1px solid ${scrolled ? 'var(--border)' : 'transparent'}`,
+          transition: 'background 0.2s, border-color 0.2s',
         }}
       >
-        {/* Logo */}
-        <div className="cursor-pointer" onClick={onLogoClick}>
-          {logo}
-        </div>
+        <div style={{ cursor: 'pointer' }} onClick={onLogoClick}>{logo}</div>
 
-        {/* Desktop nav items */}
-        <div className="nav-desktop-items flex items-center" style={{ gap: '22px' }}>
-          {[
-            { label: 'For Clinics', href: '/clinics' },
-            { label: 'For Facilities', href: '/facilities' },
-            { label: 'For Teams', href: '/teams' },
-          ].map((link) => (
+        <div className="site-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '28px' }}>
+          {SEGMENT_LINKS.map((l) => (
             <a
-              key={link.href}
-              href={link.href}
-              className="nav-segment-link transition-colors"
-              style={{
-                fontFamily: 'var(--font-body)',
-                fontSize: '0.85rem',
-                fontWeight: 400,
-                color: 'var(--text2)',
-                textDecoration: 'none',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--accent)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
+              key={l.href}
+              href={l.href}
+              style={linkStyle(currentPath.startsWith(l.href))}
+              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
+              onMouseLeave={(e) => { if (!currentPath.startsWith(l.href)) e.currentTarget.style.color = 'var(--text2)'; }}
             >
-              {link.label}
+              For {l.label}
             </a>
           ))}
-
-          <span style={{ width: '1px', height: '18px', background: 'var(--border)' }} />
-
           <span
             onClick={onHowItWorks}
-            className="cursor-pointer transition-colors"
-            style={{ fontFamily: 'var(--font-body)', fontSize: '0.875rem', fontWeight: 400, color: 'var(--text2)' }}
+            style={{ ...linkStyle(false), cursor: 'pointer' }}
             onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
             onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
           >
-            How It Works
+            How it works
           </span>
+        </div>
 
+        <div className="site-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '18px' }}>
           {userName ? (
-            <div className="flex items-center gap-4">
-              <span style={{ fontSize: '0.8rem', color: 'var(--text)', fontFamily: 'var(--font-body)' }}>
-                {userName}
-              </span>
-              <span
-                onClick={onSignOut}
-                className="cursor-pointer transition-colors font-mono uppercase"
-                style={{ fontSize: '0.65rem', color: 'var(--text2)', letterSpacing: '0.06em' }}
-                onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
-                onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
-              >
-                Sign Out
-              </span>
-            </div>
+            <>
+              <span style={{ fontFamily: 'var(--font-body)', fontSize: '0.9rem', color: 'var(--text)' }}>{userName}</span>
+              <button type="button" onClick={onSignOut} className="mk-btn mk-btn--ghost" style={{ padding: '8px 0', fontSize: '0.9rem' }}>Sign out</button>
+            </>
           ) : onSignIn ? (
-            <span
-              onClick={onSignIn}
-              className="cursor-pointer transition-colors"
-              style={{ fontSize: '0.85rem', color: 'var(--text2)', fontFamily: 'var(--font-body)' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
-            >
-              Sign In
-            </span>
+            <button type="button" onClick={onSignIn} style={{ ...linkStyle(false), background: 'none', border: 'none', cursor: 'pointer', borderBottom: 'none' }}>
+              Sign in
+            </button>
           ) : null}
 
           {subtleStart ? (
-            <span
-              onClick={onStart}
-              className="cursor-pointer transition-colors font-mono uppercase"
-              style={{ fontSize: '0.65rem', color: 'var(--text2)', letterSpacing: '0.06em' }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text2)'; }}
-            >
-              {startLabel || 'Start New Test'}
-            </span>
+            <button type="button" onClick={onStart} className="mk-btn mk-btn--secondary" style={{ padding: '10px 18px', fontSize: '0.9rem' }}>
+              {startLabel || 'Start new test'}
+            </button>
           ) : (
-            <button
-              onClick={onStart}
-              className="cursor-pointer transition-all font-mono uppercase"
-              style={{
-                fontSize: '0.72rem',
-                fontWeight: 500,
-                letterSpacing: '0.08em',
-                color: 'var(--text2)',
-                border: '1px solid var(--border)',
-                background: 'var(--surface2)',
-                padding: '8px 18px',
-                borderRadius: '10px',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = 'var(--accent)';
-                e.currentTarget.style.color = 'var(--text)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.borderColor = 'var(--border)';
-                e.currentTarget.style.color = 'var(--text2)';
-              }}
-            >
-              {startLabel || 'Start Assessment'}
+            <button type="button" onClick={onStart} className="mk-btn mk-btn--primary" style={{ padding: '11px 22px', fontSize: '0.92rem', boxShadow: 'none' }}>
+              {startLabel || 'Take the test'}
             </button>
           )}
         </div>
 
-        {/* Mobile hamburger */}
         <button
-          className="nav-hamburger"
+          className="site-nav-burger"
           onClick={() => setDrawerOpen((o) => !o)}
           aria-label="Menu"
-          style={{
-            display: 'none',
-            width: '40px',
-            height: '40px',
-            background: 'transparent',
-            border: 'none',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: '5px',
-            padding: '8px',
-            cursor: 'pointer',
-          }}
+          style={{ display: 'none', width: 44, height: 44, background: 'transparent', border: 'none', cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }}
         >
-          <span className="nav-burger-line nav-burger-top" style={{
-            width: '22px', height: '2px', background: 'var(--text)',
-            borderRadius: '2px', transition: 'all 0.25s ease', display: 'block',
-          }} />
-          <span className="nav-burger-line nav-burger-mid" style={{
-            width: '22px', height: '2px', background: 'var(--text)',
-            borderRadius: '2px', transition: 'all 0.25s ease', display: 'block',
-          }} />
-          <span className="nav-burger-line nav-burger-bot" style={{
-            width: '22px', height: '2px', background: 'var(--text)',
-            borderRadius: '2px', transition: 'all 0.25s ease', display: 'block',
-          }} />
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round">
+            <line x1="4" y1="7" x2="20" y2="7" /><line x1="4" y1="12" x2="20" y2="12" /><line x1="4" y1="17" x2="20" y2="17" />
+          </svg>
         </button>
       </nav>
 
-      {/* Mobile drawer overlay */}
+      {/* Drawer */}
       <div
-        className="nav-drawer-overlay"
+        className="site-drawer-overlay"
         onClick={closeDrawer}
-        style={{
-          position: 'fixed',
-          inset: 0,
-          background: 'rgba(0,0,0,0.5)',
-          backdropFilter: 'blur(4px)',
-          WebkitBackdropFilter: 'blur(4px)',
-          zIndex: 99,
-          opacity: drawerOpen ? 1 : 0,
-          pointerEvents: drawerOpen ? 'auto' : 'none',
-          transition: 'opacity 0.25s ease',
-        }}
+        style={{ position: 'fixed', inset: 0, background: 'rgba(27,31,28,0.35)', backdropFilter: 'blur(4px)', WebkitBackdropFilter: 'blur(4px)', zIndex: 99, opacity: drawerOpen ? 1 : 0, pointerEvents: drawerOpen ? 'auto' : 'none', transition: 'opacity 0.25s ease' }}
       />
-
-      {/* Mobile drawer */}
       <div
-        className="nav-drawer"
-        style={{
-          position: 'fixed',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          width: '75%',
-          maxWidth: '300px',
-          background: 'var(--surface)',
-          borderLeft: '1px solid var(--border)',
-          zIndex: 100,
-          padding: '24px',
-          display: 'flex',
-          flexDirection: 'column',
-          transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)',
-          transition: 'transform 0.3s ease',
-        }}
+        className="site-drawer"
+        style={{ position: 'fixed', top: 0, right: 0, bottom: 0, width: '82%', maxWidth: '360px', background: 'var(--surface)', borderLeft: '1px solid var(--border)', zIndex: 100, padding: '20px 24px 28px', display: 'flex', flexDirection: 'column', transform: drawerOpen ? 'translateX(0)' : 'translateX(100%)', transition: 'transform 0.3s ease', boxShadow: 'var(--shadow-lg)' }}
       >
-        {/* Drawer header */}
-        <div className="flex items-center justify-between" style={{ marginBottom: '32px' }}>
-          <div className="cursor-pointer" onClick={() => { closeDrawer(); onLogoClick?.(); }}>
-            {logo}
-          </div>
-          <button
-            onClick={closeDrawer}
-            aria-label="Close menu"
-            style={{
-              width: '36px',
-              height: '36px',
-              background: 'transparent',
-              border: 'none',
-              cursor: 'pointer',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </svg>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '28px' }}>
+          <div style={{ cursor: 'pointer' }} onClick={() => { closeDrawer(); onLogoClick?.(); }}>{logo}</div>
+          <button onClick={closeDrawer} aria-label="Close menu" style={{ width: 40, height: 40, background: 'var(--surface2)', border: 'none', borderRadius: '50%', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--text)" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
           </button>
         </div>
 
-        {/* Drawer menu items */}
-        <div style={{ flex: 1 }}>
-          {[
-            { label: 'For Clinics', href: '/clinics' },
-            { label: 'For Facilities', href: '/facilities' },
-            { label: 'For Teams', href: '/teams' },
-          ].map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              style={{
-                display: 'block',
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.3rem',
-                color: 'var(--text)',
-                padding: '16px 0',
-                borderBottom: '1px solid var(--border)',
-                textDecoration: 'none',
-              }}
-            >
-              {link.label}
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+          <p style={{ fontFamily: 'var(--font-body)', fontSize: '0.75rem', fontWeight: 600, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--text3)', margin: '8px 0 6px' }}>For professionals</p>
+          {SEGMENT_LINKS.map((l) => (
+            <a key={l.href} href={l.href} style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--text)', padding: '12px 0', textDecoration: 'none', borderBottom: '1px solid var(--border)' }}>
+              {l.label}
             </a>
           ))}
-
-          <div
-            onClick={() => { closeDrawer(); onHowItWorks(); }}
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.3rem',
-              color: 'var(--text)',
-              padding: '16px 0',
-              borderBottom: '1px solid var(--border)',
-              cursor: 'pointer',
-            }}
-          >
-            How It Works
+          <div onClick={() => { closeDrawer(); onHowItWorks(); }} style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', color: 'var(--text)', padding: '12px 0', borderBottom: '1px solid var(--border)', cursor: 'pointer', marginTop: '12px' }}>
+            How it works
           </div>
-
           {userName ? (
-            <>
-              <div
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.3rem',
-                  color: 'var(--text2)',
-                  padding: '16px 0',
-                  borderBottom: '1px solid var(--border)',
-                }}
-              >
-                {userName}
-              </div>
-              <div
-                onClick={() => { closeDrawer(); onSignOut?.(); }}
-                style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: '1.3rem',
-                  color: 'var(--text)',
-                  padding: '16px 0',
-                  borderBottom: '1px solid var(--border)',
-                  cursor: 'pointer',
-                }}
-              >
-                Sign Out
-              </div>
-            </>
+            <div onClick={() => { closeDrawer(); onSignOut?.(); }} style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', color: 'var(--text2)', padding: '16px 0', cursor: 'pointer' }}>
+              Sign out ({userName})
+            </div>
           ) : onSignIn ? (
-            <div
-              onClick={() => { closeDrawer(); onSignIn(); }}
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: '1.3rem',
-                color: 'var(--text)',
-                padding: '16px 0',
-                borderBottom: '1px solid var(--border)',
-                cursor: 'pointer',
-              }}
-            >
-              Sign In
+            <div onClick={() => { closeDrawer(); onSignIn(); }} style={{ fontFamily: 'var(--font-body)', fontSize: '1rem', color: 'var(--text2)', padding: '16px 0', cursor: 'pointer' }}>
+              Sign in
             </div>
           ) : null}
         </div>
 
-        {/* Bottom CTA */}
-        <button
-          onClick={() => { closeDrawer(); onStart(); }}
-          className="font-mono uppercase cursor-pointer"
-          style={{
-            fontSize: '0.82rem',
-            fontWeight: 600,
-            letterSpacing: '0.12em',
-            color: 'var(--bg)',
-            background: 'var(--accent)',
-            padding: '15px 24px',
-            borderRadius: '10px',
-            border: 'none',
-            boxShadow: 'var(--shadow-accent)',
-            width: '100%',
-            marginTop: 'auto',
-          }}
-        >
-          Start Free Assessment →
+        <button type="button" onClick={() => { closeDrawer(); onStart(); }} className="mk-btn mk-btn--primary mk-btn--lg" style={{ width: '100%' }}>
+          {startLabel || 'Take the free test'}
         </button>
       </div>
 
-      {/* Beta Modal */}
+      {/* Beta modal */}
       {betaModalOpen && (
-        <div
-          onClick={() => setBetaModalOpen(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            background: 'rgba(6,12,24,0.85)',
-            backdropFilter: 'blur(4px)',
-            WebkitBackdropFilter: 'blur(4px)',
-            zIndex: 200,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: '24px',
-          }}
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            style={{
-              position: 'relative',
-              width: '100%',
-              maxWidth: '420px',
-              background: 'var(--surface)',
-              border: '1px solid var(--accent)',
-              borderRadius: '16px',
-              padding: '32px 28px',
-              boxShadow: '0 8px 40px rgba(20,230,180,0.20)',
-            }}
-          >
-            {/* Close button */}
-            <button
-              onClick={() => setBetaModalOpen(false)}
-              style={{
-                position: 'absolute',
-                top: '16px',
-                right: '16px',
-                width: '28px',
-                height: '28px',
-                background: 'none',
-                border: 'none',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                color: 'var(--text3)',
-                fontSize: '18px',
-                lineHeight: 1,
-                transition: 'color 0.15s',
-              }}
-              onMouseEnter={(e) => { e.currentTarget.style.color = 'var(--text)'; }}
-              onMouseLeave={(e) => { e.currentTarget.style.color = 'var(--text3)'; }}
-            >
-              &#x2715;
+        <div onClick={() => setBetaModalOpen(false)} style={{ position: 'fixed', inset: 0, background: 'rgba(27,31,28,0.45)', backdropFilter: 'blur(6px)', WebkitBackdropFilter: 'blur(6px)', zIndex: 200, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px' }}>
+          <div onClick={(e) => e.stopPropagation()} className="mk-card" style={{ position: 'relative', width: '100%', maxWidth: '440px', padding: '36px 32px', boxShadow: 'var(--shadow-lg)', borderRadius: '24px' }}>
+            <button onClick={() => setBetaModalOpen(false)} aria-label="Close" style={{ position: 'absolute', top: 14, right: 14, width: 36, height: 36, borderRadius: '50%', background: 'var(--surface2)', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text2)" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
             </button>
-
-            {/* Eyebrow */}
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <span style={{
-                width: '8px',
-                height: '8px',
-                borderRadius: '50%',
-                background: 'var(--accent)',
-                boxShadow: '0 0 12px var(--accent)',
-                flexShrink: 0,
-              }} />
-              <span style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.7rem',
-                fontWeight: 600,
-                textTransform: 'uppercase',
-                letterSpacing: '0.16em',
-                color: 'var(--accent)',
-              }}>
-                Active Beta
-              </span>
-            </div>
-
-            {/* Headline */}
-            <h2 style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '1.6rem',
-              fontWeight: 700,
-              color: 'var(--text)',
-              lineHeight: 1.2,
-              marginBottom: '14px',
-            }}>
-              StepIQ is in active beta.
-            </h2>
-
-            {/* Body */}
-            <p style={{
-              fontFamily: 'var(--font-body)',
-              fontSize: '0.95rem',
-              color: 'var(--text2)',
-              lineHeight: 1.55,
-              marginBottom: '14px',
-            }}>
+            <span className="mk-pill" style={{ marginBottom: '18px' }}>
+              <span style={{ width: 8, height: 8, borderRadius: '50%', background: 'var(--accent)', boxShadow: '0 0 0 4px var(--accent-glow)' }} />
+              Active beta
+            </span>
+            <h2 className="mk-display-md" style={{ marginBottom: '12px' }}>StepIQ is in active beta.</h2>
+            <p className="mk-body" style={{ marginBottom: '14px' }}>
               I'm shaping the product based on what beta users tell me. If you take the test and have 30 seconds to share what worked, what didn't, or what surprised you — that's the most valuable thing you can give me.
             </p>
-
-            {/* Signature */}
-            <p style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: '0.95rem',
-              fontStyle: 'italic',
-              color: 'var(--text2)',
-              marginBottom: '24px',
-            }}>
-              — Keith, founder
-            </p>
-
-            {/* CTA */}
-            <a
-              href="mailto:keith@stepiq.app?subject=StepIQ%20Beta%20Feedback"
-              onClick={() => setBetaModalOpen(false)}
-              style={{
-                display: 'block',
-                width: '100%',
-                padding: '15px 24px',
-                fontFamily: 'var(--font-mono)',
-                fontSize: '0.82rem',
-                fontWeight: 700,
-                textTransform: 'uppercase',
-                letterSpacing: '0.12em',
-                color: 'var(--bg)',
-                background: 'var(--accent)',
-                border: 'none',
-                borderRadius: '10px',
-                boxShadow: 'var(--shadow-accent)',
-                cursor: 'pointer',
-                textAlign: 'center',
-                textDecoration: 'none',
-              }}
-            >
-              Send Feedback
+            <p style={{ fontFamily: 'var(--font-display)', fontStyle: 'italic', fontSize: '1rem', color: 'var(--text2)', marginBottom: '24px' }}>— Keith, founder</p>
+            <a href="mailto:keith@stepiq.app?subject=StepIQ%20Beta%20Feedback" onClick={() => setBetaModalOpen(false)} className="mk-btn mk-btn--primary" style={{ width: '100%' }}>
+              Send feedback
             </a>
           </div>
         </div>
       )}
 
       <style>{`
-        .hiw-nav-pad { padding: 0 64px; }
-        @media (max-width: 767px) {
-          .hiw-nav-pad { padding: 0 16px !important; }
-          .nav-desktop-items { display: none !important; }
-          .nav-hamburger { display: flex !important; }
+        :root[data-theme="dark"] .site-nav { background: rgba(15,14,19,0.82) !important; }
+        @media (max-width: 1023px) {
+          .site-nav { padding: 0 20px !important; height: 64px !important; }
+          .site-nav-links, .site-nav-actions { display: none !important; }
+          .site-nav-burger { display: flex !important; }
         }
-        @media (min-width: 768px) and (max-width: 1023px) {
-          .hiw-nav-pad { padding: 0 40px !important; }
-          .nav-desktop-items { display: none !important; }
-          .nav-hamburger { display: flex !important; }
-        }
-        @media (min-width: 768px) {
-          .nav-drawer-overlay,
-          .nav-drawer { display: none !important; }
+        @media (min-width: 1024px) {
+          .site-drawer-overlay, .site-drawer { display: none !important; }
         }
       `}</style>
     </>
